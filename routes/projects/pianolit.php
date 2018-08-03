@@ -60,6 +60,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 // App Routes
 Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::post('/search', 'Projects\PianoLit\ApiController@search')->name('search');
+	Route::post('/lookup', 'Projects\PianoLit\ApiController@lookup')->name('lookup');
 	Route::post('/tour', 'Projects\PianoLit\ApiController@tour')->name('tour');
 	Route::get('/discover', 'Projects\PianoLit\ApiController@discover')->name('discover');
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');

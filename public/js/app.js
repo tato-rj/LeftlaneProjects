@@ -10476,6 +10476,12 @@ module.exports = __webpack_require__(12);
 
 __webpack_require__(4);
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': app.csrfToken
+    }
+});
+
 /***/ }),
 /* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {

@@ -9,7 +9,7 @@
     'description' => 'Add a new piece'])
     
     <div class="row my-5 mx-2">
-      <form method="POST" action="/piano-lit/pieces" class="col-lg-6 col-sm-10 col-12 mx-auto" enctype="multipart/form-data">
+      <form method="POST" action="/piano-lit/pieces" class="col-lg-6 col-sm-10 col-12 mx-auto" autocomplete="off" enctype="multipart/form-data">
         {{csrf_field()}}
         {{-- Name --}}
         <div class="form-group form-row">
@@ -22,8 +22,14 @@
           </div>
         </div>
         <div class="form-group form-row">
-          <div class="col">
-            <input type="text" class="form-control" name="collection_name" placeholder="Collection name" value="{{ old('collection_name') }}">
+          <div class="col position-relative">
+            <input type="text" lookup-url="{{route('piano-lit.api.lookup')}}" class="form-control" name="collection_name" placeholder="Collection name" value="{{ old('collection_name') }}">
+            <div class="autocomplete model position-absolute w-100 px-1" style="top: 100%; left: 0; display: none; z-index: 2">
+              <div class="bg-white border">
+                <div class="text-muted loading px-2 py-1 bg-light"><i><small><i class="fas fa-search mr-2"></i><strong>Finding similar...</strong></small></i></div>
+                <div class="model hover-bg-light text-muted px-2 py-1 cursor-pointer d-none"><i><small><span></span></small></i></div>
+              </div>
+            </div>
           </div>
           <div class="col">
             <div class="input-group">
@@ -203,6 +209,74 @@
 @endsection
 
 @section('scripts')
+<script type="text/javascript" src="{{asset('js/vendor/jquery.ba-throttle-debounce.min.js')}}"></script>
+<script type="text/javascript">
+///////////////////
+// AUTO COMPLETE //
+///////////////////
+
+var lookupRequest = null;
+var $collectionInput = $('input[name="collection_name"]');
+var $resultsContainerModel = $collectionInput.siblings('.autocomplete');
+var url = $collectionInput.attr('lookup-url');
+var field = $collectionInput.attr('name');
+
+var lookupEvents = function() {
+    var value = $collectionInput.val();
+
+    $('.autocomplete-temp').remove();
+    
+    if (value == '')
+      return;
+
+    if (lookupRequest)
+      lookupRequest.abort();
+    
+    $resultsContainer = $resultsContainerModel.clone().removeClass('model').addClass('autocomplete-temp').appendTo($collectionInput.parent());
+    $resultsContainer.show();
+
+    lookupRequest = $.post(url, {
+        field: field,
+        input: value
+      }, function(data, status){
+        data.forEach(result => {
+          var $resultContainer = $resultsContainer.find('.model').clone().removeClass('model').addClass('result-temp').appendTo($resultsContainer.find('div.border'));
+          var $resultText = $resultContainer.find('span');
+
+          $resultText.text(result.collection);
+          
+          $resultContainer.attr('data-collection_name', result.collection_name);
+          $resultContainer.attr('data-catalogue_name', result.catalogue_name);
+          $resultContainer.attr('data-catalogue_number', result.catalogue_number);
+        });
+
+        $resultsContainer.find('.loading strong').text('Found '+data.length+' result(s)!');
+        $resultsContainer.find('.result-temp').removeClass('d-none');      
+    });
+};
+
+$(document).on('click', '.result-temp', function() {
+  $result = $(this);
+
+  $('input[name="collection_name"]').val($result.attr('data-collection_name'));
+  $('select[name="catalogue_name"] option[value="'+$result.attr('data-catalogue_name')+'"]').prop('selected', true);
+  $('input[name="catalogue_number"]').val($result.attr('data-catalogue_number'));
+});
+
+$collectionInput.on({
+  click: lookupEvents,
+  keyup: $.debounce(200, lookupEvents)
+});
+
+// HIDE AUTOCOMPLETE IF CLICK ANYWHERE ON THE SCREEN
+$(document).on('click', function(e) {                    
+   if(!$(e.target).hasClass('autocomplete-temp') )
+   {
+       $('.autocomplete-temp').remove();                
+   }
+}); 
+
+</script>
 <script type="text/javascript">
 /////////////////
 // ADD NEW TIP //

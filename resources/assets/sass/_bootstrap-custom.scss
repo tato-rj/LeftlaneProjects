@@ -5,6 +5,10 @@
 	text-overflow: ellipsis;
 }
 
+.hover-bg-light:hover {
+	background: rgba(0,0,0,0.025);
+}
+
 .link-none {
 	color: inherit !important;
 }

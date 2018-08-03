@@ -58,6 +58,16 @@ class ApiController extends Controller
         return view('projects/pianolit/search/index', compact(['pieces', 'inputArray', 'tags']));
     }
 
+    public function lookup(Request $request)
+    {
+        $results = Piece::selectRaw('collection_name, catalogue_name, catalogue_number, CONCAT_WS(" ", collection_name, catalogue_name, catalogue_number) as collection')
+                        ->where('collection_name', 'like', "%$request->input%")
+                        ->groupBy('collection_name', 'catalogue_name', 'catalogue_number')
+                        ->get();
+
+        return $results;
+    }
+
     public function tour(Request $request)
     {
         $inputArray = $this->api->prepareInput($request);
