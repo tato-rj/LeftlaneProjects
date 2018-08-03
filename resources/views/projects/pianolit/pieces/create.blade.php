@@ -240,14 +240,17 @@ var lookupEvents = function() {
         input: value
       }, function(data, status){
         data.forEach(result => {
+          console.log(result);
           var $resultContainer = $resultsContainer.find('.model').clone().removeClass('model').addClass('result-temp').appendTo($resultsContainer.find('div.border'));
           var $resultText = $resultContainer.find('span');
 
           $resultText.text(result.collection);
           
           $resultContainer.attr('data-collection_name', result.collection_name);
+          $resultContainer.attr('data-nickname', result.nickname);
           $resultContainer.attr('data-catalogue_name', result.catalogue_name);
           $resultContainer.attr('data-catalogue_number', result.catalogue_number);
+          $resultContainer.attr('data-composer_id', result.composer_id);
         });
 
         $resultsContainer.find('.loading strong').text('Found '+data.length+' result(s)!');
@@ -259,7 +262,9 @@ $(document).on('click', '.result-temp', function() {
   $result = $(this);
 
   $('input[name="collection_name"]').val($result.attr('data-collection_name'));
+  $('input[name="nickname"]').val($result.attr('data-nickname'));
   $('select[name="catalogue_name"] option[value="'+$result.attr('data-catalogue_name')+'"]').prop('selected', true);
+  $('select[name="composer_id"] option[value="'+$result.attr('data-composer_id')+'"]').prop('selected', true);
   $('input[name="catalogue_number"]').val($result.attr('data-catalogue_number'));
 });
 

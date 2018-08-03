@@ -60,9 +60,10 @@ class ApiController extends Controller
 
     public function lookup(Request $request)
     {
-        $results = Piece::selectRaw('collection_name, catalogue_name, catalogue_number, CONCAT_WS(" ", collection_name, catalogue_name, catalogue_number) as collection')
+        $results = Piece::selectRaw('collection_name, catalogue_name, catalogue_number, composer_id, 
+            CONCAT_WS(" ", collection_name, catalogue_name, catalogue_number) as collection')
                         ->where('collection_name', 'like', "%$request->input%")
-                        ->groupBy('collection_name', 'catalogue_name', 'catalogue_number')
+                        ->groupBy('collection_name', 'catalogue_name', 'catalogue_number', 'composer_id')
                         ->get();
 
         return $results;
