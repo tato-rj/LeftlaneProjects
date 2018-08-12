@@ -81,9 +81,8 @@
         <div class="col-12">
           <p>Welcome <strong>{{auth()->user()->name}}</strong>!</p>
           <p>So far you have created 
-            {{auth()->user()->pieces_count}} {{str_plural('piece', auth()->user()->pieces_count) }}, 
-          {{auth()->user()->composers_count}} {{str_plural('composer', auth()->user()->composers_count) }}, 
-        {{auth()->user()->tags_count}} {{str_plural('tag', auth()->user()->tags_count) }}. <a href="">Click here</a> to see how your pieces are doing in the app.</p>
+            {{auth()->user()->pieces_count}} {{str_plural('piece', auth()->user()->pieces_count) }} and 
+          {{auth()->user()->composers_count}} {{str_plural('composer', auth()->user()->composers_count) }}. <a href="">Click here</a> to see how your pieces are doing in the app.</p>
         <p>Thank you for your contribution <i class="fas fa-smile text-warning"></i></p>
         </div>
         

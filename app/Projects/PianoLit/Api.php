@@ -9,17 +9,35 @@ class Api
 {
     public function composers()
     {
-        return Composer::with('pieces')->get();
+        $collection = Composer::select('name')->withCount('pieces')->get();
+        $this->withAttributes($collection, [
+            'type' => 'collection',
+            'source' => \URL::to('/piano-lit/api/search'),
+            'color' => '#F45E8CFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Composers']);
     }
 
     public function periods()
     {
-        return Tag::periods()->with('pieces')->get();
+        $collection = Tag::periods()->select('name')->withCount('pieces')->get();
+        $this->withAttributes($collection, [
+            'type' => 'collection',
+            'source' => \URL::to('/piano-lit/api/search'),
+            'color' => '#DB634AFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Periods']);
     }
 
     public function improve()
     {
-        return Tag::improve()->with('pieces')->get();
+        $collection = Tag::improve()->select('name')->withCount('pieces')->get();
+        $this->withAttributes($collection, [
+            'type' => 'collection',
+            'source' => \URL::to('/piano-lit/api/search'),
+            'color' => '#32CCBCFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Improve your']);
     }
 
     public function countries()
@@ -29,7 +47,13 @@ class Api
 
     public function levels()
     {
-        return Tag::levels()->with('pieces')->get();
+        $collection = Tag::levels()->select('name')->withCount('pieces')->get();
+        $this->withAttributes($collection, [
+            'type' => 'collection',
+            'source' => \URL::to('/piano-lit/api/search'),
+            'color' => '#28C76FFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Levels']);
     }
 
     public function foundation()
@@ -39,27 +63,75 @@ class Api
 
     public function trending()
     {
-        return Piece::orderBy('views', 'DESC')->take(10)->get();
+        $collection = Piece::orderBy('views', 'DESC')->take(10)->get();
+        $this->withAttributes($collection, [
+            'type' => 'piece',
+            'source' => \URL::to('/piano-lit/api/pieces/find'),
+            'color' => '#0396FFFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Trending']);
     }
 
     public function latest()
     {
-        return Piece::latest()->take(15)->get();
+        $collection = Piece::latest()->take(15)->get();
+        $this->withAttributes($collection, [
+            'type' => 'piece',
+            'source' => \URL::to('/piano-lit/api/pieces/find'),
+            'color' => '#7367F0FF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Latest']);
     }
 
     public function famous()
     {
-        return Piece::famous()->take(10);
+        $collection = Piece::famous()->take(10);
+        $this->withAttributes($collection, [
+            'type' => 'piece',
+            'source' => \URL::to('/piano-lit/api/pieces/find'),
+            'color' => '#8069BEFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Most famous']);
     }
 
     public function flashy()
     {
-        return Piece::flashy()->take(10);
+        $collection = Piece::flashy()->take(10);
+        $this->withAttributes($collection, [
+            'type' => 'piece',
+            'source' => \URL::to('/piano-lit/api/pieces/find'),
+            'color' => '#846FCDFF']);
+
+        return $this->createPlaylist($collection, ['title' => 'Flashy']);
     }
 
-    public function ornaments()
+    public function createPlaylist($model, array $args)
     {
-        return Piece::ornaments()->take(10);
+        $playlist['title'] = $args['title'];
+        $playlist['content'] = $model;
+
+        return $playlist;
+    }
+
+    public function withAttributes($collection, array $args)
+    {
+        foreach ($collection as $model) {
+            if (get_class($model) == 'App\Projects\PianoLit\Piece') {
+                $model->setAttribute('name', $model->medium_name);
+                $number = $model->views;
+                $string = 'views';
+            } else {
+                $model->name = ucfirst($model->name);
+                $number = $model->pieces_count;
+                $string = 'pieces';
+            }
+
+            $model->setAttribute('source', $args['source']);
+            $model->setAttribute('type', $args['type']);
+            $model->setAttribute('color', $args['color']);
+            $model->setAttribute('special_attribute', $args['special_attribute'] ?? null);
+            $model->setAttribute('count', $number.' '.$string);
+        }
     }
 
 	public function setCustomAttributes($model)

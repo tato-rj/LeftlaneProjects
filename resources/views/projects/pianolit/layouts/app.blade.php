@@ -13,6 +13,7 @@
         <script>
             window.app = <?php echo json_encode([
                 'csrfToken' => csrf_token(),
+                'url' => \Request::root(),
                 'user' => auth()->guard('pianolit-admin')->user()
             ]); ?>
         </script>

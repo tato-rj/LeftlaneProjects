@@ -52,6 +52,40 @@ class PiecesController extends Controller
         return view('projects/pianolit/search/index', compact(['tags', 'inputArray']));
     }
 
+    public function singleLookup(Request $request)
+    {
+        $field = $request->field;
+
+        $results = Piece::selectRaw("$field, $field as output")
+                        ->where($field, 'like', "%$request->input%")
+                        ->groupBy($field)
+                        ->get();
+
+        return $results;
+    }
+   
+    public function multiLookup(Request $request)
+    {
+        $results = Piece::selectRaw('collection_name, catalogue_name, catalogue_number, composer_id, 
+            CONCAT_WS(" ", collection_name, catalogue_name, catalogue_number) as output')
+                        ->where('collection_name', 'like', "%$request->input%")
+                        ->groupBy('collection_name', 'catalogue_name', 'catalogue_number', 'composer_id')
+                        ->get();
+
+        return $results;
+    }
+
+    public function validateName(Request $request)
+    {
+        $result = Piece::where([
+            ['name', '=', $request->name ?? null],
+            ['catalogue_number', '=', $request->catalogue_number ?? null],
+            ['collection_number', '=', $request->collection_number ?? null]
+        ])->first();
+
+        return $result->medium_name;        
+    }
+
     public function tour()
     {
         $levels = Tag::levels()->get();

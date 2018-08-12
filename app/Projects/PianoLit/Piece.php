@@ -2,11 +2,11 @@
 
 namespace App\Projects\PianoLit;
 
-use App\Projects\PianoLit\Traits\{Resources, PieceExtraAttributes};
+use App\Projects\PianoLit\Traits\{Resources, PieceExtraAttributes, BelongsToThrough};
 
 class Piece extends PianoLit
 {
-    use Resources, PieceExtraAttributes;
+    use Resources, PieceExtraAttributes, BelongsToThrough;
 
     protected $casts = ['tips' => 'array'];
     protected $with = ['composer', 'tags'];
@@ -53,6 +53,11 @@ class Piece extends PianoLit
     	return $this->belongsTo(Composer::class);
     }
 
+    public function country()
+    {
+        return $this->belongsToThrough(Country::class, Composer::class);
+    }
+
     public function scopeSearch($query, $array, $request)
     {
         $results = $query->where(function($query) use ($array, $request) {
@@ -84,10 +89,6 @@ class Piece extends PianoLit
             $q->where('name', 'famous');
         })->get();
         
-        $results->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
-        });
-
         return $results;
     }
 
@@ -96,28 +97,6 @@ class Piece extends PianoLit
         $results = $query->whereHas('tags', function($q) {
             $q->where('name', 'flashy');
         })->get();
-
-        $results->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
-        });
-
-        return $results;
-    }
-
-    public function scopeOrnaments($query)
-    {
-        $results = $query->whereHas('tags', function($q) {
-            $q->where('name', 'ornaments');
-        })->get();
-
-        $results->each(function($piece, $key) use ($results) {
-            if (! in_array($piece->level()->name, ['beginner', 'elementary']))
-                $results->forget($key);
-        });
-
-        $results->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
-        });
 
         return $results;
     }

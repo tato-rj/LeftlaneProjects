@@ -41,6 +41,10 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/add', 'Projects\PianoLit\PiecesController@create');
 		Route::get('/{piece}', 'Projects\PianoLit\PiecesController@edit')->name('edit');
 
+		Route::post('/single-lookup', 'Projects\PianoLit\PiecesController@singleLookup')->name('single-lookup');
+		Route::post('/multi-lookup', 'Projects\PianoLit\PiecesController@multiLookup')->name('multi-lookup');
+		Route::post('/validate-name', 'Projects\PianoLit\PiecesController@validateName')->name('validate-name');
+
 		Route::post('', 'Projects\PianoLit\PiecesController@store');
 		Route::patch('/{piece}', 'Projects\PianoLit\PiecesController@update');
 		Route::delete('/{piece}', 'Projects\PianoLit\PiecesController@destroy');
@@ -60,10 +64,10 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 // App Routes
 Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::post('/search', 'Projects\PianoLit\ApiController@search')->name('search');
-	Route::post('/lookup', 'Projects\PianoLit\ApiController@lookup')->name('lookup');
 	Route::post('/tour', 'Projects\PianoLit\ApiController@tour')->name('tour');
 	Route::get('/discover', 'Projects\PianoLit\ApiController@discover')->name('discover');
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
+	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');
 	Route::get('/composers', 'Projects\PianoLit\ApiController@composers')->name('composers');
 	Route::get('/tags', 'Projects\PianoLit\ApiController@tags')->name('tags');
 });

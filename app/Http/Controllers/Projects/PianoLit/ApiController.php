@@ -15,6 +15,15 @@ class ApiController extends Controller
         $this->api = new Api;        
     }
 
+    public function piece(Request $request)
+    { 
+        $piece = Piece::find($request->search);
+
+        $this->api->setCustomAttributes($piece);
+
+        return $piece;
+    }
+
     public function pieces()
     {
     	$pieces = Piece::all();
@@ -42,33 +51,6 @@ class ApiController extends Controller
     	return Tag::all();
     }
 
-    public function search(Request $request)
-    {
-        $inputArray = $this->api->prepareInput($request);
-
-        $pieces = Piece::search($inputArray, $request)->get();
-
-        $this->api->prepare($request, $pieces, $inputArray);
-
-        if ($request->wantsJson() || $request->has('api'))
-            return $pieces;
-
-        $tags = Tag::pluck('name');
-                
-        return view('projects/pianolit/search/index', compact(['pieces', 'inputArray', 'tags']));
-    }
-
-    public function lookup(Request $request)
-    {
-        $results = Piece::selectRaw('collection_name, catalogue_name, catalogue_number, composer_id, 
-            CONCAT_WS(" ", collection_name, catalogue_name, catalogue_number) as collection')
-                        ->where('collection_name', 'like', "%$request->input%")
-                        ->groupBy('collection_name', 'catalogue_name', 'catalogue_number', 'composer_id')
-                        ->get();
-
-        return $results;
-    }
-
     public function tour(Request $request)
     {
         $inputArray = $this->api->prepareInput($request);
@@ -87,14 +69,33 @@ class ApiController extends Controller
         return view('projects/pianolit/tour/index', compact(['pieces', 'inputArray', 'levels', 'lengths', 'moods']));
     }
 
-    public function discover()
+    public function search(Request $request)
+    {
+        $inputArray = $this->api->prepareInput($request);
+
+        $pieces = Piece::search($inputArray, $request)->get();
+
+        $this->api->prepare($request, $pieces, $inputArray);
+
+        if ($request->wantsJson() || $request->has('api'))
+            return $pieces;
+
+        if ($request->has('discover'))
+            return $this->discover($pieces, $inputArray);
+
+        $tags = Tag::pluck('name');
+                
+        return view('projects/pianolit/search/index', compact(['pieces', 'inputArray', 'tags']));
+    }
+    
+    public function discover($pieces = null, $inputArray = null)
     {
         // Collections of playlists
         $composers = $this->api->composers();
         $periods = $this->api->periods();
         $improve = $this->api->improve();
-        $countries = $this->api->countries();
-        $foundation = $this->api->foundation();
+        // $countries = $this->api->countries();
+        // $foundation = $this->api->foundation();
         $levels = $this->api->levels();
 
         // Collections of pieces
@@ -102,13 +103,12 @@ class ApiController extends Controller
         $latest = $this->api->latest();
         $famous = $this->api->famous();
         $flashy = $this->api->flashy();
-        $ornaments = $this->api->ornaments();
 
-        $results = compact(['composers', 'periods', 'improve', 'trending', 'flashy', 'countries', 'latest', 'famous', 'foundation', 'ornaments', 'levels']);
+        $collection = compact(['trending', 'latest', 'composers', 'periods', 'improve', 'levels', 'famous', 'flashy']);
 
         if (request()->wantsJson() || request()->has('api'))
-            return $results;
+            return array_values($collection);
 
-        return view('projects/pianolit/discover/index', $results);
+        return view('projects/pianolit/discover/index', compact(['collection', 'pieces', 'inputArray']));
     }
 }

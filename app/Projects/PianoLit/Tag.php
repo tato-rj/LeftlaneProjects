@@ -43,4 +43,5 @@ class Tag extends PianoLit
     {
         return $query->where('name', 'famous');
     }
+
 }

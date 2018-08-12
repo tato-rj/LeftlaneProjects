@@ -3,7 +3,7 @@
     @if(is_null($piece->creator_id))
     bg-white text-muted border
     @else
-    bg-{{$piece->level()->name}}
+    bg-{{strtolower($piece->level()->name)}}
     @endif
     rounded">
     <div class="truncate">

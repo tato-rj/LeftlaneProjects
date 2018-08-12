@@ -11,25 +11,25 @@
     <div class="row my-5 mx-2">
       <form method="POST" action="/piano-lit/pieces" class="col-lg-6 col-sm-10 col-12 mx-auto" autocomplete="off" enctype="multipart/form-data">
         {{csrf_field()}}
+        <div id="name-validation-notice" style="display: none;">
+          <p class="text-danger text-center"><small><i class="fas fa-ban mr-1"></i>Ops, the <strong><span></span></strong> already exists!</small></p>
+        </div>
         {{-- Name --}}
         <div class="form-group form-row">
           <div class="col">
-            <input type="text" class="form-control {{$errors->has('name') ? 'is-invalid' : ''}}" name="name" placeholder="Piece name" value="{{ old('name') }}" >
+            <input type="text" class="validate-name form-control {{$errors->has('name') ? 'is-invalid' : ''}}" name="name" placeholder="Piece name" value="{{ old('name') }}" >
+            @include('projects/pianolit/components/lookup')
             @include('projects/pianolit/components/feedback', ['field' => 'name'])
           </div>
           <div class="col">
-            <input type="text" class="form-control" name="nickname" placeholder="Nickname" value="{{ old('nickname') }}" >
+            <input type="text" class="validate-name form-control" name="nickname" placeholder="Nickname" value="{{ old('nickname') }}" >
+            @include('projects/pianolit/components/lookup')
           </div>
         </div>
         <div class="form-group form-row">
-          <div class="col position-relative">
-            <input type="text" lookup-url="{{route('piano-lit.api.lookup')}}" class="form-control" name="collection_name" placeholder="Collection name" value="{{ old('collection_name') }}">
-            <div class="autocomplete model position-absolute w-100 px-1" style="top: 100%; left: 0; display: none; z-index: 2">
-              <div class="bg-white border">
-                <div class="text-muted loading px-2 py-1 bg-light"><i><small><i class="fas fa-search mr-2"></i><strong>Finding similar...</strong></small></i></div>
-                <div class="model hover-bg-light text-muted px-2 py-1 cursor-pointer d-none"><i><small><span></span></small></i></div>
-              </div>
-            </div>
+          <div class="col">
+            <input type="text" class="validate-name form-control" name="collection_name" placeholder="Collection name" value="{{ old('collection_name') }}">
+            @include('projects/pianolit/components/lookup')
           </div>
           <div class="col">
             <div class="input-group">
@@ -41,7 +41,7 @@
                   @endforeach
                 </select>
               </div>
-              <input type="text" class="form-control" name="catalogue_number" placeholder="Number" value="{{ old('catalogue_number') }}">
+              <input type="text" class="validate-name form-control" name="catalogue_number" placeholder="Number" value="{{ old('catalogue_number') }}">
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
               <div class="input-group-prepend">
                 <div class="input-group-text">No.</div>
               </div>
-              <input type="text" class="form-control" name="collection_number" placeholder="Number" value="{{ old('collection_number') }}">
+              <input type="text" class="validate-name form-control" name="collection_number" placeholder="Number" value="{{ old('collection_number') }}">
             </div>
           </div>
           <div class="col">
@@ -60,7 +60,7 @@
               <div class="input-group-prepend">
                 <div class="input-group-text">Mov.</div>
               </div>
-              <input type="text" class="form-control" name="movement_number" placeholder="Number" value="{{ old('movement_number') }}">
+              <input type="text" class="validate-name form-control" name="movement_number" placeholder="Number" value="{{ old('movement_number') }}">
             </div>
           </div>
         </div>
@@ -210,78 +210,50 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{asset('js/vendor/jquery.ba-throttle-debounce.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/lookup.js')}}"></script>
+
 <script type="text/javascript">
-///////////////////
-// AUTO COMPLETE //
-///////////////////
-
-var lookupRequest = null;
-var $collectionInput = $('input[name="collection_name"]');
-var $resultsContainerModel = $collectionInput.siblings('.autocomplete');
-var url = $collectionInput.attr('lookup-url');
-var field = $collectionInput.attr('name');
-
-var lookupEvents = function() {
-    var value = $collectionInput.val();
-
-    $('.autocomplete-temp').remove();
-    
-    if (value == '')
-      return;
-
-    if (lookupRequest)
-      lookupRequest.abort();
-    
-    $resultsContainer = $resultsContainerModel.clone().removeClass('model').addClass('autocomplete-temp').appendTo($collectionInput.parent());
-    $resultsContainer.show();
-
-    lookupRequest = $.post(url, {
-        field: field,
-        input: value
-      }, function(data, status){
-        data.forEach(result => {
-          console.log(result);
-          var $resultContainer = $resultsContainer.find('.model').clone().removeClass('model').addClass('result-temp').appendTo($resultsContainer.find('div.border'));
-          var $resultText = $resultContainer.find('span');
-
-          $resultText.text(result.collection);
-          
-          $resultContainer.attr('data-collection_name', result.collection_name);
-          $resultContainer.attr('data-nickname', result.nickname);
-          $resultContainer.attr('data-catalogue_name', result.catalogue_name);
-          $resultContainer.attr('data-catalogue_number', result.catalogue_number);
-          $resultContainer.attr('data-composer_id', result.composer_id);
-        });
-
-        $resultsContainer.find('.loading strong').text('Found '+data.length+' result(s)!');
-        $resultsContainer.find('.result-temp').removeClass('d-none');      
-    });
-};
-
-$(document).on('click', '.result-temp', function() {
-  $result = $(this);
-
-  $('input[name="collection_name"]').val($result.attr('data-collection_name'));
-  $('input[name="nickname"]').val($result.attr('data-nickname'));
-  $('select[name="catalogue_name"] option[value="'+$result.attr('data-catalogue_name')+'"]').prop('selected', true);
-  $('select[name="composer_id"] option[value="'+$result.attr('data-composer_id')+'"]').prop('selected', true);
-  $('input[name="catalogue_number"]').val($result.attr('data-catalogue_number'));
+var nicknameLookup = new Lukup({
+  url: app.url+'/piano-lit/pieces/single-lookup',
+  field: 'nickname',
+  autofill: ['nickname']
 });
 
-$collectionInput.on({
-  click: lookupEvents,
-  keyup: $.debounce(200, lookupEvents)
+var nameLookup = new Lukup({
+  url: app.url+'/piano-lit/pieces/single-lookup',
+  field: 'name',
+  autofill: ['name']
 });
 
-// HIDE AUTOCOMPLETE IF CLICK ANYWHERE ON THE SCREEN
-$(document).on('click', function(e) {                    
-   if(!$(e.target).hasClass('autocomplete-temp') )
-   {
-       $('.autocomplete-temp').remove();                
-   }
-}); 
+var collectionLookup = new Lukup({
+  url: app.url+'/piano-lit/pieces/multi-lookup',
+  field: 'collection_name',
+  autofill: ['collection_name', 'nickname', 'catalogue_name', 'catalogue_number', 'composer_id']
+});
 
+collectionLookup.enable();
+nicknameLookup.enable();
+nameLookup.enable();
 </script>
+
+<script type="text/javascript">
+$('input.validate-name').on('focus', function() {
+  $.post(app.url+'/piano-lit/pieces/validate-name', {
+    name: $('input[name="name"]').val(),
+    collection_number: $('input[name="collection_number"]').val(),
+    catalogue_number: $('input[name="catalogue_number"]').val()
+  }, function(data, status) {
+    if (data != '') {
+      $('#name-validation-notice span').text(data);
+      $('#name-validation-notice').show();
+      $('input, select, textarea').removeClass('border-warning');
+    } else {
+      $('#name-validation-notice').hide();
+    }
+  });
+});
+</script>
+
 <script type="text/javascript">
 /////////////////
 // ADD NEW TIP //
