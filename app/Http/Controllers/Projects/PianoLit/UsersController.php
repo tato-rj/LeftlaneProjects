@@ -15,13 +15,9 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = User::latest()->get();
+        $users = User::latest()->paginate(10);
+
         return view('projects/pianolit/users/index', compact('users'));
-    }
-    
-    public function app()
-    {
-        return User::latest()->with(['comments', 'ratings', 'stories'])->get();
     }
 
     /**
@@ -97,9 +93,9 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return view('projects/pianolit/users/show', compact('user'));
     }
 
     /**

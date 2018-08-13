@@ -15,8 +15,13 @@ class CreatePianolitUsersTable extends Migration
     {
         Schema::connection('pianolit')->create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
+            $table->enum('gender', ['male', 'female'])->nullable();
+            $table->string('locale')->nullable();
+            $table->string('subscription_token')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

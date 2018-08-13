@@ -52,7 +52,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/piano-lit">
+        <a class="nav-link" href="/piano-lit/users/">
           <i class="fa fa-fw fa-users"></i>
           <span class="nav-link-text">Users</span>
         </a>

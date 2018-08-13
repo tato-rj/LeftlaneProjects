@@ -4,6 +4,7 @@ namespace App\Projects\PianoLit;
 
 use App\Projects\PianoLit\Piece;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -15,14 +16,38 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
-    // protected $withCount = ['stories'];
-
-    // protected $with = ['comments', 'ratings', 'stories'];
-
-    public function getRouteKeyName()
+    public function favorites()
     {
-        return 'slug';
+        return $this->belongsToMany(Piece::class, 'favorites','user_id', 'piece_id');
+    }
+
+    public function suggestions($limit)
+    {
+        $tags = [];
+
+        foreach ($this->favorites as $piece) {
+            array_push($tags, $piece->tags->pluck('name'));
+        }
+
+        $tags = array_flatten($tags);
+        $orderedTags = array_count_values($tags);
+        
+        arsort($orderedTags);
+
+        $pieces = array_keys(array_slice($orderedTags, 0, 3));
+
+        $suggestions = Piece::search($pieces)->limit($limit)->get();
+
+        $suggestions->each(function($piece, $key) use ($suggestions) {
+            if ($this->favorites->contains($piece))
+                $suggestions->forget($key);
+        });
+
+        return $suggestions;
     }
 
     public function getFullNameAttribute()
@@ -36,35 +61,5 @@ class User extends Authenticatable
             return asset('images/default_avatar.png');
 
         return "http://graph.facebook.com/{$this->facebook_id}/picture?type=large";
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class);
-    }
-
-    public function stories()
-    {
-        return $this->belongsToMany(Story::class, 'user_purchase_records', 'user_id', 'story_id')->select(['stories.id', 'title','user_purchase_records.created_at'])->latest();
-    }
-
-    public function ratingsFor($storyId)
-    {
-        $rating =  Rating::where([
-            'user_id' => $this->id,
-            'story_id' => $storyId
-        ])->first();
-
-        return ($rating) ? $rating->score : 0;
-    }
-
-    public function scopeStatistics($query)
-    {
-        return new Records($this);
     }
 }

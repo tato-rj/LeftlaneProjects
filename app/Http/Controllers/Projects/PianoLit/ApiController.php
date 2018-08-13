@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Projects\PianoLit;
 
-use App\Projects\PianoLit\{Piece, Composer, Tag, Api};
+use App\Projects\PianoLit\{Piece, Composer, Tag, Api, User};
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -21,7 +21,9 @@ class ApiController extends Controller
 
         $this->api->setCustomAttributes($piece);
 
-        return $piece;
+        $result[0] = $piece;
+
+        return $result;
     }
 
     public function pieces()
@@ -49,6 +51,33 @@ class ApiController extends Controller
     public function tags()
     {
     	return Tag::all();
+    }
+
+    public function users()
+    {
+        return User::latest()->get();
+    }
+
+    public function user(User $user)
+    {
+        $user = $user->load('favorites');
+
+        $user->favorites->each(function($piece) {
+            $this->api->setCustomAttributes($piece);
+        });
+
+        return $user;        
+    }
+
+    public function suggestions(User $user)
+    {
+        $suggestions = $user->suggestions(10);
+        
+        $suggestions->each(function($piece) {
+            $this->api->setCustomAttributes($piece);
+        });
+
+        return $suggestions;
     }
 
     public function tour(Request $request)

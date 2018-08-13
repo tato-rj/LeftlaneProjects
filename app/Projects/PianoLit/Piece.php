@@ -58,7 +58,7 @@ class Piece extends PianoLit
         return $this->belongsToThrough(Country::class, Composer::class);
     }
 
-    public function scopeSearch($query, $array, $request)
+    public function scopeSearch($query, $array, $request = null)
     {
         $results = $query->where(function($query) use ($array, $request) {
 
@@ -67,7 +67,7 @@ class Piece extends PianoLit
                        $q->where('name', 'like', "%$tag%"); 
                 });
 
-                if ($request->has('global')) {
+                if (is_null($request) || $request->has('global')) {
                     $query->orWhereHas('composer', function($q) use ($tag) {
                            $q->where('name', 'like', "%$tag%");
                     })->orWhere('nickname', 'like', "%$tag%")

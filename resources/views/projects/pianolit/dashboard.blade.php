@@ -67,7 +67,7 @@
               </div>
               <div class="mr-5">{{$users_count}} Users</div>
             </div>
-            <a class="card-footer color-inherit clearfix small z-1" target="_blank" href="/piano-lit">
+            <a class="card-footer color-inherit clearfix small z-1" target="_blank" href="{{route('piano-lit.api.users')}}">
               <span class="float-left">See JSON response</span>
               <span class="float-right">
                 <i class="fa fa-angle-right"></i>

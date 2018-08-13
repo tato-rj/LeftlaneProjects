@@ -1,37 +1,93 @@
-  <div class="card">
-    <div class="card-header cursor-pointer bg-white d-flex justify-content-between align-items-center" id="headingOne" data-toggle="collapse" data-target="#user-{{$user->id}}" aria-expanded="true" aria-controls="user-{{$user->id}}">
-      <p class="mb-0">
-          <strong>{{$user->fullName}}</strong><span class="ml-2 badge badge-light text-muted">{{$user->stories()->count()}} {{ str_plural('story', $user->stories()->count()) }}</span>
-      </p>
-      <p class="m-0 text-muted">joined on {{$user->created_at->toFormattedDateString()}}</p>
-    </div>
+@extends('projects/pianolit/layouts/app')
 
-    <div id="user-{{$user->id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-lg-3 col-md-4 col-sm-4 col-12 mb-2">
-            <img class="rounded mb-2" style="width: 80px" src="{{$user->profilePicture}}">
-            <div>
-              <p class="m-0" style="color: #2093a5"><small>Email</small></p>
-              <p class="m-0">{{$user->email}}</p>
-            </div>
-            <div>
-              <p class="m-0" style="color: #2093a5"><small>Country</small></p>
-              <p class="m-0">{{locale_get_display_region($user->locale)}}</p>
-            </div>
-            <div>
-              <p class="m-0" style="color: #2093a5"><small>Gender</small></p>
-              <p class="m-0">{{ucfirst($user->gender)}}</p>
-            </div>
-          </div>
+@section('content')
 
-        	<div class="col-lg-9 col-md-8 col-sm-8 col-12">
-        		@foreach($user->stories as $story)
-              @include('pages/users/stories')
-        		@endforeach
-        	</div>
+<div class="content-wrapper">
+  <div class="container-fluid">
+  @include('projects/pianolit/components/breadcrumb', [
+    'title' => 'Users',
+    'description' => "$user->first_name's profile"])
 
+    <div class="text-center">
+      <a href="{{route('piano-lit.api.user', $user->id)}}" target="_blank" class="link-default"><small>See JSON response</small></a>
+    </div>  
+   
+    <div class="d-flex my-4 mx-3">
+      <div class="mr-5">
+        <img src="https://api.adorable.io/avatars/236/{{$user->email}}" class="rounded-circle" style="width: 160px">
+      </div>
+
+      <div class="mr-5">
+        <div>
+          <label class="text-brand m-0"><small>Name</small></label>
+          <p>{{$user->full_name}}</p>
+        </div>
+        <div>
+          <label class="text-brand m-0"><small>E-mail</small></label>
+          <p>{{$user->email}}</p>
+        </div>
+      </div>
+      
+      <div class="mr-5">
+        <div>
+          <label class="text-brand m-0"><small>Gender</small></label>
+          <p>{{ucfirst($user->gender)}}</p>
+        </div>
+        <div>
+          <label class="text-brand m-0"><small>Language</small></label>
+          <p>{{Locale::getDisplayName($user->locale)}}</p>
+        </div>
+      </div>
+
+      <div>
+        <div>
+          <label class="text-brand m-0"><small>Status</small></label>
+          @if($user->is_active)
+          <p class="text-success">Active</p>
+          @else
+          <p class="text-danger">Inactive</p>
+          @endif
         </div>
       </div>
     </div>
+
+    <div class="row mx-3">
+      <div class="col-lg-6 col-sm-10 col-12">
+        <p class="text-muted">
+          <strong>{{$user->first_name}} has {{$user->favorites->count()}} {{str_plural('favorite', $user->favorites->count())}}</strong>
+        </p>
+        @if($user->favorites->count() > 0)
+        <ul class="list-style-none pl-2">
+          @foreach($user->favorites as $piece)
+          <li class="mb-2">
+            <a href="{{route('piano-lit.pieces.edit', $piece)}}">
+              <i class="fas fa-caret-right mr-2"></i>{{$piece->long_name}}
+            </a>
+          </li>
+          @endforeach
+        </ul>
+        @endif
+      </div>
+      <div class="col-lg-6 col-sm-10 col-12">
+        <p class="text-muted">
+          <strong>Suggested pieces</strong> | <a href="{{route('piano-lit.api.suggestions', $user->id)}}" target="_blank" class="link-default"><small>See JSON response</small></a>
+        </p>
+        <ul class="list-style-none pl-2">
+          @foreach($user->suggestions(10) as $piece)
+          <li class="mb-2">
+            <a href="{{route('piano-lit.pieces.edit', $piece)}}">
+              <i class="fas fa-caret-right mr-2"></i>{{$piece->long_name}}
+            </a>
+          </li>
+          @endforeach
+        </ul>
+      </div>
+    </div>
   </div>
+</div>
+
+@endsection
+
+@section('scripts')
+
+@endsection
