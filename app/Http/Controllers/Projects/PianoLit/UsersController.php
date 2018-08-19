@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers\Projects\PianoLit;
 
-use App\Projects\PianoLit\User;
+use Carbon\Carbon;
+use App\Projects\PianoLit\{User, Piece, Api};
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
+    protected $api;
+
+    public function __construct()
+    {
+        $this->api = new Api;        
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,49 +38,37 @@ class UsersController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        return User::firstOrCreate(
-            [
-                'email' => $request["email"],
-            ],
-            [
-            'slug' => str_slug("{$request["first_name"]} {$request["last_name"]}"),
-            'first_name' => $request["first_name"],
-            'last_name' => $request["last_name"],
-            'locale' => $request["locale"],
-            'gender' => $request["gender"],
-            'facebook_id' => $request["facebook_id"],
-        ]);
-    }
-
-    public function register(Request $request)
-    {
         $validator = \Validator::make($request->all(), [
-            'email' => 'unique:pianolit.users'
+            'first_name' => 'required|string|min:2|max:160',
+            'last_name' => 'required|string|min:2|max:160',
+            'email' => 'required|string|email|max:160|unique:pianolit.users',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        if ($validator->fails()) { 
-            return response()->json($validator->messages(), 403);
+        if ($validator->fails()) {
+            return $request->wantsJson() ? 
+                        response()->json($validator->messages(), 403)
+                        : redirect()->back()->with('errors', $validator->messages());
         }
 
         $user = User::create([
-            'slug' => str_slug("{$request["first_name"]} {$request["last_name"]}"),
-            'first_name' => $request["first_name"],
-            'last_name' => $request["last_name"],
-            'email' => $request["email"],
-            'facebook_id' => \Hash::make(\Carbon\Carbon::now()->timestamp.$request["email"]),
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
             'password' => \Hash::make($request["password"]),
-            'locale' => $request["locale"]
+            'locale' => $request->locale,
+            'age_range' => $request->age_range,
+            'experience' => $request->experience,
+            'preferred_piece_id' => $request->preferred_piece_id,
+            'occupation' => $request->occupation,
+            'trial_ends_at' => Carbon::now()->addWeek()
         ]);
 
-        return response()->json($user);
+        return $request->wantsJson() ? 
+                    response()->json($user) 
+                    : redirect()->back()->with('success', "The user has been successfully created!");;
     }
 
     public function appLogin($email, $password)
@@ -95,28 +91,45 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        return view('projects/pianolit/users/show', compact('user'));
+        $pieces = Piece::orderBy('name')->get();
+
+        $pieces->each(function($piece) {
+            $this->api->setCustomAttributes($piece);
+        });
+
+        return view('projects/pianolit/users/show', compact(['user', 'pieces']));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
         //
+    }
+
+    public function favorite(Request $request, User $user)
+    {
+        if ($user->favorites()->find($request->piece_id)) {
+            $user->favorites()->detach($request->piece_id);
+        } else {
+            $user->favorites()->attach($request->piece_id);
+        };
+
+        return response(200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -124,11 +137,14 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $user->favorites()->detach();
+        $user->delete();
+
+        return redirect(route('piano-lit.users.index'))->with('success', "The user has been successfully removed!");
     }
 }

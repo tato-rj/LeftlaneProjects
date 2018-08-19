@@ -3,13 +3,14 @@
 namespace App\Projects\PianoLit;
 
 use App\Projects\PianoLit\Piece;
+use App\Projects\PianoLit\Traits\Resources;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, Resources;
 
     protected $guarded = [];
     protected $connection = 'pianolit';
@@ -19,15 +20,23 @@ class User extends Authenticatable
     protected $casts = [
         'is_active' => 'boolean',
     ];
+    protected $dates = [
+        'trial_ends_at'
+    ];
 
     public function favorites()
     {
         return $this->belongsToMany(Piece::class, 'favorites','user_id', 'piece_id');
     }
 
-    public function suggestions($limit)
+    public function getPreferredPieceAttribute()
     {
-        $tags = [];
+        return Piece::find($this->preferred_piece_id);
+    }
+
+    public function tags()
+    {
+        $tags = $this->preferred_piece->tags->pluck('name')->toArray();
 
         foreach ($this->favorites as $piece) {
             array_push($tags, $piece->tags->pluck('name'));
@@ -38,9 +47,14 @@ class User extends Authenticatable
         
         arsort($orderedTags);
 
-        $pieces = array_keys(array_slice($orderedTags, 0, 3));
+        return array_keys(array_slice($orderedTags, 0, 3));       
+    }
 
-        $suggestions = Piece::search($pieces)->limit($limit)->get();
+    public function suggestions($limit)
+    {
+        $tags = $this->tags();
+
+        $suggestions = Piece::search($tags)->limit($limit)->get();
 
         $suggestions->each(function($piece, $key) use ($suggestions) {
             if ($this->favorites->contains($piece))

@@ -63,6 +63,9 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 	Route::prefix('/users')->name('users.')->group(function() {
 		Route::get('/', 'Projects\PianoLit\UsersController@index')->name('index');
 		Route::get('/{user}', 'Projects\PianoLit\UsersController@show')->name('show');
+
+		Route::post('', 'Projects\PianoLit\UsersController@store');
+		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
 	});
 });
 
@@ -71,11 +74,16 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::post('/search', 'Projects\PianoLit\ApiController@search')->name('search');
 	Route::post('/tour', 'Projects\PianoLit\ApiController@tour')->name('tour');
 	Route::get('/discover', 'Projects\PianoLit\ApiController@discover')->name('discover');
+
 	Route::get('/users', 'Projects\PianoLit\ApiController@users')->name('users');
 	Route::get('/users/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
 	Route::get('/users/{user}/suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
+	Route::post('/users/{user}/favorite', 'Projects\PianoLit\UsersController@favorite')->name('favorite');
+
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
 	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');
+	
 	Route::get('/composers', 'Projects\PianoLit\ApiController@composers')->name('composers');
+	
 	Route::get('/tags', 'Projects\PianoLit\ApiController@tags')->name('tags');
 });

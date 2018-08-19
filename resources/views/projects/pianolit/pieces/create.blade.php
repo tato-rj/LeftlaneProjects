@@ -123,14 +123,17 @@
         {{-- Score Info --}}
         <div class="form-group form-row">
           <div class="col">
-            <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{old('score_editor')}}" >
+            <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{old('score_editor')}}">
+            @include('projects/pianolit/components/lookup')
           </div>
           <div class="col">
             <input type="text" class="form-control" name="score_copyright" placeholder="Score copyright" value="{{old('score_copyright')}}">
+            @include('projects/pianolit/components/lookup')
           </div>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{ old('score_publisher') }}">
+          <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{ old('score_publisher') }}">
+          @include('projects/pianolit/components/lookup')
         </div>
         {{-- Files --}}
         <div class="form-row form-group">
@@ -213,27 +216,43 @@
 <script type="text/javascript" src="{{asset('js/lookup.js')}}"></script>
 
 <script type="text/javascript">
-var nicknameLookup = new Lukup({
+
+new Lukup({
+  url: app.url+'/piano-lit/pieces/single-lookup',
+  field: 'score_publisher',
+  autofill: ['score_publisher']
+}).enable();
+
+new Lukup({
+  url: app.url+'/piano-lit/pieces/single-lookup',
+  field: 'score_editor',
+  autofill: ['score_editor', 'score_publisher', 'score_copyright']
+}).enable();
+
+new Lukup({
+  url: app.url+'/piano-lit/pieces/single-lookup',
+  field: 'score_copyright',
+  autofill: ['score_copyright']
+}).enable();
+
+new Lukup({
   url: app.url+'/piano-lit/pieces/single-lookup',
   field: 'nickname',
   autofill: ['nickname']
-});
+}).enable();
 
-var nameLookup = new Lukup({
+new Lukup({
   url: app.url+'/piano-lit/pieces/single-lookup',
   field: 'name',
   autofill: ['name']
-});
+}).enable();
 
-var collectionLookup = new Lukup({
+new Lukup({
   url: app.url+'/piano-lit/pieces/multi-lookup',
   field: 'collection_name',
   autofill: ['collection_name', 'nickname', 'catalogue_name', 'catalogue_number', 'composer_id']
-});
+}).enable();
 
-collectionLookup.enable();
-nicknameLookup.enable();
-nameLookup.enable();
 </script>
 
 <script type="text/javascript">
