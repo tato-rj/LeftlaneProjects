@@ -83,7 +83,7 @@ class PiecesController extends Controller
             ['collection_number', '=', $request->collection_number ?? null]
         ])->first();
 
-        return $result->medium_name;        
+        return $result->medium_name ?? null;        
     }
 
     public function tour()
@@ -149,6 +149,7 @@ class PiecesController extends Controller
         $piece->audio_path_rh = Piece::upload($request, 'audio_path_rh','audio_rh');
         $piece->audio_path_lh = Piece::upload($request, 'audio_path_lh','audio_lh');
         $piece->creator_id = auth()->user()->id;
+        $piece->views = mt_rand(5,20);
 
         $piece->save();
 

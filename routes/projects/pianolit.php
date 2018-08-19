@@ -20,7 +20,6 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('', 'Projects\PianoLit\EditorsController@index')->name('index');
 		Route::get('/{editor}', 'Projects\PianoLit\EditorsController@edit')->name('edit');
 
-		Route::post('', 'Projects\PianoLit\EditorsController@store')->name('store');
 		Route::patch('/{editor}', 'Projects\PianoLit\EditorsController@update')->name('update');
 		Route::delete('/{editor}', 'Projects\PianoLit\EditorsController@destroy')->name('destroy');
 	});
@@ -78,6 +77,7 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::get('/users', 'Projects\PianoLit\ApiController@users')->name('users');
 	Route::get('/users/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
 	Route::get('/users/{user}/suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
+	Route::post('/users', 'Projects\PianoLit\UsersController@store')->name('store');
 	Route::post('/users/{user}/favorite', 'Projects\PianoLit\UsersController@favorite')->name('favorite');
 
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');

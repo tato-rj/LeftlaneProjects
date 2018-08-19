@@ -41,34 +41,33 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'first_name' => 'required|string|min:2|max:160',
-            'last_name' => 'required|string|min:2|max:160',
-            'email' => 'required|string|email|max:160|unique:pianolit.users',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|unique:pianolit.users',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
-            return $request->wantsJson() ? 
-                        response()->json($validator->messages(), 403)
-                        : redirect()->back()->with('errors', $validator->messages());
+            return response()->json($validator->messages(), 403);
         }
 
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => \Hash::make($request["password"]),
+            'password' => \Hash::make($request->password),
             'locale' => $request->locale,
-            'age_range' => $request->age_range,
-            'experience' => $request->experience,
+            'age_range' => strtolower($request->age_range),
+            'experience' => strtolower($request->experience),
             'preferred_piece_id' => $request->preferred_piece_id,
-            'occupation' => $request->occupation,
+            'occupation' => strtolower($request->occupation),
             'trial_ends_at' => Carbon::now()->addWeek()
         ]);
 
-        return $request->wantsJson() ? 
-                    response()->json($user) 
-                    : redirect()->back()->with('success', "The user has been successfully created!");;
+        if ($request->has('from_backend'))
+            return redirect()->back()->with('success', "The user has been successfully created!");
+
+        return $user;
     }
 
     public function appLogin($email, $password)

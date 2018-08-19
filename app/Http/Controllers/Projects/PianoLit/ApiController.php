@@ -123,17 +123,16 @@ class ApiController extends Controller
         $composers = $this->api->composers();
         $periods = $this->api->periods();
         $improve = $this->api->improve();
-        // $countries = $this->api->countries();
-        // $foundation = $this->api->foundation();
         $levels = $this->api->levels();
 
         // Collections of pieces
+        $suggestions = request()->has('user_id') ? $this->api->forUser(request('user_id')) : [];
         $trending = $this->api->trending();
         $latest = $this->api->latest();
         $famous = $this->api->famous();
         $flashy = $this->api->flashy();
 
-        $collection = compact(['trending', 'latest', 'composers', 'periods', 'improve', 'levels', 'famous', 'flashy']);
+        $collection = compact(['suggestions', 'trending', 'latest', 'composers', 'periods', 'improve', 'levels', 'famous', 'flashy']);
 
         if (request()->wantsJson() || request()->has('api'))
             return array_values($collection);

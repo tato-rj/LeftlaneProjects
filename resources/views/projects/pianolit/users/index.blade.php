@@ -62,26 +62,26 @@
 </div>
 
 @component('projects/pianolit/components/modals/add', ['model' => 'user'])
-<form method="POST" action="/piano-lit/users">
-  {{csrf_field()}}
+<form method="POST" action="/piano-lit/api/users">
+  <input type="hidden" name="from_backend">
   {{-- First Name --}}
   <div class="form-group">
-    <input type="text" class="form-control" name="first_name" placeholder="First name" value="{{ old('first_name') }}" {{-- required --}}>
+    <input type="text" class="form-control" name="first_name" placeholder="First name" value="{{ old('first_name') }}" required>
   </div>
   {{-- Last Name --}}
   <div class="form-group">
-    <input type="text" class="form-control" name="last_name" placeholder="Last name" value="{{ old('last_name') }}" {{-- required --}}>
+    <input type="text" class="form-control" name="last_name" placeholder="Last name" value="{{ old('last_name') }}" required>
   </div>
   {{-- Email --}}
   <div class="form-group">
-    <input type="text" class="form-control" name="email" placeholder="E-mail" value="{{ old('email') }}" {{-- required --}}>
+    <input type="text" class="form-control" name="email" placeholder="E-mail" value="{{ old('email') }}" required>
   </div>
   {{-- Password --}}
   <div class="form-group">
-    <input type="password" placeholder="Password" class="form-control" name="password" {{-- required --}}>
+    <input type="password" placeholder="Password" class="form-control" name="password" required>
   </div>
   <div class="form-group">
-    <input type="password" placeholder="Confirm your password" class="form-control" name="password_confirmation" {{-- required --}}>
+    <input type="password" placeholder="Confirm your password" class="form-control" name="password_confirmation" required>
   </div>
 
   {{-- About --}}

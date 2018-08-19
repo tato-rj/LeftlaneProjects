@@ -27,7 +27,7 @@ trait PieceExtraAttributes
 
     public function getMediumNameAttribute()
     {
-        $mediumName = "$this->short_name, ";
+        $mediumName = "$this->short_name ";
         $mediumName .= ($this->catalogue_name ? "{$this->catalogue}" : '');
         $mediumName .= ($this->nickname ? " \"{$this->nickname}\"" : '');
         

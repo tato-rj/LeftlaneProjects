@@ -18,18 +18,15 @@
         <div class="form-group form-row">
           <div class="col">
             <input type="text" class="validate-name form-control {{$errors->has('name') ? 'is-invalid' : ''}}" name="name" placeholder="Piece name" value="{{ old('name') }}" >
-            @include('projects/pianolit/components/lookup')
             @include('projects/pianolit/components/feedback', ['field' => 'name'])
           </div>
           <div class="col">
             <input type="text" class="validate-name form-control" name="nickname" placeholder="Nickname" value="{{ old('nickname') }}" >
-            @include('projects/pianolit/components/lookup')
           </div>
         </div>
         <div class="form-group form-row">
           <div class="col">
             <input type="text" class="validate-name form-control" name="collection_name" placeholder="Collection name" value="{{ old('collection_name') }}">
-            @include('projects/pianolit/components/lookup')
           </div>
           <div class="col">
             <div class="input-group">
@@ -124,11 +121,9 @@
         <div class="form-group form-row">
           <div class="col">
             <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{old('score_editor')}}">
-            @include('projects/pianolit/components/lookup')
           </div>
           <div class="col">
             <input type="text" class="form-control" name="score_copyright" placeholder="Score copyright" value="{{old('score_copyright')}}">
-            @include('projects/pianolit/components/lookup')
           </div>
         </div>
         <div class="form-group">
@@ -226,7 +221,7 @@ new Lukup({
 new Lukup({
   url: app.url+'/piano-lit/pieces/single-lookup',
   field: 'score_editor',
-  autofill: ['score_editor', 'score_publisher', 'score_copyright']
+  autofill: ['score_editor']
 }).enable();
 
 new Lukup({

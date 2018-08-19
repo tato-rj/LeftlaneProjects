@@ -49,8 +49,8 @@
               <label class="text-brand">Period</label>
               <select class="form-control" name="period">
                 <option selected disabled>Period</option>
-                @foreach(\App\Projects\PianoLit\Piece::periods() as $period)
-                <option value="{{$period}}" {{(strtolower($composer->period) == $period) ? 'selected' : ''}}>{{ucfirst($period)}}</option>
+                @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
+                <option value="{{$period->name}}" {{(strtolower($composer->period) == $period->name) ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
                 @endforeach
               </select>
             </div>

@@ -10,14 +10,30 @@
     'path' => 'api/discover'])
   </div>
   
-  <div class="text-center">
+  <div class="text-center mb-2">
     <a href="{{route('piano-lit.api.discover')}}?api" target="_blank" class="link-default"><small>See JSON response</small></a>
+  </div>
+
+  <div class="row mx-3">
+    <div class="col-lg-6 col-md-8 col-10 mx-auto">
+      <form method="GET" action="{{route('piano-lit.api.discover')}}">
+        <div class="form-group">
+          <select name="user_id" class="form-control" onchange="this.form.submit()">
+            <option selected disabled>See suggestions for...</option>
+            @foreach(\App\Projects\PianoLit\User::all() as $user)
+            <option value="{{$user->id}}">{{$user->full_name}}</option>
+            @endforeach
+          </select>
+        </div>
+      </form>
+    </div>
   </div>
 
   <div class="row">
    <div class="col-lg-6 col-md-8 col-10 mx-auto mb-5">
 
     @foreach($collection as $playlist)
+      @if(! empty($playlist))
       @component('projects/pianolit/components/swiper', ['title' => $playlist['title']])
         @foreach($playlist['content'] as $model)
           <form name="{{$model->type == 'piece' ? 'piece_'.snake_case($model->id) : snake_case($model->name)}}_form" method="POST" action="{{$model->source}}" target="{{$model->type == 'piece' ? '_blank' : null}}">
@@ -28,6 +44,7 @@
           </form>
         @endforeach
       @endcomponent
+      @endif
     @endforeach
 
     </div>

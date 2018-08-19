@@ -7,13 +7,25 @@ use App\Projects\PianoLit\{Piece, Composer, Tag, Api, Country, Playlist};
 
 class Api
 {
+    public function forUser($id)
+    {
+        $user = User::find($id);
+        $collection = $user->suggestions(12);
+        $this->withAttributes($collection, [
+            'type' => 'piece',
+            'source' => \URL::to('/piano-lit/api/pieces/find'),
+            'color' => '#28C76FFF']);
+
+        return $this->createPlaylist($collection, ['title' => "For {$user->first_name}"]);
+    }
+
     public function trending()
     {
         $collection = Piece::orderBy('views', 'DESC')->take(10)->get();
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#7367F0FF']);
+            'color' => '#00C9B7FF']);
 
         return $this->createPlaylist($collection, ['title' => 'Trending']);
     }
@@ -24,7 +36,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#EB5286FF']);
+            'color' => '#0396FFFF']);
 
         return $this->createPlaylist($collection, ['title' => 'Latest']);
     }
@@ -35,7 +47,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#28C76FFF']);
+            'color' => '#7367F0FF']);
 
         return $this->createPlaylist($collection, ['title' => 'Composers']);
     }
@@ -46,7 +58,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#00C9B7FF']);
+            'color' => '#EB5286FF']);
 
         return $this->createPlaylist($collection, ['title' => 'Periods']);
     }
@@ -57,14 +69,14 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#32CCBCFF']);
+            'color' => '#F67A36FF']);
 
         return $this->createPlaylist($collection, ['title' => 'Improve your']);
     }
 
     public function countries()
     {
-        return Country::with('pieces')->get();
+        //return Country::with('pieces')->get();
     }
 
     public function levels()
@@ -73,14 +85,14 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#0396FFFF']);
+            'color' => '#28C76FFF']);
 
         return $this->createPlaylist($collection, ['title' => 'Levels']);
     }
 
     public function foundation()
     {
-        return Playlist::foundation()->with('pieces')->get();
+        //return Playlist::foundation()->with('pieces')->get();
     }
 
     public function famous()
@@ -89,7 +101,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#F67A36FF']);
+            'color' => '#00C9B7FF']);
 
         return $this->createPlaylist($collection, ['title' => 'Most famous']);
     }
@@ -100,7 +112,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#28C76FFF']);
+            'color' => '#0396FFFF']);
 
         return $this->createPlaylist($collection, ['title' => 'Flashy']);
     }
