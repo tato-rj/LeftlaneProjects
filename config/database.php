@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => '',
+    'default' => 'pianolit',
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ return [
         ],
 
         'quickreads' => [
-            'driver' => 'mysql',
+            'driver' => env('DB_CONNECTION_QUICKREADS', 'mysql'),
             'host' => env('DB_HOST_QUICKREADS'),
             'port' => env('DB_PORT_QUICKREADS'),
             'database' => env('DB_DATABASE_QUICKREADS'),
@@ -50,12 +50,12 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
 
         'pianolit' => [
-            'driver' => 'mysql',
+            'driver' => env('DB_CONNECTION_PIANOLIT', 'mysql'),
             'host' => env('DB_HOST_PIANOLIT'),
             'port' => env('DB_PORT_PIANOLIT'),
             'database' => env('DB_DATABASE_PIANOLIT'),
@@ -65,7 +65,7 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
         ],
 

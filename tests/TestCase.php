@@ -2,13 +2,13 @@
 
 namespace Tests;
 
-use App\Exceptions\Handler;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Tests\Utilities\ExceptionHandling;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    use CreatesApplication, ExceptionHandling, DatabaseMigrations;
 
     public function setUp()
     {
@@ -17,32 +17,8 @@ abstract class TestCase extends BaseTestCase
         $this->disableExceptionHandling();
     }
 
-    public function disableExceptionHandling()
+    protected function logout()
     {
-        $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);
-
-        $this->app->instance(ExceptionHandler::class, new class extends Handler {
-            public function __construct() {}
-            public function report(\Exception $exception) {}
-            public function render($request, \Exception $exception) {
-                throw $exception;
-            }
-        });
-    }
-
-    public function withExceptionHandling()
-    {
-        $this->app->instance(ExceptionHandler::class, $this->oldExceptionHandler);
-        return $this;
-    }
-
-    public function register($email = 'doe@email.com')
-    {
-        return $this->post('/quickreads/users/register', [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => $email,
-            'password' => 'secret'
-        ]);
+        Auth::logout();
     }
 }

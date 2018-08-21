@@ -30,7 +30,7 @@ class CreatePianolitPiecesTable extends Migration
             $table->string('audio_path_lh')->nullable();
             $table->json('itunes')->nullable();
             $table->json('youtube')->nullable();
-            $table->string('score_path');
+            $table->string('score_path')->nullable();
             $table->string('score_editor')->nullable();
             $table->string('score_publisher')->nullable();
             $table->string('score_copyright')->nullable();
@@ -47,6 +47,6 @@ class CreatePianolitPiecesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pieces');
+        Schema::connection('pianolit')->dropIfExists('pieces');
     }
 }

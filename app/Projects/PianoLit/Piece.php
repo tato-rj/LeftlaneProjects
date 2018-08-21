@@ -11,10 +11,10 @@ class Piece extends PianoLit
     protected $casts = ['tips' => 'array'];
     protected $with = ['composer', 'tags'];
     protected $api;
-    protected $fillable = ['name'];
 
-    public function __construct()
+    public function __construct($attributes = [])
     {
+        parent::__construct($attributes);
         $this->api = new Api;        
     }
 

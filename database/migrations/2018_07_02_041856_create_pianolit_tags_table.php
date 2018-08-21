@@ -17,6 +17,7 @@ class CreatePianolitTagsTable extends Migration
             $table->increments('id');
             $table->string('type')->nullable();
             $table->string('name');
+            $table->unsignedInteger('creator_id')->nullable();
             $table->timestamps();
         });
 

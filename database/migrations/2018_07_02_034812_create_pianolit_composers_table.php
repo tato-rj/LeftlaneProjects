@@ -19,9 +19,10 @@ class CreatePianolitComposersTable extends Migration
             $table->text('biography');
             $table->text('curiosity')->nullable();
             $table->enum('period', periods());
-            $table->enum('nationality', nationalities());
+            $table->unsignedInteger('country_id')->nullable();
             $table->date('date_of_birth');
             $table->date('date_of_death');
+            $table->unsignedInteger('creator_id')->nullable();
             $table->timestamps();
         });
     }
