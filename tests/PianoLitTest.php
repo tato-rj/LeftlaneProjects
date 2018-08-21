@@ -26,7 +26,10 @@ class PianoLitTest extends TestCase
         	'country_id' => $this->country->id
         ]);
 
-        $this->piece = create(Piece::class, ['creator_id' => $this->admin->id]);
+        $this->piece = create(Piece::class, [
+            'creator_id' => $this->admin->id,
+            'composer_id' => $this->composer->id
+        ]);
         $this->piece->tags()->attach($this->tag);
     }
 

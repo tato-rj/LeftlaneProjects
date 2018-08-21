@@ -16,6 +16,7 @@ use Faker\Generator as Faker;
 $factory->define(App\Projects\PianoLit\Admin::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
+        'role' => $faker->word,
         'email' => $faker->unique()->safeEmail,
         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
         'remember_token' => str_random(10),
@@ -27,7 +28,7 @@ $factory->define(App\Projects\PianoLit\Piece::class, function (Faker $faker) {
 	$keys = keys();
 
     return [
-            'name' => 'test',
+            'name' => $faker->name,
             'nickname' => $faker->name,
             'catalogue_name' => $catalogues[rand(0, count($catalogues) - 1)],
             'catalogue_number' => rand(1,100),
@@ -46,10 +47,12 @@ $factory->define(App\Projects\PianoLit\Piece::class, function (Faker $faker) {
             'score_editor' => '',
             'score_publisher' => '',
             'score_copyright' => '',
-            'composer_id' => 1,
+            'composer_id' => function() {
+                return factory('App\Projects\PianoLit\Composer')->create()->id;
+            },
             'creator_id' => function() {
             	return factory('App\Projects\PianoLit\Admin')->create()->id;
-            },
+            }
     ];
 });
 

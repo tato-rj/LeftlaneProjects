@@ -63,18 +63,18 @@ class ComposersController extends Controller
             'date_of_death' => 'required',
         ]);
 
-        $author = Composer::create([
+        $composer = Composer::create([
             'name' => $request->name,
             'biography' => $request->biography,
             'curiosity' => $request->curiosity,
             'country_id' => $request->country_id,
-            'period' => $request->period,
+            'period' => strtolower($request->period),
             'date_of_birth' => Carbon::parse($request->date_of_birth)->format('Y-m-d'),
             'date_of_death' => Carbon::parse($request->date_of_death)->format('Y-m-d'),
             'creator_id' => auth()->user()->id
         ]);
 
-        return redirect()->back()->with('success', "$request->name has been successfully added!");
+        return redirect()->back()->with('success', "$composer->name has been successfully added!");
     }
 
     /**
@@ -111,6 +111,7 @@ class ComposersController extends Controller
      */
     public function update(Request $request, Composer $composer)
     {
+
         $this->authorize('update', $composer);
 
         $request->validate([
@@ -125,9 +126,9 @@ class ComposersController extends Controller
             'biography' => $request->biography,
             'curiosity' => $request->curiosity,
             'country_id' => $request->country_id,
-            'period' => $request->period
+            'period' => strtolower($request->period)
         ]);
-
+        
         return redirect()->back()->with('success', "$request->name has been updated");
     }
 

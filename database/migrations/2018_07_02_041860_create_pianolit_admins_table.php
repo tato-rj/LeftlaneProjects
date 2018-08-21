@@ -16,6 +16,7 @@ class CreatePianolitAdminsTable extends Migration
         Schema::connection('pianolit')->create('admins', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('role');
             $table->string('email')->unique();
             $table->string('password');
             $table->rememberToken();

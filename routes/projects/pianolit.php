@@ -24,13 +24,13 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::delete('/{editor}', 'Projects\PianoLit\EditorsController@destroy')->name('destroy');
 	});
 
-	Route::prefix('/composers')->group(function() {
+	Route::prefix('/composers')->name('composers.')->group(function() {
 		Route::get('/', 'Projects\PianoLit\ComposersController@index');
 		Route::get('/{composer}', 'Projects\PianoLit\ComposersController@edit');
 
-		Route::post('', 'Projects\PianoLit\ComposersController@store');
-		Route::patch('/{composer}', 'Projects\PianoLit\ComposersController@update');
-		Route::delete('/{composer}', 'Projects\PianoLit\ComposersController@destroy');
+		Route::post('', 'Projects\PianoLit\ComposersController@store')->name('store');
+		Route::patch('/{composer}', 'Projects\PianoLit\ComposersController@update')->name('update');
+		Route::delete('/{composer}', 'Projects\PianoLit\ComposersController@destroy')->name('destroy');
 	});
 
 	Route::prefix('/pieces')->name('pieces.')->group(function() {
@@ -44,9 +44,9 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::post('/multi-lookup', 'Projects\PianoLit\PiecesController@multiLookup')->name('multi-lookup');
 		Route::post('/validate-name', 'Projects\PianoLit\PiecesController@validateName')->name('validate-name');
 
-		Route::post('', 'Projects\PianoLit\PiecesController@store');
-		Route::patch('/{piece}', 'Projects\PianoLit\PiecesController@update');
-		Route::delete('/{piece}', 'Projects\PianoLit\PiecesController@destroy');
+		Route::post('', 'Projects\PianoLit\PiecesController@store')->name('store');
+		Route::patch('/{piece}', 'Projects\PianoLit\PiecesController@update')->name('update');
+		Route::delete('/{piece}', 'Projects\PianoLit\PiecesController@destroy')->name('destroy');
 	});
 
 	Route::prefix('/tags')->name('tags.')->group(function() {
@@ -54,9 +54,9 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/add', 'Projects\PianoLit\TagsController@create');
 		Route::get('/{tag}', 'Projects\PianoLit\TagsController@edit')->name('edit');
 
-		Route::post('', 'Projects\PianoLit\TagsController@store');
-		Route::patch('/{tag}', 'Projects\PianoLit\TagsController@update');
-		Route::delete('/{tag}', 'Projects\PianoLit\TagsController@destroy');
+		Route::post('', 'Projects\PianoLit\TagsController@store')->name('store');
+		Route::patch('/{tag}', 'Projects\PianoLit\TagsController@update')->name('update');
+		Route::delete('/{tag}', 'Projects\PianoLit\TagsController@destroy')->name('destroy');
 	});
 
 	Route::prefix('/users')->name('users.')->group(function() {

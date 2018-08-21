@@ -126,32 +126,30 @@ class PiecesController extends Controller
             'level' => 'required',
         ]);
 
-        $piece = new Piece;
-
-        $piece->name = $request->name;
-        $piece->nickname = $request->nickname;
-        $piece->collection_name = $request->collection_name;
-        $piece->collection_number = $request->collection_number;
-        $piece->catalogue_name = $request->catalogue_name;
-        $piece->catalogue_number = $request->catalogue_number;
-        $piece->movement_number = $request->movement_number;
-        $piece->curiosity = $request->curiosity;
-        $piece->tips = $request->tips ? serialize($request->tips) : null;
-        $piece->youtube = $request->youtube ? serialize($request->youtube) : null;
-        $piece->itunes = $request->itunes ? serialize($request->itunes) : null;
-        $piece->key = $request->key;
-        $piece->score_editor = $request->score_editor;
-        $piece->score_publisher = $request->score_publisher;
-        $piece->score_copyright = $request->score_copyright;
-        $piece->composer_id = $request->composer_id;
-        $piece->audio_path = Piece::upload($request, 'audio_path','audio');
-        $piece->score_path = Piece::upload($request, 'score_path','score');
-        $piece->audio_path_rh = Piece::upload($request, 'audio_path_rh','audio_rh');
-        $piece->audio_path_lh = Piece::upload($request, 'audio_path_lh','audio_lh');
-        $piece->creator_id = auth()->user()->id;
-        $piece->views = mt_rand(5,20);
-
-        $piece->save();
+        $piece = Piece::create([
+            'name' => $request->name,
+            'nickname' => $request->nickname,
+            'collection_name' => $request->collection_name,
+            'collection_number' => $request->collection_number,
+            'catalogue_name' => $request->catalogue_name,
+            'catalogue_number' => $request->catalogue_number,
+            'movement_number' => $request->movement_number,
+            'curiosity' => $request->curiosity,
+            'tips' => $request->tips ? serialize($request->tips) : null,
+            'youtube' => $request->youtube ? serialize($request->youtube) : null,
+            'itunes' => $request->itunes ? serialize($request->itunes) : null,
+            'key' => $request->key,
+            'score_editor' => $request->score_editor,
+            'score_publisher' => $request->score_publisher,
+            'score_copyright' => $request->score_copyright,
+            'composer_id' => $request->composer_id,
+            'audio_path' => Piece::upload($request, 'audio_path','audio'),
+            'score_path' => Piece::upload($request, 'score_path','score'),
+            'audio_path_rh' => Piece::upload($request, 'audio_path_rh','audio_rh'),
+            'audio_path_lh' => Piece::upload($request, 'audio_path_lh','audio_lh'),
+            'creator_id' => auth()->user()->id,
+            'views' => mt_rand(5,20),
+        ]);
 
         $piece->tags()->attach(array_merge($request->tags ?? [], $request->level ?? [], $request->length ?? [], $request->period ?? []));
 
