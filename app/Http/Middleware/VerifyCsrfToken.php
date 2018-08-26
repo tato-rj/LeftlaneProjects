@@ -13,8 +13,11 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'piano-lit/api/pieces/find',
-        'piano-lit/api/users/favorites',
+        'piano-lit/api/users/set-favorites',
+        'piano-lit/api/users/get-favorites',
+        'piano-lit/api/users/get-suggestions',
         'piano-lit/api/users',
+        'piano-lit/api/users/login',
         'piano-lit/api/search',
         'piano-lit/api/tour',
         'piano-lit/api/discover',

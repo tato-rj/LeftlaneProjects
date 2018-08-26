@@ -10,6 +10,10 @@ class Api
     public function forUser($id)
     {
         $user = User::find($id);
+
+        if (! $user)
+            return [];
+
         $collection = $user->suggestions(12);
         $this->withAttributes($collection, [
             'type' => 'piece',

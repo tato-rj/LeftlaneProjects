@@ -10,7 +10,7 @@
       <div class="modal-body">
         <div class="mx-2">
           @foreach($pieces as $piece)
-          <div class="form-check my-2 align-items-center piece" data-url="{{route('piano-lit.api.favorite', $user)}}" data-id="{{$piece->id}}">
+          <div class="form-check my-2 align-items-center piece" data-url="{{route('piano-lit.api.set-favorites')}}" data-id="{{$piece->id}}" data-user_id={{$user->id}}>
             <i class="{{$user->favorites()->find($piece->id) ? 'fas' : 'far'}} fa-heart mr-1 text-danger"></i>
             <span class="cursor-pointer">{{$piece->long_name}}</span>
           </div>

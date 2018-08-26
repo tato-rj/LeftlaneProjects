@@ -101,9 +101,14 @@
         @endif
       </div>
       <div class="col-lg-6 col-sm-10 col-12">
-        <p class="text-muted m-0">
-          <strong>Suggested pieces</strong> | <a href="{{route('piano-lit.api.suggestions', $user->id)}}" target="_blank" class="link-default"><small>See JSON response</small></a>
-        </p>
+        <div class="d-flex align-items-center">
+          <p class="text-muted m-0">
+            <strong>Suggested pieces</strong> | </p>  
+            <form method="POST" action="{{route('piano-lit.api.suggestions')}}" target="_blank">
+              <input type="hidden" name="user_id" value="{{$user->id}}">
+              <button type="submit" class="text-brand ml-1 btn btn-link p-0 cursor-pointer"><small>See JSON response</small></button>
+            </form>
+        </div>
 
         <div class="mt-2 mb-3 ml-2">
           <span class="text-muted"><small>Top tags: </small></span>
@@ -139,7 +144,7 @@ $('.piece').on('click', function() {
 
   $heart.toggleClass('fas far');
 
-  $.post($piece.attr('data-url'), {'piece_id': $piece.attr('data-id')}, 
+  $.post($piece.attr('data-url'), {'piece_id': $piece.attr('data-id'), 'user_id': $piece.attr('data-user_id')}, 
     function(response){
       console.log(response);
     if(response.passes) {

@@ -69,8 +69,13 @@ class ApiController extends Controller
         return $user;        
     }
 
-    public function suggestions(User $user)
+    public function suggestions(Request $request)
     {
+        $user = User::find($request->user_id);
+
+        if (! $user)
+            return response()->json(['User not found']);
+
         $suggestions = $user->suggestions(10);
         
         $suggestions->each(function($piece) {
@@ -78,6 +83,22 @@ class ApiController extends Controller
         });
 
         return $suggestions;
+    }
+
+    public function getFavorites(Request $request)
+    {
+        $user = User::find($request->user_id);
+
+        if (! $user)
+            return response()->json(['User not found']);
+
+        $favorites = $user->favorites;
+        
+        $favorites->each(function($piece) {
+            $this->api->setCustomAttributes($piece);
+        });
+
+        return $favorites;
     }
 
     public function tour(Request $request)

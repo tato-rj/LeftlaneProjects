@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Projects\PianoLit\{User, Piece, Api};
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
 {
@@ -43,7 +44,7 @@ class UsersController extends Controller
         $validator = \Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'email' => 'required|unique:pianolit.users',
+            'email' => 'required|email|unique:pianolit.users',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
@@ -70,16 +71,24 @@ class UsersController extends Controller
         return $user;
     }
 
-    public function appLogin($email, $password)
+    public function appLogin(Request $request)
     {
-        $user = User::where('email', $email)->first();
+        $user = User::where('email', $request->email)->first();
 
         if ($user) {
-            if (\Hash::check($password, $user->password))
-                return response()->json($user);            
+            if (\Hash::check($request->password, $user->password))
+                return response()->json($user);
+
+            $error = ['Sorry, the password is not valid.'];
+
+        } else {
+            $error = ['This email is not registered.'];
         }
 
-        return response()->json();
+        $response = new \stdClass;
+        $response->error = $error;
+
+        return response()->json($response);
     }
 
     /**
@@ -110,8 +119,13 @@ class UsersController extends Controller
         //
     }
 
-    public function favorite(Request $request, User $user)
+    public function setFavorite(Request $request)
     {
+        $user = User::find($request->user_id);
+
+        if (! $user)
+            return response()->json(['User not found']);
+
         if ($user->favorites()->find($request->piece_id)) {
             $user->favorites()->detach($request->piece_id);
         } else {

@@ -76,9 +76,11 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 
 	Route::get('/users', 'Projects\PianoLit\ApiController@users')->name('users');
 	Route::get('/users/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
-	Route::get('/users/{user}/suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
 	Route::post('/users', 'Projects\PianoLit\UsersController@store')->name('store');
-	Route::post('/users/{user}/favorite', 'Projects\PianoLit\UsersController@favorite')->name('favorite');
+	Route::post('/users/login', 'Projects\PianoLit\UsersController@appLogin')->name('app-login');
+	Route::post('/users/set-favorites', 'Projects\PianoLit\UsersController@setFavorite')->name('set-favorites');
+	Route::post('/users/get-favorites', 'Projects\PianoLit\ApiController@getFavorites')->name('get-favorites');
+	Route::post('/users/get-suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
 
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
 	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');
