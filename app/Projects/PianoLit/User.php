@@ -29,6 +29,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Piece::class, 'favorites','user_id', 'piece_id');
     }
 
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function name($value='')
+    {
+        
+    }
+
     public function getPreferredPieceAttribute()
     {
         return Piece::find($this->preferred_piece_id);

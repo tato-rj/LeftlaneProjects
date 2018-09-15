@@ -13,6 +13,26 @@ use Faker\Generator as Faker;
 |
 */
 
+$factory->define(App\Projects\PianoLit\User::class, function (Faker $faker) {
+    return [
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'email' => $faker->unique()->safeEmail,
+        'password' => $faker->password,
+        'trial_ends_at' => \Carbon\Carbon::now()->addWeek()
+    ];
+});
+
+$factory->define(App\Projects\PianoLit\Subscription::class, function (Faker $faker) {
+    return [
+        'user_id' => function() {
+            return factory('App\Projects\PianoLit\User')->create()->id;
+        },
+        'receipt_data' => $faker->md5,
+        'password' => $faker->md5
+    ];
+});
+
 $factory->define(App\Projects\PianoLit\Admin::class, function (Faker $faker) {
     return [
         'name' => $faker->name,

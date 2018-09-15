@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
         'piano-lit/api/users/set-favorites',
         'piano-lit/api/users/get-favorites',
         'piano-lit/api/users/get-suggestions',
+        'piano-lit/api/users/subscription',
         'piano-lit/api/users',
         'piano-lit/api/users/login',
         'piano-lit/api/search',

@@ -19,7 +19,7 @@ class ApiController extends Controller
     { 
         $piece = Piece::find($request->search);
 
-        $this->api->setCustomAttributes($piece);
+        $this->api->setCustomAttributes($piece, $request->user_id);
 
         $result[0] = $piece;
 
@@ -30,8 +30,8 @@ class ApiController extends Controller
     {
     	$pieces = Piece::all();
  
-        $pieces->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
+        $pieces->each(function($piece) use ($request) {
+            $this->api->setCustomAttributes($piece, $request->user_id);
         });
 
         return $pieces;
@@ -62,8 +62,8 @@ class ApiController extends Controller
     {
         $user = $user->load('favorites');
 
-        $user->favorites->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
+        $user->favorites->each(function($piece) use ($user) {
+            $this->api->setCustomAttributes($piece, $user->id);
         });
 
         return $user;        
@@ -78,8 +78,8 @@ class ApiController extends Controller
 
         $suggestions = $user->suggestions(10);
         
-        $suggestions->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
+        $suggestions->each(function($piece) use ($user) {
+            $this->api->setCustomAttributes($piece, $user->id);
         });
 
         return $suggestions;
@@ -94,8 +94,8 @@ class ApiController extends Controller
 
         $favorites = $user->favorites;
         
-        $favorites->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
+        $favorites->each(function($piece) use ($user) {
+            $this->api->setCustomAttributes($piece, $user->id);
         });
 
         return $favorites;

@@ -101,8 +101,8 @@ class UsersController extends Controller
     {
         $pieces = Piece::orderBy('name')->get();
 
-        $pieces->each(function($piece) {
-            $this->api->setCustomAttributes($piece);
+        $pieces->each(function($piece) use ($user) {
+            $this->api->setCustomAttributes($piece, $user->id);
         });
 
         return view('projects/pianolit/users/show', compact(['user', 'pieces']));
@@ -124,7 +124,7 @@ class UsersController extends Controller
         $user = User::find($request->user_id);
 
         if (! $user)
-            return response()->json(['User not found']);
+            return response()->json(['Sorry, user not found.']);
 
         if ($user->favorites()->find($request->piece_id)) {
             $user->favorites()->detach($request->piece_id);
@@ -132,7 +132,7 @@ class UsersController extends Controller
             $user->favorites()->attach($request->piece_id);
         };
 
-        return response(200);
+        return response()->json(['Add to favorites!']);
     }
 
     /**

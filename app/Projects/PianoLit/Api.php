@@ -4,9 +4,12 @@ namespace App\Projects\PianoLit;
 
 use Carbon\Carbon;
 use App\Projects\PianoLit\{Piece, Composer, Tag, Api, Country, Playlist};
+use App\Projects\PianoLit\Traits\Background;
 
 class Api
 {
+    use Background;
+
     public function forUser($id)
     {
         $user = User::find($id);
@@ -18,7 +21,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#28C76FFF']);
+            'color' => 'blue']);
 
         return $this->createPlaylist($collection, ['title' => "For {$user->first_name}"]);
     }
@@ -29,7 +32,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#00C9B7FF']);
+            'color' => 'green']);
 
         return $this->createPlaylist($collection, ['title' => 'Trending']);
     }
@@ -40,7 +43,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#0396FFFF']);
+            'color' => 'teal']);
 
         return $this->createPlaylist($collection, ['title' => 'Latest']);
     }
@@ -51,7 +54,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#7367F0FF']);
+            'color' => 'purple']);
 
         return $this->createPlaylist($collection, ['title' => 'Composers']);
     }
@@ -62,7 +65,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#EB5286FF']);
+            'color' => 'orange']);
 
         return $this->createPlaylist($collection, ['title' => 'Periods']);
     }
@@ -73,14 +76,9 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#F67A36FF']);
+            'color' => 'green']);
 
         return $this->createPlaylist($collection, ['title' => 'Improve your']);
-    }
-
-    public function countries()
-    {
-        //return Country::with('pieces')->get();
     }
 
     public function levels()
@@ -89,14 +87,9 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => '#28C76FFF']);
+            'color' => 'blue']);
 
         return $this->createPlaylist($collection, ['title' => 'Levels']);
-    }
-
-    public function foundation()
-    {
-        //return Playlist::foundation()->with('pieces')->get();
     }
 
     public function famous()
@@ -105,7 +98,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#00C9B7FF']);
+            'color' => 'teal']);
 
         return $this->createPlaylist($collection, ['title' => 'Most famous']);
     }
@@ -116,7 +109,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'piece',
             'source' => \URL::to('/piano-lit/api/pieces/find'),
-            'color' => '#0396FFFF']);
+            'color' => 'orange']);
 
         return $this->createPlaylist($collection, ['title' => 'Flashy']);
     }
@@ -145,12 +138,13 @@ class Api
             $model->setAttribute('source', $args['source']);
             $model->setAttribute('type', $args['type']);
             $model->setAttribute('color', $args['color']);
+            $model->setAttribute('background', $this->getBackground($args['color']));
             $model->setAttribute('special_attribute', $args['special_attribute'] ?? null);
             $model->setAttribute('count', $number.' '.$string);
         }
     }
 
-	public function setCustomAttributes($model)
+	public function setCustomAttributes($model, $user_id)
 	{
         $classname = get_class($model);
 
@@ -171,6 +165,7 @@ class Api
             $model->setAttribute('audio_rh', $model->file_path('audio_path_rh'));
             $model->setAttribute('audio_lh', $model->file_path('audio_path_lh'));
             $model->setAttribute('score', $model->file_path('score_path'));
+            $model->setAttribute('is_favorited', $model->isFavorited($user_id));
             $model->composer->setAttribute('alive_on', $model->composer->alive_on);
             $model->composer->setAttribute('short_name', $model->composer->short_name);
             $model->composer->setAttribute('born_at', $model->composer->born_at);
@@ -231,8 +226,8 @@ class Api
             });
         }
         
-        $pieces->each(function($result) {
-            self::setCustomAttributes($result);
+        $pieces->each(function($result) use ($request) {
+            self::setCustomAttributes($result, $request->user_id);
         });
     }
 

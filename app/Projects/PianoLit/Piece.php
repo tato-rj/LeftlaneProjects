@@ -58,6 +58,16 @@ class Piece extends PianoLit
         return $this->belongsToThrough(Country::class, Composer::class);
     }
 
+    public function isFavorited($user_id)
+    {
+        $result = \DB::connection('pianolit')->table('favorites')->where([
+            'user_id' => $user_id,
+            'piece_id' => $this->id
+        ])->first();
+
+        return $result ? true : false;
+    }
+
     public function scopeSearch($query, $array, $request = null)
     {
         $results = $query->where(function($query) use ($array, $request) {
