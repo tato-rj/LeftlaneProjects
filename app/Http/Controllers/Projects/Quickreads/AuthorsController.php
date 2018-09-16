@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Author;
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\Author;
 
-class AuthorsController extends Controller
+class AuthorsController extends QuickreadsController
 {
     public function __construct()
     {
@@ -29,7 +28,7 @@ class AuthorsController extends Controller
      */
     public function create()
     {
-        return view('pages/authors/add');
+        return view('projects/quickreads/authors/add');
     }
 
     /**
@@ -76,13 +75,13 @@ class AuthorsController extends Controller
     public function select()
     {
         $authors = Author::orderBy('name')->get();
-        return view('pages/authors/edit', compact(['authors']));
+        return view('projects/quickreads/authors/edit', compact(['authors']));
     }
 
     public function edit(Author $author)
     {
         $authors = Author::orderBy('name')->get();
-        return view('pages/authors/edit', compact(['author', 'authors']));
+        return view('projects/quickreads/authors/edit', compact(['author', 'authors']));
     }
 
     /**
@@ -121,7 +120,7 @@ class AuthorsController extends Controller
     public function delete()
     {
         $authors = Author::orderBy('name')->get();
-        return view('pages/authors/delete', compact(['authors']));        
+        return view('projects/quickreads/authors/delete', compact(['authors']));        
     }
     
     public function destroy(Author $author)

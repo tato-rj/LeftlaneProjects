@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\{Story, Author, Category, User, Subscription};
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\{Story, Author, Category, User, Subscription};
 
-class HomeController extends Controller
+class HomeController extends QuickreadsController
 {
     public function __construct()
     {

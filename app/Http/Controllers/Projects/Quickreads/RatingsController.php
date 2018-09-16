@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\User;
-use App\Rating;
-use App\Story;
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\{User, Rating, Story};
 
-class RatingsController extends Controller
+class RatingsController extends QuickreadsController
 {
 
     public function index()

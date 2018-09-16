@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Comment;
-use App\Story;
-use App\User;
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\{Comment, Story, User};
 
-class CommentsController extends Controller
+class CommentsController extends QuickreadsController
 {
     /**
      * Display a listing of the resource.

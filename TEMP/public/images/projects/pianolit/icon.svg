@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1024px"
+	 height="1024px" viewBox="0 0 1024 1024" enable-background="new 0 0 1024 1024" xml:space="preserve">
+<g id="Canvas">
+	<linearGradient id="Background_1_" gradientUnits="userSpaceOnUse" x1="0" y1="512" x2="1024" y2="512">
+		<stop  offset="0" style="stop-color:#1D3E86"/>
+		<stop  offset="0.2279" style="stop-color:#1E4089"/>
+		<stop  offset="0.4199" style="stop-color:#224694"/>
+		<stop  offset="0.599" style="stop-color:#2950A5"/>
+		<stop  offset="0.7701" style="stop-color:#325FBE"/>
+		<stop  offset="0.9343" style="stop-color:#3E71DD"/>
+		<stop  offset="1" style="stop-color:#447AEC"/>
+	</linearGradient>
+	<rect id="Background" fill="url(#Background_1_)" width="1024" height="1024"/>
+	<g id="Circles">
+		<path opacity="0.3" fill="#3C7AFF" d="M277,320c-100.743,0-195.279,26.563-277,73.055V1024h819.6c12-45.654,18.4-93.579,18.4-143
+			C838,571.168,586.831,320,277,320z"/>
+		<path opacity="0.3" fill="#3C7AFF" stroke="#3C7AFF" stroke-miterlimit="10" d="M534,554c0,184.119,75.626,350.571,197.504,470
+			H1024V0H836.824C654.674,117.021,534,321.417,534,554z"/>
+	</g>
+	<g id="Grid" display="none">
+		<defs>
+			<rect id="SVGID_1_" width="1024" height="1024"/>
+		</defs>
+		<clipPath id="SVGID_2_" display="inline">
+			<use xlink:href="#SVGID_1_"  overflow="visible"/>
+		</clipPath>
+		<g display="inline" opacity="0.5" clip-path="url(#SVGID_2_)">
+			<g>
+				<defs>
+					<rect id="SVGID_3_" x="-0.707" y="-0.71" width="1025.417" height="1025.417"/>
+				</defs>
+				<clipPath id="SVGID_4_">
+					<use xlink:href="#SVGID_3_"  overflow="visible"/>
+				</clipPath>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="1024" y1="0" x2="0" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="0" x2="1024" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="958" y1="0" x2="958" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="706" y1="0" x2="706" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="512" y1="0" x2="512" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="318" y1="0" x2="318" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="66" y1="0" x2="66" y2="1024"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="66" x2="1024" y2="66"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="318" x2="1024" y2="318"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="512" x2="1024" y2="512"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="706" x2="1024" y2="706"/>
+				
+					<line clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" x1="0" y1="958" x2="1024" y2="958"/>
+				<circle clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-miterlimit="10" cx="512" cy="512" r="194"/>
+				<circle clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-miterlimit="10" cx="512" cy="512" r="274"/>
+				<circle clip-path="url(#SVGID_4_)" fill="none" stroke="#BABABA" stroke-miterlimit="10" cx="512" cy="512" r="446"/>
+				<use xlink:href="#SVGID_3_"  overflow="visible" fill="none" stroke="#BABABA" stroke-miterlimit="10"/>
+			</g>
+		</g>
+		<g display="inline" opacity="0.5" clip-path="url(#SVGID_2_)">
+			<g>
+				<defs>
+					<rect id="SVGID_5_" x="-0.5" y="-0.5" width="1025" height="1025"/>
+				</defs>
+				<clipPath id="SVGID_6_">
+					<use xlink:href="#SVGID_5_"  overflow="visible"/>
+				</clipPath>
+				<path clip-path="url(#SVGID_6_)" fill="none" stroke="#BABABA" stroke-linecap="square" stroke-miterlimit="10" d="M798.98,1024
+					H225.02C100.745,1024,0,923.255,0,798.98V225.02C0,100.745,100.745,0,225.02,0H798.98C923.255,0,1024,100.745,1024,225.02
+					v573.96C1024,923.255,923.255,1024,798.98,1024z"/>
+				<use xlink:href="#SVGID_5_"  overflow="visible" fill="none" stroke="#BABABA" stroke-miterlimit="10"/>
+			</g>
+		</g>
+		<use xlink:href="#SVGID_1_"  display="inline" overflow="visible" fill="none" stroke="#BABABA" stroke-miterlimit="10"/>
+	</g>
+</g>
+<g id="Magnifier">
+	<path id="Handle" fill="#FFFFFF" d="M766.472,673.93l100.42,100.415c21.478,21.48,21.478,56.303,0,77.779l0,0
+		c-21.478,21.476-56.3,21.476-77.777,0l-111.137-111.14"/>
+	<circle id="Lens" fill="none" stroke="#FFFFFF" stroke-width="42" stroke-miterlimit="10" cx="505.267" cy="490.499" r="312.267"/>
+</g>
+<g id="Music_notes">
+	<circle id="Circle_1_" fill="#FFFFFF" cx="606.119" cy="586.602" r="40"/>
+	<path id="Stem_1_" fill="#FFFFFF" d="M646,583.514c0,3.915-3.149,7.088-7.033,7.088h-10.934c-3.885,0-7.033-3.173-7.033-7.088
+		V396.938c0-3.915,3.148-7.088,7.033-7.088h10.934c3.884,0,7.033,3.173,7.033,7.088V583.514z"/>
+	<circle id="Circle" fill="#FFFFFF" cx="377.88" cy="606.602" r="40"/>
+	<path id="Stem" fill="#FFFFFF" d="M418,602.807c0,4.306-3.148,7.795-7.033,7.795h-10.934c-3.885,0-7.033-3.489-7.033-7.795V397.644
+		c0-4.305,3.148-7.795,7.033-7.795h10.934c3.885,0,7.033,3.49,7.033,7.795V602.807z"/>
+	<path id="Stem_2_" fill="#FFFFFF" d="M476,518.565c0,4.418-3.148,8-7.033,8h-10.934c-3.885,0-7.033-3.582-7.033-8V308
+		c0-4.418,3.148-8,7.033-8h10.934c3.885,0,7.033,3.582,7.033,8V518.565z"/>
+	<path id="Stem_3_" fill="#FFFFFF" d="M533,518.565c0,4.418-3.149,8-7.033,8h-10.934c-3.885,0-7.033-3.582-7.033-8V308
+		c0-4.418,3.148-8,7.033-8h10.934c3.884,0,7.033,3.582,7.033,8V518.565z"/>
+	<path id="Stem_4_" fill="#FFFFFF" d="M587,520.484c0,3.358-3.148,6.081-7.032,6.081h-10.935c-3.885,0-7.033-2.723-7.033-6.081
+		V360.438c0-3.358,3.148-6.081,7.033-6.081h10.935c3.884,0,7.032,2.723,7.032,6.081V520.484z"/>
+</g>
+</svg>

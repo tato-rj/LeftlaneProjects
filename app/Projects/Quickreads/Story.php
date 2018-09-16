@@ -23,9 +23,9 @@ class Story extends Quickreads
 
     public function image()
     {
-        if (File::exists("public/quickreads/stories/$this->slug")) {
-            if (count(File::allFiles("public/quickreads/stories/$this->slug"))) {
-                return File::allFiles("public/quickreads/stories/$this->slug")[0];
+        if (File::exists("storage/stories/$this->slug")) {
+            if (count(File::allFiles("storage/stories/$this->slug"))) {
+                return File::allFiles("storage/stories/$this->slug")[0];
             }
         }
 

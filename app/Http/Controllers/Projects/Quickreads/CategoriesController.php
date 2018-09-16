@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Category;
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\Category;
 
-class CategoriesController extends Controller
+class CategoriesController extends QuickreadsController
 {
     public function __construct()
     {
@@ -29,7 +28,7 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        return view('pages/categories/add');
+        return view('projects/quickreads/categories/add');
     }
 
     /**
@@ -73,13 +72,13 @@ class CategoriesController extends Controller
     {
 
         $categories = Category::orderBy('category')->get();
-        return view('pages/categories/edit', compact(['categories']));
+        return view('projects/quickreads/categories/edit', compact(['categories']));
     }
 
     public function edit(Category $category)
     {
         $categories = Category::orderBy('category')->get();
-        return view('pages/categories/edit', compact(['category', 'categories']));
+        return view('projects/quickreads/categories/edit', compact(['category', 'categories']));
     }
 
     /**
@@ -115,7 +114,7 @@ class CategoriesController extends Controller
     public function delete()
     {
         $categories = Category::orderBy('category')->get();
-        return view('pages/categories/delete', compact(['categories']));        
+        return view('projects/quickreads/categories/delete', compact(['categories']));        
     }
     
     public function destroy(Category $category)

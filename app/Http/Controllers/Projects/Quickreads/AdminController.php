@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use Illuminate\Http\Request;
-use App\Projects\Quickreads\{Story, Author, Category, User, UserPurchaseRecord, Subscription};
-use App\Http\Controllers\Controller;
+use App\Projects\Quickreads\{Story, Author, Category, QuickreadsUser, UserPurchaseRecord, Subscription};
 
-class AdminController extends Controller
+class AdminController extends QuickreadsController
 {
 	public function index()
 	{
 		$stories_count = Story::count();
 		$categories_count = Category::count();
 		$authors_count = Author::count();
-		$users_count = User::count();
+		$users_count = QuickreadsUser::count();
 		$subscriptions_count = Subscription::count();
 
 		return view('projects/quickreads/dashboard', 
@@ -22,9 +21,10 @@ class AdminController extends Controller
 
     public function statistics()
     {
-    	$dailySignups = User::statistics()->daily()->take(30)->get();
-		$monthlySignups = User::statistics()->monthly()->take(12)->get();
-		$yearlySignups = User::statistics()->yearly()->take(4)->get();
+
+    	$dailySignups = QuickreadsUser::statistics()->daily()->take(30)->get();
+		$monthlySignups = QuickreadsUser::statistics()->monthly()->take(12)->get();
+		$yearlySignups = QuickreadsUser::statistics()->yearly()->take(4)->get();
 
 		$storiesRecords = UserPurchaseRecord::pluck('story_id')->toArray();
 

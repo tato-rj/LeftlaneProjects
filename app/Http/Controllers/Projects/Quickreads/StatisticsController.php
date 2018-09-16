@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\{User, UserPurchaseRecord};
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\{QuickreadsUser, UserPurchaseRecord};
 
-class StatisticsController extends Controller
+class StatisticsController extends QuickreadsController
 {
     public function index()
     {
-    	$dailySignups = User::statistics()->daily()->take(30)->get();
-		$monthlySignups = User::statistics()->monthly()->take(12)->get();
-		$yearlySignups = User::statistics()->yearly()->take(4)->get();
+    	$dailySignups = QuickreadsUser::statistics()->daily()->take(30)->get();
+		$monthlySignups = QuickreadsUser::statistics()->monthly()->take(12)->get();
+		$yearlySignups = QuickreadsUser::statistics()->yearly()->take(4)->get();
 
 		$storiesRecords = UserPurchaseRecord::whereNotIn('user_id', config('app.testersIds'))->pluck('story_id')->toArray();
 
@@ -27,6 +26,6 @@ class StatisticsController extends Controller
 		
 		$activeUsers = $usersArray->sort()->reverse();
 
-    	return view('pages/statistics/index', compact(['dailySignups', 'monthlySignups', 'yearlySignups', 'topStories', 'activeUsers']));
+    	return view('projects/quickreads/statistics/index', compact(['dailySignups', 'monthlySignups', 'yearlySignups', 'topStories', 'activeUsers']));
     }
 }

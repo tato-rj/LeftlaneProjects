@@ -16,9 +16,10 @@ class CreatePianoLitSubscriptionsTable extends Migration
         Schema::connection('pianolit')->create('subscriptions', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->unique();
-            $table->text('receipt_data');
-            $table->string('password');
-            $table->boolean('exclude_old_transactions')->default(false);
+            $table->string('plan_id');
+            $table->dateTime('expires_at');
+            $table->dateTime('latest_payment_at');
+            $table->unsignedInteger('payments_count');
             $table->timestamps();
         });
     }

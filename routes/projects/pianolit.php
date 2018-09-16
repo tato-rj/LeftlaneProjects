@@ -66,6 +66,8 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::post('', 'Projects\PianoLit\UsersController@store');
 		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
 	});
+
+	Route::get('apple-test', 'Projects\PianoLit\SubscriptionsController@test');
 });
 
 // App Routes
@@ -93,4 +95,5 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::get('/composers', 'Projects\PianoLit\ApiController@composers')->name('composers');
 	
 	Route::get('/tags', 'Projects\PianoLit\ApiController@tags')->name('tags');
+
 });

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Subscription;
-use Illuminate\Http\Request;
+use App\Projects\Quickreads\Subscription;
 
-class LandingPagesController extends Controller
+class LandingPagesController extends QuickreadsController
 {
     public function pianolit()
     {

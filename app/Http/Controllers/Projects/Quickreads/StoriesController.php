@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Story;
-use App\Author;
-use App\Category;
+use App\Projects\Quickreads\{Story, Author, Category};
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Upload;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class StoriesController extends Controller
+class StoriesController extends QuickreadsController
 {
     public function __construct()
     {
@@ -53,7 +50,7 @@ class StoriesController extends Controller
     {
         $authors = Author::orderBy('name')->get();
         $categories = Category::orderBy('category')->get();
-        return view('pages/stories/add', compact(['authors', 'categories']));
+        return view('projects/quickreads/stories/add', compact(['authors', 'categories']));
     }
 
     /**
@@ -123,7 +120,8 @@ class StoriesController extends Controller
     public function select()
     {
         $stories = Story::orderBy('title')->get();
-        return view('pages/stories/edit', compact(['stories']));
+
+        return view('projects/quickreads/stories/edit', compact(['stories']));
     }
 
     public function edit(Story $story)
@@ -131,7 +129,7 @@ class StoriesController extends Controller
         $authors = Author::orderBy('name')->get();
         $categories = Category::orderBy('category')->get();
         $stories = Story::orderBy('title')->get();
-        return view('pages/stories/edit', compact(['stories', 'story', 'authors', 'categories']));
+        return view('projects/quickreads/stories/edit', compact(['stories', 'story', 'authors', 'categories']));
     }
 
     /**
@@ -180,7 +178,7 @@ class StoriesController extends Controller
     public function delete()
     {
         $stories = Story::orderBy('title')->get();
-        return view('pages/stories/delete', compact(['stories']));       
+        return view('projects/quickreads/stories/delete', compact(['stories']));       
     }
 
     public function destroy(Story $story)

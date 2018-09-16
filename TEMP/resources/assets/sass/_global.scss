@@ -1,0 +1,41 @@
+textarea {
+	overflow-x: hidden;
+}
+
+a {
+	color: $brand-primary;
+}
+
+a:hover {
+	color: darken($brand-primary, 5);
+}
+
+.navbar-brand {
+	img {
+		width: 22px;
+	}
+}
+
+.btn:focus,.btn:active, a:focus, a:active, button:focus, button:active {
+   outline: none!important;
+}
+
+.btn-default {
+	background: $brand-primary;
+	color: white;
+}
+
+.btn-default:hover, .btn-default:active, .btn-default:focus {
+	background: darken($brand-primary, 3);
+}
+
+.alert-container {
+	z-index: 10000;
+	position: fixed;
+	top: 1em;
+	left: 0;
+}
+
+.text-brand {
+	color: $brand-primary;
+}
