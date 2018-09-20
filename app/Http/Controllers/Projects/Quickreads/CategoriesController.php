@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\Category;
+use Illuminate\Http\Request;
 
 class CategoriesController extends QuickreadsController
 {
@@ -40,7 +41,7 @@ class CategoriesController extends QuickreadsController
     public function store(Request $request)
     {
         $request->validate([
-            'category' => 'required|unique:categories|max:120'
+            'category' => 'required|unique:quickreads.categories|max:120'
         ]);
 
         $category = Category::create([

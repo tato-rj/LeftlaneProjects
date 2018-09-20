@@ -67,7 +67,6 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
 	});
 
-	Route::get('apple-test', 'Projects\PianoLit\SubscriptionsController@test');
 });
 
 // App Routes

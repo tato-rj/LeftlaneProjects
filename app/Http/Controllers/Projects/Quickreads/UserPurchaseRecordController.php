@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\Story;
-use App\UserPurchaseRecord;
+use App\Projects\Quickreads\{User, Story, UserPurchaseRecord};
 use Illuminate\Http\Request;
 
-class UserPurchaseRecordController extends Controller
+class UserPurchaseRecordController extends QuickreadsController
 {
     public function store(Request $request)
     {

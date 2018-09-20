@@ -23,11 +23,14 @@
               <p class="m-0" style="color: #2093a5"><small>Gender</small></p>
               <p class="m-0">{{ucfirst($user->gender)}}</p>
             </div>
+            <div class="mt-4">
+              <button class="delete-user btn btn-danger btn-sm" data-slug="{{$user->slug}}" data-name="{{$user->fullName}}">Delete user</button>
+            </div>
           </div>
 
         	<div class="col-lg-9 col-md-8 col-sm-8 col-12">
         		@foreach($user->stories as $story)
-              @include('pages/users/stories')
+              @include('projects/quickreads/users/stories')
         		@endforeach
         	</div>
 

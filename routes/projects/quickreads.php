@@ -17,6 +17,7 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 
 	Route::prefix('/users')->group(function() {
 		Route::get('', 'Projects\Quickreads\UsersController@index');
+		Route::delete('/{user}', 'Projects\Quickreads\UsersController@destroy');
 	});
 
 	Route::prefix('/stories')->group(function() {

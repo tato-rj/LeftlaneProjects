@@ -23,16 +23,6 @@ $factory->define(App\Projects\PianoLit\User::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Projects\PianoLit\Subscription::class, function (Faker $faker) {
-    return [
-        'user_id' => function() {
-            return factory('App\Projects\PianoLit\User')->create()->id;
-        },
-        'receipt_data' => $faker->md5,
-        'password' => $faker->md5
-    ];
-});
-
 $factory->define(App\Projects\PianoLit\Admin::class, function (Faker $faker) {
     return [
         'name' => $faker->name,

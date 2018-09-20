@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\User as QuickreadsUser;
+use App\Projects\Quickreads\User;
 use Illuminate\Http\Request;
 
-class UsersController extends Controller
+class UsersController extends QuickreadsController
 {
     /**
      * Display a listing of the resource.
@@ -14,13 +14,13 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = QuickreadsUser::latest()->get();
-        return view('pages/users/index', compact('users'));
+        $users = User::latest()->get();
+        return view('projects/quickreads/users/index', compact('users'));
     }
     
     public function app()
     {
-        return QuickreadsUser::latest()->with(['comments', 'ratings', 'stories'])->get();
+        return User::latest()->with(['comments', 'ratings', 'stories'])->get();
     }
 
     /**
@@ -41,7 +41,7 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        return QuickreadsUser::firstOrCreate(
+        return User::firstOrCreate(
             [
                 'email' => $request["email"],
             ],
@@ -58,14 +58,14 @@ class UsersController extends Controller
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'email' => 'unique:users'
+            'email' => 'unique:quickreads.users'
         ]);
 
         if ($validator->fails()) { 
             return response()->json($validator->messages(), 403);
         }
 
-        $user = QuickreadsUser::create([
+        $user = User::create([
             'slug' => str_slug("{$request["first_name"]} {$request["last_name"]}"),
             'first_name' => $request["first_name"],
             'last_name' => $request["last_name"],
@@ -80,7 +80,7 @@ class UsersController extends Controller
 
     public function appLogin($email, $password)
     {
-        $user = QuickreadsUser::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
 
         if ($user) {
             if (\Hash::check($password, $user->password))
@@ -127,11 +127,14 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        $user->purchases()->delete();
+        $user->delete();
+
+        return redirect()->back()->with('success', "The user has been successfully deleted!");
     }
 }

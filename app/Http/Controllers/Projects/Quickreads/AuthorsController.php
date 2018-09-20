@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\Author;
+use Illuminate\Http\Request;
 
 class AuthorsController extends QuickreadsController
 {
@@ -40,7 +41,7 @@ class AuthorsController extends QuickreadsController
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:authors|max:140',
+            'name' => 'required|unique:quickreads.authors|max:140',
             'life' => 'required'
         ]);
 

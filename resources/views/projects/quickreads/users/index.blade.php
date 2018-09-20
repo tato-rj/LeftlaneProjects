@@ -21,6 +21,9 @@
   </div>
 </div>
 
+@component('projects/quickreads/components/modals/delete')
+users
+@endcomponent
 @endsection
 
 @section('scripts')
@@ -30,6 +33,18 @@ $('.fb-picture .image').on('mouseover', function() {
 });
 $('.fb-picture .image').on('mouseleave', function() {
 	$(this).parent().find('img').fadeOut('fast');
+});
+</script>
+<script type="text/javascript">
+$('.delete-user').on('click', function() {
+  $slug = $(this).attr('data-slug');
+  $name = $(this).attr('data-name');
+  
+  $modal = $('#delete-modal');
+  $modal.find('input[name="slug"]').val($slug);
+  $modal.find('#name').text($name);
+  $modal.find('form').attr('action', $modal.find('form').attr('action')+$slug);
+  $modal.modal('show');
 });
 </script>
 @endsection

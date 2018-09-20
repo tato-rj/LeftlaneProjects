@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\Subscription;
+use Illuminate\Http\Request;
 
 class LandingPagesController extends QuickreadsController
 {

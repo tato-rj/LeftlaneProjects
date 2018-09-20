@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\{User, Rating, Story};
+use Illuminate\Http\Request;
 
 class RatingsController extends QuickreadsController
 {

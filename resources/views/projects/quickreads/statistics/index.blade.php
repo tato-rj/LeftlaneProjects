@@ -20,10 +20,10 @@
         @component('projects/quickreads/statistics/list', ['left' => 'Title', 'right' => '# of downloads'])
           @foreach($topStories as $id => $count)
           <li class="d-flex justify-content-between">
-            @if(! \App\Story::find($id))
+            @if(! \App\Projects\Quickreads\Story::find($id))
             {{dd($id)}}
             @endif
-            <span>{{\App\Story::find($id)->title}}</span>
+            <span>{{\App\Projects\Quickreads\Story::find($id)->title}}</span>
             <span>{{$count}}</span>
           </li>
           @endforeach
@@ -35,10 +35,10 @@
         @component('projects/quickreads/statistics/list', ['left' => 'Name', 'right' => '# of stories'])
           @foreach($activeUsers as $id => $count)
           <li class="d-flex justify-content-between">
-            @if(! \App\User::find($id))
+            @if(! \App\Projects\Quickreads\User::find($id))
             {{dd($id)}}
             @endif
-            <span>{{\App\User::find($id)->fullName}}</span>
+            <span>{{\App\Projects\Quickreads\User::find($id)->fullName}}</span>
             <span>{{$count}}</span>
           </li>
           @endforeach

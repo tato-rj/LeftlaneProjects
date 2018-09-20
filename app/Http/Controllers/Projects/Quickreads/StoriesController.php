@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Upload;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class StoriesController extends QuickreadsController
 {
@@ -22,7 +23,7 @@ class StoriesController extends QuickreadsController
 
     public function app()
     {
-        $stories = DB::table('stories')
+        $stories = DB::connection('quickreads')->table('stories')
                         ->join('categories', 'stories.category_id', '=', 'categories.id')
                         ->join('authors', 'stories.author_id', '=', 'authors.id')
                         ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpeg") AS story_filename, categories.category AS category, categories.sorting_order')
@@ -33,7 +34,7 @@ class StoriesController extends QuickreadsController
 
     public function text(Request $request)
     {
-        $story = DB::table('stories')
+        $story = DB::connection('quickreads')->table('stories')
                         ->selectRaw('text')
                         ->where('id', '=', $request->id)
                         ->get();
@@ -62,7 +63,7 @@ class StoriesController extends QuickreadsController
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|unique:stories|max:255',
+            'title' => 'required|unique:quickreads.stories|max:255',
             'summary' => 'required',
             'text' => 'required',
             'author_id' => 'required',

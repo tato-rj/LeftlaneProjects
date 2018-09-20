@@ -2,15 +2,15 @@
 
 namespace App\Projects\PianoLit;
 
-use App\Projects\PianoLit\Piece;
-use App\Projects\PianoLit\Traits\Resources;
+use App\Projects\PianoLit\{Piece, Subscription};
+use App\Projects\PianoLit\Traits\{Resources, Subscribes};
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable, Resources;
+    use Notifiable, Resources, Subscribes;
 
     protected $guarded = [];
     protected $connection = 'pianolit';
@@ -32,11 +32,6 @@ class User extends Authenticatable
     public function subscription()
     {
         return $this->hasOne(Subscription::class);
-    }
-
-    public function name($value='')
-    {
-        
     }
 
     public function getPreferredPieceAttribute()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\{Comment, Story, User};
+use Illuminate\Http\Request;
 
 class CommentsController extends QuickreadsController
 {
@@ -33,7 +34,7 @@ class CommentsController extends QuickreadsController
         $request->validate([
             'facebook_id' => 'required',
             'title' => 'required',
-            'body' => 'required|max:248|unique:comments'
+            'body' => 'required|max:248|unique:quickreads.comments'
         ]);
 
         $comment = Comment::create([
