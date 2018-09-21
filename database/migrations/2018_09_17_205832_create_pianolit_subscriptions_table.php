@@ -22,14 +22,14 @@ class CreatePianoLitSubscriptionsTable extends Migration
             $table->string('original_application_version');
             $table->timestamp('receipt_creation_date')->nullable();
             $table->timestamp('receipt_creation_date_pst')->nullable();
-            $table->timestamp('receipt_creation_date_ms')->nullable();
+            $table->unsignedInteger('receipt_creation_date_ms')->nullable();
             $table->string('version_external_identifier');
             $table->timestamp('original_purchase_date')->nullable();
             $table->timestamp('original_purchase_date_pst')->nullable();
-            $table->timestamp('original_purchase_date_ms')->nullable();
+            $table->unsignedInteger('original_purchase_date_ms')->nullable();
             $table->timestamp('request_date')->nullable();
             $table->timestamp('request_date_pst')->nullable();
-            $table->timestamp('request_date_ms')->nullable();
+            $table->unsignedInteger('request_date_ms')->nullable();
             $table->string('receipt_type');
             $table->unsignedInteger('download_id');
             $table->unsignedInteger('adam_id');

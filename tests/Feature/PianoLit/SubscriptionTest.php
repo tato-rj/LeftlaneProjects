@@ -5,6 +5,7 @@ namespace Tests\Feature\PianoLit;
 use Tests\PianoLitTest;
 use App\Projects\PianoLit\{User, Subscription};
 use App\Projects\PianoLit\Providers\Sandbox\Subscription as FakeSubscription;
+use Carbon\Carbon;
 
 class SubscriptionTest extends PianoLitTest
 {
@@ -37,22 +38,14 @@ class SubscriptionTest extends PianoLitTest
 	}
 
 	/** @test */
-	public function a_user_knows_if_the_subscription_is_expired()
+	public function a_user_knows_when_the_subscription_is_set_to_renew()
 	{
-		$activeUser = create(User::class);
+		$user = create(User::class);
 
-		$validReceipt = (new FakeSubscription(now()->subMonths(1)))->generate($valid = true);
+		$receipt = (new FakeSubscription(now()->subMonths(2)))->generate();
 
-		$activeUser->subscribe($validReceipt['receipt']);
+		$user->subscribe($receipt['receipt']);
 
-		$this->assertTrue($activeUser->subscription->status());
-
-		$inactiveUser = create(User::class);
-
-		$expiredReceipt = (new FakeSubscription(now()->subMonths(1)))->generate($valid = false);
-
-		$inactiveUser->subscribe($expiredReceipt['receipt']);
-
-		$this->assertFalse($inactiveUser->subscription->status());
+		$this->assertInstanceOf(Carbon::class, $user->subscription->renews_at);		 
 	}
 }

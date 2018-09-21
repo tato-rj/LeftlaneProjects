@@ -8,6 +8,8 @@ trait FakeReceipt
 {
 	public function receipt($date)
 	{
+		$date->addDays(rand(1,7));
+
 		return [
 			"version_external_identifier" => 0,
 			"request_date" => $date->setTimezone('Etc/GMT')->addSecond()->format($this->format),
@@ -33,9 +35,11 @@ trait FakeReceipt
 
 	public function purchase($date)
 	{
+		$oneMonthAfter = $date->copy()->addMonth();
+
 		return [
 			"quantity" => 1,
-			"product_id" => 02,
+			"product_id" => 'monthly',
 			"transaction_id" => $this->randomNumber(16),
 			"purchase_date" => $date->setTimezone('Etc/GMT')->format($this->format),
 			"purchase_date_pst" => $date->setTimezone('America/Los_Angeles')->format($this->format),
@@ -43,9 +47,9 @@ trait FakeReceipt
 			"original_purchase_date" => $this->receipt['receipt_creation_date'],
 			"original_purchase_date_pst" => $this->receipt['receipt_creation_date_pst'],
 			"original_purchase_date_ms" => $this->receipt['receipt_creation_date_ms'],
-			"expires_date" => $date->addMonth()->setTimezone('Etc/GMT')->format($this->format),
-			"expires_date_pst" => $date->setTimezone('America/Los_Angeles')->format($this->format),
-			"expires_date_ms" => $date->setTimezone('Etc/GMT')->timestamp,
+			"expires_date" => $oneMonthAfter->setTimezone('Etc/GMT')->format($this->format),
+			"expires_date_pst" => $oneMonthAfter->setTimezone('America/Los_Angeles')->format($this->format),
+			"expires_date_ms" => $oneMonthAfter->setTimezone('Etc/GMT')->timestamp,
 			"expiration_intent" => null,
 			"is_in_billing_retry_period" => null,
 			"web_order_line_item_id" => $this->randomNumber(16),
@@ -57,19 +61,15 @@ trait FakeReceipt
 		];
 	}
 
-	public function makePurchases($valid = true)
+	public function makePurchases()
 	{
 		$array = [];
 
 		$receiptDate = Carbon::parse($this->receipt['receipt_creation_date']);
 
-		$numberOfMonths = now()->diffInMonths($receiptDate) + 1;
-
-		if ($valid)
-			array_push($array, $this->purchase(now()));
-
-		for ($i = 1; $i <= $numberOfMonths; $i++) {
-			array_push($array, $this->purchase(now()->subMonths($i)));
+		while ($receiptDate->lt(now())) {
+		    array_push($array, $this->purchase($receiptDate));
+		    $receiptDate->addMonth();
 		}
 
 		return $array;

@@ -25,8 +25,6 @@ class CreatePianolitUsersTable extends Migration
             $table->enum('occupation', ['student', 'teacher', 'music lover'])->nullable();
             
             $table->string('locale')->default('en_US');
-            $table->string('subscription_token')->nullable();
-            $table->boolean('is_active')->default(false);
             $table->string('password');
             $table->timestamp('trial_ends_at')->nullable();
             $table->rememberToken();

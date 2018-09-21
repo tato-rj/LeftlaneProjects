@@ -14,11 +14,22 @@ use Faker\Generator as Faker;
 */
 
 $factory->define(App\Projects\PianoLit\User::class, function (Faker $faker) {
+    $age = ['under 13', '13 to 18', '18 to 25', '25 to 35', '35 to 45', '45 and up'];
+    $experience = ['none', 'little', 'a lot'];
+    $occupation = ['student', 'teacher', 'music lover'];
+    $favorite = \App\Projects\PianoLit\Piece::inRandomOrder()->first();
+    $locale = ['en_US', 'en_GB', 'it_CH', 'it_IT', 'fr_BE', 'fr_CA', 'pt_BR'];
+
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'email' => $faker->unique()->safeEmail,
-        'password' => $faker->password,
+        'password' => \Hash::make('secret'),
+        'locale' => $locale[array_rand($locale)],
+        'age_range' => $age[array_rand($age)],
+        'experience' => $experience[array_rand($experience)],
+        'preferred_piece_id' => $favorite->id,
+        'occupation' => $occupation[array_rand($occupation)],
         'trial_ends_at' => \Carbon\Carbon::now()->addWeek()
     ];
 });

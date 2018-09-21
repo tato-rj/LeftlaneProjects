@@ -27,26 +27,27 @@
       </div>
       @foreach($users as $user)
       <div class="col-12 mb-2">
-        <div class="d-flex bg-light rounded-right text-muted">
-          
-            @if($user->is_active)
-            <div class="px-3 py-1 bg-success rounded-left">
-              <span class="text-white">Active</span>
+        <a href="/piano-lit/users/{{$user->id}}" class="link-none">
+          <div class="d-flex align-items-center bg-light text-muted px-3 py-2 badge-pill hover-shadow-light t-2">
+            
+            @include('projects/pianolit/users/status/'.$user->status())
+
+            <div class="px-3" style="flex-grow: 2">
+              <span>
+                <strong>{{$user->full_name}}</strong> | <small><i>signed up on {{$user->created_at->toFormattedDateString()}}</i></small>
+              </span>
             </div>
-            @else
-            <div class="px-3 py-1 bg-danger rounded-left">
-              <span class="text-white">Inactive</span>
+
+            <div>
+              @if($user->subscription()->exists())
+              <div class="position-relative">
+                <span class="position-absolute d-flex align-items-center justify-content-center rounded-circle bg-intermediate" style="top: -4px; right: -8px; width: 16px; height: 16px; font-size: .56em"><strong>{{count($user->subscription->purchases)}}</strong></span>
+                <i class="fas fa-credit-card"></i>
+              </div>
+              @endif
             </div>
-            @endif
-          <div class="px-3 py-1 border-bottom border-top" style="flex-grow: 2">
-            <span>
-              <strong>{{$user->full_name}}</strong> | <small><i>signed up on {{$user->created_at->toFormattedDateString()}}</i></small>
-            </span>
           </div>
-          <div class="text-right text-brand px-3 border-top border-right border-bottom rounded-right py-1 d-flex align-items-center">
-            <a href="/piano-lit/users/{{$user->id}}"><i class="fas fa-info-circle mr-2"></i>view details</a>
-          </div>
-        </div>
+        </a>
       </div>
       @endforeach
     </div>

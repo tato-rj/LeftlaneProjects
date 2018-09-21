@@ -14,6 +14,9 @@ class Subscription extends Sandbox
 	{
 		$this->receipt['in_app'] = $this->makePurchases($valid);
 
+		if (empty($this->receipt['in_app']))
+			return null;
+
 		$response['status'] = 0;
 		$response['receipt'] = $this->receipt;
 		

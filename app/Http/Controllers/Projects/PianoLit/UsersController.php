@@ -105,7 +105,7 @@ class UsersController extends Controller
             $this->api->setCustomAttributes($piece, $user->id);
         });
 
-        return view('projects/pianolit/users/show', compact(['user', 'pieces']));
+        return view('projects/pianolit/users/show/index', compact(['user', 'pieces']));
     }
 
     /**

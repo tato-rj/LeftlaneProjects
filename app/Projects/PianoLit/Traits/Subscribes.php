@@ -6,6 +6,9 @@ trait Subscribes
 {
     public function subscribe($receipt)
     {
+        if (! $receipt)
+            return null;
+        
         $method = $this->subscription()->exists() ? 'update' : 'create';
 
         return $this->subscription()->$method([
@@ -30,5 +33,16 @@ trait Subscribes
             "cancellation_reason" => $receipt['cancellation_reason'] ?? null,
             "in_app" => json_encode($receipt['in_app'])
         ]);
+    }
+
+    public function status()
+    {
+        if (! $this->subscription()->exists() && $this->trial_ends_at->gte(now()))
+            return 'trial';
+
+        if (! $this->subscription()->exists() && $this->trial_ends_at->lt(now()))
+            return 'expired';
+
+        return $this->subscription->status() ? 'active' : 'inactive';
     }
 }
