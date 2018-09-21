@@ -8,14 +8,15 @@
 		@include('projects/pianolit/users/show/list-item', ['title' => 'Start Date', 'value' => $user->subscription->receipt_creation_date->toFormattedDateString()])
 	  </tbody>
 	</table>
+	<a href="{{url()->current()}}?format=json" target="_blank" class="link-default"><small>See JSON response</small></a>
 </div>
 <div class="col-6">
 	<div class="accordion" id="subscription-for-{{$user->id}}">
 		@foreach($user->subscription->purchases as $receipt)
 		<div class="card">
-			<div class="card-header" id="headingOne">
+			<div class="card-header bg-pastel" id="headingOne">
 				<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt-{{$loop->iteration}}">
-					<strong>Receipt #{{$loop->remaining + 1}}</strong>
+					<strong><i class="fas fa-file-alt mr-2"></i>Receipt #{{$loop->remaining + 1}}</strong>
 					<span>{{carbon($receipt->purchase_date)->toFormattedDateString()}}</span>
 				</div>
 			</div>

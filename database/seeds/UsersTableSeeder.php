@@ -7,7 +7,7 @@ class UsersTableSeeder extends Seeder
 {
 	public function run()
 	{
-		for ($i = 0; $i < 20; $i++) {
+		for ($i = 0; $i < 40; $i++) {
 			$date = now()->subDays($this->randomNumber());
 			factory(User::class)->create([
 				'created_at' => $date,

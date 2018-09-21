@@ -22,10 +22,10 @@
         <a class="nav-link" id="subscription-tab" data-toggle="tab" href="#subscription" role="tab" aria-controls="subscription" aria-selected="false">Subscription</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="behaviour-tab" data-toggle="tab" href="#behaviour" role="tab" aria-controls="behaviour" aria-selected="false">Behaviour</a>
+        <a class="nav-link" id="behavior-tab" data-toggle="tab" href="#behavior" role="tab" aria-controls="behavior" aria-selected="false">Behavior</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+        <a class="nav-link" id="manage-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="manage" aria-selected="false">Manage</a>
       </li>
     </ul>
 
@@ -33,11 +33,16 @@
       @include('projects/pianolit/users/show/profile')
 
       @include('projects/pianolit/users/show/subscription/section')
+
+      @include('projects/pianolit/users/show/behavior')
+
+      @include('projects/pianolit/users/show/manage')
   </div>
   </div>
 </div>
 
 @include('projects/pianolit/components/modals/delete', ['model' => 'user'])
+@include('projects/pianolit/components/modals/trial', ['model' => 'user'])
 @include('projects/pianolit/users/favorites')
 
 @endsection

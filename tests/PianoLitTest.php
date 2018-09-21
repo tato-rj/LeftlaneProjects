@@ -38,4 +38,20 @@ class PianoLitTest extends TestCase
         $admin = ($admin) ?: $this->admin;
         return $this->actingAs($admin, 'pianolit-admin');
     }
+
+    protected function register($user = null)
+    {
+        return $this->post(route('piano-lit.api.users.store'), [
+            'first_name' => $user['first_name'] ?? 'John',
+            'last_name' => $user['last_name'] ?? 'Doe',
+            'email' => $user['email'] ?? 'doe@email.com',
+            'password' => $user['password'] ?? 'secret',
+            'password_confirmation' => $user['password_confirmation'] ?? 'secret',
+            'locale' => $user['locale'] ?? 'en_US',
+            'age_range' => $user['age_range'] ?? '35 to 45',
+            'experience' => $user['experience'] ?? 'Little',
+            'preferred_piece_id' => $user['preferred_piece_id'] ?? create('App\Projects\PianoLit\Piece')->id,
+            'occupation' => $user['occupation'] ?? 'Teacher',
+        ])->assertSuccessful();     
+    }
 }

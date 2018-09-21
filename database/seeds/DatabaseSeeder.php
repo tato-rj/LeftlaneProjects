@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DatabaseSeeder extends Seeder
 {
-	protected $toTruncate = ['users', 'subscriptions'];
+	protected $toTruncate = ['users', 'subscriptions', 'favorites'];
 
     /**
      * Seed the application's database.

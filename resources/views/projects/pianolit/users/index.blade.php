@@ -30,7 +30,7 @@
         <a href="/piano-lit/users/{{$user->id}}" class="link-none">
           <div class="d-flex align-items-center bg-light text-muted px-3 py-2 badge-pill hover-shadow-light t-2">
             
-            @include('projects/pianolit/users/status/'.$user->status())
+            @include('projects/pianolit/users/status-icon/'.$user->status())
 
             <div class="px-3" style="flex-grow: 2">
               <span>

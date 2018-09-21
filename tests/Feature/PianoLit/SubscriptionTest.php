@@ -3,12 +3,28 @@
 namespace Tests\Feature\PianoLit;
 
 use Tests\PianoLitTest;
-use App\Projects\PianoLit\{User, Subscription};
+use App\Projects\PianoLit\{User, Subscription, Admin};
 use App\Projects\PianoLit\Providers\Sandbox\Subscription as FakeSubscription;
 use Carbon\Carbon;
 
 class SubscriptionTest extends PianoLitTest
 {
+	/** @test */
+	public function an_admin_can_extend_the_users_trial()
+	{
+		$admin = create(Admin::class, ['role' => 'manager']);
+
+		$this->signIn($admin);
+
+		$user = create(User::class);
+
+		$oldTrialDate = $user->trial_ends_at;
+
+		$this->post(route('piano-lit.users.extend-trial', $user->id));
+
+		$this->assertTrue($oldTrialDate->lt($user->fresh()->trial_ends_at));
+	}
+
 	/** @test */
 	public function a_user_can_subscribe()
 	{

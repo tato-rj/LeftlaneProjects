@@ -7,6 +7,7 @@ use Carbon\Carbon;
 class Subscription extends PianoLit
 {
 	protected $casts = ['exclude_old_transactions' => 'boolean'];
+	protected $appends = ['purchases'];
 	
 	public function user()
 	{
@@ -20,7 +21,7 @@ class Subscription extends PianoLit
 
 	public function getLatestPurchaseAttribute()
 	{
-		return $this->purchases[0];
+		return $this->purchases->first();
 	}
 
 	public function status()

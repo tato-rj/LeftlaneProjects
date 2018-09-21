@@ -68,7 +68,12 @@ trait FakeReceipt
 		$receiptDate = Carbon::parse($this->receipt['receipt_creation_date']);
 
 		while ($receiptDate->lt(now())) {
+			
+			if ($this->trueByChance(1))
+				break;
+
 		    array_push($array, $this->purchase($receiptDate));
+
 		    $receiptDate->addMonth();
 		}
 
@@ -83,5 +88,10 @@ trait FakeReceipt
 		}
 
 		return $result;
+	}
+
+	public function trueByChance($number)
+	{
+		return mt_rand(0, 10) < $number;
 	}
 }

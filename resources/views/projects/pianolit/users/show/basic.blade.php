@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between my-4 mx-3">
+<div class="d-flex justify-content-between mt-4 mb-5 mx-3">
   <div class="d-flex">
     <div class="mr-5">
       <img src="https://api.adorable.io/avatars/236/{{$user->email}}" class="rounded-circle" style="width: 160px">
@@ -28,19 +28,16 @@
         <p>
           @if($user->status() == 'trial')
             <span class="text-warning">Trial ends in {{$user->trial_ends_at->diffForHumans()}} ({{$user->trial_ends_at->toFormattedDateString()}})</span>
-          @elseif($user->status() == 'trial')
-            <span class="text-danger">Trial expired</span>
+          @elseif($user->status() == 'expired')
+            <span class="text-muted">Trial expired</span>
           @elseif($user->status() == 'active')
             <span class="text-success">Active</span>
-          @else
-            <span class="text-danger">Inactive</span>
+          @elseif($user->status() == 'inactive')
+            <span class="text-danger">Subscription expired</span>
           @endif
         </p>
         @endif
       </div>
     </div>
-  </div>
-  <div>
-    <a href="" data-name="{{$user->full_name}}" data-url="/piano-lit/users/{{$user->id}}" data-toggle="modal" data-target="#delete-modal" class="text-danger delete">Delete user's profile</a>
   </div>
 </div>

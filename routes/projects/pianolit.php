@@ -64,6 +64,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/{user}', 'Projects\PianoLit\UsersController@show')->name('show');
 
 		Route::post('', 'Projects\PianoLit\UsersController@store');
+		Route::post('/{user}/extend-trial', 'Projects\PianoLit\UsersController@extendTrial')->name('extend-trial');
 		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
 	});
 
@@ -77,7 +78,7 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 
 	Route::get('/users', 'Projects\PianoLit\ApiController@users')->name('users');
 	Route::get('/users/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
-	Route::post('/users', 'Projects\PianoLit\UsersController@store')->name('store');
+	Route::post('/users', 'Projects\PianoLit\UsersController@store')->name('users.store');
 
 	Route::post('/users/login', 'Projects\PianoLit\UsersController@appLogin')->name('app-login');
 	

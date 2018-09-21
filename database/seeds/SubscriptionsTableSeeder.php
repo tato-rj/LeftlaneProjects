@@ -10,7 +10,7 @@ class SubscriptionsTableSeeder extends Seeder
 	{
 		$valid = [true, false];
 
-		$users = User::take(mt_rand(12, 16))->get();
+		$users = User::take(mt_rand(25, 30))->get();
 
 		foreach ($users as $user) {
 			$receipt = (new FakeSubscription($user->created_at))->generate();
