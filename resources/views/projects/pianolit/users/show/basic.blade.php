@@ -18,8 +18,8 @@
     <div class="mr-5">
       <div>
         <label class="text-brand m-0"><small>Language</small></label>
-        {{-- <p>{{Locale::getDisplayName($user->locale)}}</p> --}}
-        <p>{{$user->locale}}</p>
+        <p>{{Locale::getDisplayName($user->locale)}}</p>
+        {{-- <p>{{$user->locale}}</p> --}}
       </div>
       <div>
         <label class="text-brand m-0"><small>Status</small></label>
