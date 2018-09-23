@@ -15,8 +15,13 @@ class CreateQuickreadsUsersTable extends Migration
     {
         Schema::connection('quickreads')->create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('slug');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('gender')->nullable();
             $table->string('email')->unique();
+            $table->string('locale')->nullable();
+            $table->string('facebook_id')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
