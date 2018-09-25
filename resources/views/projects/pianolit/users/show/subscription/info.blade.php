@@ -1,41 +1,44 @@
 <div class="col-6">
 	<table class="table table-striped table-borderless">
 	  <tbody>
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Subscription ID', 'value' => $user->subscription->latestPurchase->original_transaction_id])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Bundle ID', 'value' => $user->subscription->bundle_id])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'App ID', 'value' => $user->subscription->app_item_id])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Application Version', 'value' => $user->subscription->application_version])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Start Date', 'value' => $user->subscription->receipt_creation_date->toFormattedDateString()])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Subscription ID', 'value' => $user->subscription->original_transaction_id])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Last updated on', 'value' => $user->subscription->updated_at->toDayDateTimeString()])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Environment', 'value' => $user->subscription->environment ?? '-'])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration intent', 'value' => $user->subscription->expiration_intent ?? '-'])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Cancellation date', 'value' => $user->subscription->cancellation_date ?? '-'])
 	  </tbody>
 	</table>
-	<a href="{{url()->current()}}?format=json" target="_blank" class="link-default"><small>See JSON response</small></a>
 </div>
 <div class="col-6">
-	<div class="accordion" id="subscription-for-{{$user->id}}">
-		@foreach($user->subscription->purchases as $receipt)
+	<div class="accordion mb-4" id="subscription-for-{{$user->id}}">
+
 		<div class="card">
 			<div class="card-header bg-pastel" id="headingOne">
-				<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt-{{$loop->iteration}}">
-					<strong><i class="fas fa-file-alt mr-2"></i>Receipt #{{$loop->remaining + 1}}</strong>
-					<span>{{carbon($receipt->purchase_date)->toFormattedDateString()}}</span>
+				<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt">
+					<strong><i class="fas fa-file-alt mr-2"></i>Latest Receipt</strong>
 				</div>
 			</div>
 
-			<div id="receipt-{{$loop->iteration}}" class="collapse" aria-labelledby="headingOne" data-parent="#subscription-for-{{$user->id}}">
+			<div id="receipt" class="collapse" aria-labelledby="headingOne" data-parent="#subscription-for-{{$user->id}}">
 				<div class="card-body" style="background-color: rgba(0,0,0,0.01)">
 					<table class="table table-hover table-sm table-borderless m-0">
 						<tbody>
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Plan', 'value' => ucfirst($receipt->product_id)])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase ID', 'value' => $receipt->web_order_line_item_id])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase Date', 'value' => carbon($receipt->purchase_date)->toFormattedDateString()])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration Date', 'value' => carbon($receipt->expires_date)->toFormattedDateString()])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Auto-renew Status', 'value' => $receipt->auto_renew_status ? 'On' : 'Off'])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Price Consent', 'value' => $receipt->auto_renew_status ? 'Agree' : 'Disagree'])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Plan', 'value' => ucfirst($user->subscription->latest_receipt_info->product_id)])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase ID', 'value' => $user->subscription->latest_receipt_info->web_order_line_item_id])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->purchase_date)->toFormattedDateString()])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->expires_date)->toFormattedDateString()])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Auto-renew Status', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'On' : 'Off'])
+							@include('projects/pianolit/users/show/list-item', ['title' => 'Price Consent', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'Agree' : 'Disagree'])
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
-		@endforeach
 	</div>
+
+	<div class="text-right">
+		<a href="" data-toggle="modal" data-target="#subscription-history" class="link-default"><div class="mb-2">Request receipts history</div></a>
+		<a href="{{url()->current()}}?format=json" target="_blank" class="link-default"><div>See JSON response</div></a>
+	</div>
+
 </div>

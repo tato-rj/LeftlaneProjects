@@ -35,4 +35,8 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'apple' => [
+        'address' => 'https://sandbox.itunes.apple.com/verifyReceipt'
+    ],
+
 ];

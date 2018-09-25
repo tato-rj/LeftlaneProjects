@@ -1,4 +1,4 @@
-<div class="tab-pane fade show active m-3" id="profile">
+<div class="tab-pane fade {{request('section') == 'profile' || ! request()->has('section') ? 'show active' : null}} m-3" id="profile">
   <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-12 p-3">
       <div class="text-center rounded bg-light px-3 py-2">

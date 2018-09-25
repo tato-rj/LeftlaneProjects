@@ -54,4 +54,13 @@ class PianoLitTest extends TestCase
             'occupation' => $user['occupation'] ?? 'Teacher',
         ])->assertSuccessful();     
     }
+
+    protected function postSubscription($user, $subscription)
+    {
+        return $this->post(route('piano-lit.api.subscription.create'), [
+            'user_id' => $user->id,
+            'receipt_data' => $subscription->withRequest()->receipt_data,
+            'password' => $subscription->withRequest()->password
+        ]);
+    }
 }

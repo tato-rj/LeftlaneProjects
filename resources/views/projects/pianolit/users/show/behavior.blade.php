@@ -1,4 +1,4 @@
-<div class="tab-pane fade m-3" id="behavior">
+<div class="tab-pane fade {{request('section') == 'behavior' ? 'show active' : null}} m-3" id="behavior">
   <div class="row">
     <div class="col-lg-6 col-sm-10 col-12 p-3">
       <p class="text-muted">

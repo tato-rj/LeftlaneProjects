@@ -8,7 +8,7 @@ trait FakeReceipt
 {
 	public function receipt($date)
 	{
-		$date->addDays(rand(1,7));
+		$date->addDays(rand(1,6));
 
 		return [
 			"version_external_identifier" => 0,
@@ -69,7 +69,7 @@ trait FakeReceipt
 
 		while ($receiptDate->lt(now())) {
 			
-			if ($this->trueByChance(1))
+			if ($this->trueByChance(0))
 				break;
 
 		    array_push($array, $this->purchase($receiptDate));

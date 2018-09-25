@@ -1,4 +1,4 @@
-<div class="tab-pane fade m-3" id="manage">
+<div class="tab-pane fade {{request('section') == 'manage' ? 'show active' : null}} m-3" id="manage">
   <div class="row">
     @if($user->status() == 'trial')
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">

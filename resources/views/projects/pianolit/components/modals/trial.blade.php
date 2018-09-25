@@ -8,10 +8,14 @@
         </button>
       </div>
       <div class="modal-body">
+        @if($user->status() == 'trial')
         This will extend {{$user->first_name}}'s trial period to <strong>{{$user->trial_ends_at->addWeek()->toFormattedDateString()}}</strong>. {{$user->first_name}} will receive an email confirming this update.
+        @elseif($user->status() == 'expired')
+        This will restart {{$user->first_name}}'s trial period, setting it to expire on <strong>{{$user->trial_ends_at->addWeek()->toFormattedDateString()}}</strong>. {{$user->first_name}} will receive an email confirming this update.
+        @endif
       </div>
       <div class="modal-footer">
-        <form method="POST" action="{{route('piano-lit.users.extend-trial', $user->id)}}">
+        <form method="POST" action="{{route('piano-lit.users.update-trial', $user->id)}}">
           {{csrf_field()}}
           <button type="submit" class="btn btn-sm btn-block btn-default">Yes, go ahead!</button>
         </form>

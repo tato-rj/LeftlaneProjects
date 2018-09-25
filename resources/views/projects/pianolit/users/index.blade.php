@@ -40,10 +40,11 @@
 
             <div>
               @if($user->subscription()->exists())
-              <div class="position-relative">
-                <span class="position-absolute d-flex align-items-center justify-content-center rounded-circle bg-intermediate" style="top: -4px; right: -8px; width: 16px; height: 16px; font-size: .56em"><strong>{{count($user->subscription->purchases)}}</strong></span>
-                <i class="fas fa-credit-card"></i>
-              </div>
+                @if($user->status() == 'pending')
+                  <div class="text-muted"><i>pending</i></div>
+                @else
+                  <div><i class="fas fa-credit-card"></i></div>
+                @endif
               @endif
             </div>
           </div>

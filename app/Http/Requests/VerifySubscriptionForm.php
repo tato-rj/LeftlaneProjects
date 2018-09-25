@@ -5,8 +5,10 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Projects\PianoLit\User;
 
-class SubscribeUser extends FormRequest
+class VerifySubscriptionForm extends FormRequest
 {
+    public $user;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -14,7 +16,9 @@ class SubscribeUser extends FormRequest
      */
     public function authorize()
     {
-        return User::find($this->request->get('user_id'));
+        $this->user = User::find($this->request->get('user_id'));
+
+        return $this->user && ! $this->user->subscription()->exists();
     }
 
     /**
@@ -25,7 +29,9 @@ class SubscribeUser extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required'
+            'user_id' => 'required',
+            'receipt_data' => 'required',
+            'password' => 'required'
         ];
     }
 }

@@ -3,14 +3,13 @@
 namespace App\Projects\PianoLit;
 
 use App\Projects\PianoLit\{Piece, Subscription};
-use App\Projects\PianoLit\Traits\{Resources, Subscribes};
+use App\Projects\PianoLit\Traits\{Resources, HasSubscription};
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable, Resources, Subscribes;
+    use Notifiable, Resources, HasSubscription;
 
     protected $guarded = [];
     protected $connection = 'pianolit';

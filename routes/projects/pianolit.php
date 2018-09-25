@@ -64,7 +64,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/{user}', 'Projects\PianoLit\UsersController@show')->name('show');
 
 		Route::post('', 'Projects\PianoLit\UsersController@store');
-		Route::post('/{user}/extend-trial', 'Projects\PianoLit\UsersController@extendTrial')->name('extend-trial');
+		Route::post('/{user}/extend-trial', 'Projects\PianoLit\SubscriptionsController@updateTrial')->name('update-trial');
 		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
 	});
 
@@ -87,7 +87,9 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	
 	Route::post('/users/get-suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
 
-	Route::post('/users/subscription', 'Projects\PianoLit\SubscriptionsController@handle')->name('subscription.handle');
+	Route::post('/users/subscription', 'Projects\PianoLit\SubscriptionsController@create')->name('subscription.create');
+	Route::get('/users/subscription/status', 'Projects\PianoLit\SubscriptionsController@status')->name('subscription.status');
+	Route::post('/users/subscription/update', 'Projects\PianoLit\SubscriptionsController@update')->name('subscription.update');
 
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
 	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');

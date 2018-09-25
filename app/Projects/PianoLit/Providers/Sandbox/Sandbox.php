@@ -7,11 +7,11 @@ abstract class Sandbox
 	protected $format = 'Y-m-d h:i:s e';
 	protected $originalTransactionId;
 
-	public function __construct($date)
+	public function __construct($date = null)
 	{
+		$this->originalDate = $date ?? now()->subDays(10);
 		$this->originalTransactionId = $this->randomNumber(16);
-		$this->originalDate = $date;
-		$this->receipt = $this->receipt($date);
+		$this->receipt = $this->receipt($this->originalDate);
 	}
 
 	public function __get($property) {

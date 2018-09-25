@@ -140,17 +140,6 @@ class UsersController extends Controller
         return response()->json(['Add to favorites!']);
     }
 
-    public function extendTrial(User $user)
-    {
-        $newDate = $user->trial_ends_at->addWeek();
-
-        $user->update(['trial_ends_at' => $newDate]);
-
-        \Mail::to($user->email)->send(new \App\Mail\PianoLit\TrialExtendedEmail($user));
-
-        return redirect()->back()->with('success', "The trial has been extended to {$newDate->toFormattedDateString()}");
-    }
-
     /**
      * Update the specified resource in storage.
      *

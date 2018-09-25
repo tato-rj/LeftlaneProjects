@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('created', function ($model) {
             return auth()->guard('pianolit-admin')->user()->id == $model->creator_id || auth()->guard('pianolit-admin')->user()->role == 'manager';
         });
+
+        Blade::if('env', function ($environment) {
+            return app()->environment($environment);
+        });
     }
 
     /**
