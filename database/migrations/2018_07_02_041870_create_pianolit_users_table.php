@@ -19,10 +19,10 @@ class CreatePianolitUsersTable extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
 
-            $table->enum('age_range', ['under 13', '13 to 18', '18 to 25', '25 to 35', '35 to 45', '45 and up'])->nullable();
-            $table->enum('experience', ['none', 'little', 'a lot'])->nullable();
+            $table->string('age_range')->nullable();
+            $table->string('experience')->nullable();
             $table->unsignedInteger('preferred_piece_id')->nullable();
-            $table->enum('occupation', ['student', 'teacher', 'music lover'])->nullable();
+            $table->string('occupation')->nullable();
             
             $table->string('locale')->default('en_US');
             $table->string('password');

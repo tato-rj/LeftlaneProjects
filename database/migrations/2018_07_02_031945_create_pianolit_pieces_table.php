@@ -17,12 +17,12 @@ class CreatePianolitPiecesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('nickname')->nullable();
-            $table->enum('catalogue_name', catalogues())->nullable();
+            $table->string('catalogue_name')->nullable();
             $table->string('catalogue_number')->nullable();
             $table->string('collection_name')->nullable();
             $table->string('collection_number')->nullable();
             $table->string('movement_number')->nullable();
-            $table->enum('key', keys());
+            $table->string('key');
             $table->json('tips')->nullable();
             $table->text('curiosity')->nullable();
             $table->string('audio_path')->nullable();
