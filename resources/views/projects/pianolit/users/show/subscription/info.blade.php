@@ -1,16 +1,24 @@
-<div class="col-6">
+<div class="col-8">
 	<table class="table table-striped table-borderless">
 	  <tbody>
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Subscription ID', 'value' => $user->subscription->original_transaction_id])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Last updated on', 'value' => $user->subscription->updated_at->toDayDateTimeString()])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Latest event', 'value' => ucfirst(str_replace('_', ' ', $user->subscription->notification_type))])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Environment', 'value' => $user->subscription->environment ?? '-'])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration intent', 'value' => $user->subscription->expiration_intent_text ?? '-'])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Cancellation date', 'value' => $user->subscription->cancellation_date ?? '-'])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Subscription ID', 'value' => $user->subscription->original_transaction_id])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Last updated on', 'value' => $user->subscription->updated_at->toDayDateTimeString()])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Latest event', 'value' => ucfirst(str_replace('_', ' ', $user->subscription->notification_type))])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Environment', 'value' => $user->subscription->environment ?? '-'])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Expiration intent', 'value' => $user->subscription->expiration_intent_text ?? '-'])
+		@include('projects/pianolit/users/show/list-item', 
+			['title' => 'Cancellation date', 'value' => $user->subscription->cancellation_date 
+				? \Carbon\Carbon::parse($user->subscription->cancellation_date)->toDayDateTimeString() 
+				: '-'])
 	  </tbody>
 	</table>
 </div>
-<div class="col-6">
+<div class="col-4">
 	<div class="card">
 		<div class="card-header bg-light" id="headingOne">
 			<div>

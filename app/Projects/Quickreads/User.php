@@ -21,10 +21,6 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    // protected $withCount = ['stories'];
-
-    // protected $with = ['comments', 'ratings', 'stories'];
-
     public function getRouteKeyName()
     {
         return 'slug';

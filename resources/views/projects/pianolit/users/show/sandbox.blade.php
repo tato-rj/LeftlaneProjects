@@ -20,7 +20,7 @@
 
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
       <form method="POST" action="{{route('piano-lit.api.subscription.update')}}">
-        @include('projects/pianolit/users/show/sandbox/fields', ['type' => 'INITIAL_BUY'])
+        @include('projects/pianolit/users/show/sandbox/fields', ['event' => 'INITIAL_BUY', 'successful' => true])
         <div class="bg-pastel p-4 rounded cursor-pointer sandbox-button">
           <p class="mb-2">
             <strong><i class="fas fa-cart-arrow-down mr-2"></i>Initial Buy</strong>
@@ -32,19 +32,31 @@
 
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
       <form method="POST" action="{{route('piano-lit.api.subscription.update')}}">
-        @include('projects/pianolit/users/show/sandbox/fields', ['type' => 'RENEWAL'])
+        @include('projects/pianolit/users/show/sandbox/fields', ['event' => 'RENEWAL', 'successful' => true])
         <div class="bg-intermediate p-4 rounded cursor-pointer sandbox-button">
           <p class="mb-2">
-            <strong><i class="fas fa-exchange-alt mr-2"></i>Renewal</strong>
+            <strong><i class="fas fa-exchange-alt mr-2"></i>Successful Renewal</strong>
           </p>
-          <span><small>Simulate a successful renewal</small></span>
+          <span><small>Simulate a subscription renewal</small></span>
         </div>
       </form>
     </div>
 
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
       <form method="POST" action="{{route('piano-lit.api.subscription.update')}}">
-        @include('projects/pianolit/users/show/sandbox/fields', ['type' => 'DID_CHANGE_RENEWAL_PREF'])
+        @include('projects/pianolit/users/show/sandbox/fields', ['event' => 'RENEWAL', 'successful' => false])
+        <div class="bg-beginner p-4 rounded cursor-pointer sandbox-button">
+          <p class="mb-2">
+            <strong><i class="fas fa-calendar-times mr-2"></i>Failed Renewal</strong>
+          </p>
+          <span><small>Simulate a cancelled subscription when renewal has failed</small></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
+      <form method="POST" action="{{route('piano-lit.api.subscription.update')}}">
+        @include('projects/pianolit/users/show/sandbox/fields', ['event' => 'DID_CHANGE_RENEWAL_PREF', 'successful' => true])
         <div class="bg-elementary p-4 rounded cursor-pointer sandbox-button">
           <p class="mb-2">
             <strong><i class="fas fa-check-square mr-2"></i>Renewal Preference</strong>
@@ -56,7 +68,7 @@
 
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
       <form method="POST" action="{{route('piano-lit.api.subscription.update')}}">
-        @include('projects/pianolit/users/show/sandbox/fields', ['type' => 'CANCEL'])
+        @include('projects/pianolit/users/show/sandbox/fields', ['event' => 'CANCEL', 'successful' => true])
         <div class="bg-advanced p-4 rounded cursor-pointer sandbox-button">
           <p class="mb-2">
             <strong><i class="fas fa-trash-alt mr-2"></i>Cancel</strong>

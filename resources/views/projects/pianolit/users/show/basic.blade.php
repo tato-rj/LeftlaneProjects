@@ -28,11 +28,13 @@
           @elseif($user->status() == 'expired')
             <span class="text-muted">Trial expired</span>
           @elseif($user->status() == 'active')
-            <span class="text-success">Active
-              @if($user->subscription->expires_at)
+            @if($user->subscription->renews_at)
+            <span class="text-success">Active</span>
+            @elseif($user->subscription->expires_at)
+            <span class="text-danger">Active
               <strong>(set to expire on {{$user->subscription->expires_at->toFormattedDateString()}})</strong>
-              @endif
-            </span>
+            </span>            
+            @endif
           @elseif($user->status() == 'pending')
             <span class="text-warning">Active, but pending Apple's confirmation</span>
           @elseif($user->status() == 'inactive')

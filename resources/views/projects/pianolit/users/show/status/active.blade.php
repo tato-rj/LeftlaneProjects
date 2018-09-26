@@ -8,7 +8,7 @@
 
 	@elseif($user->subscription->expires_at)
 
-		<div class="p-3 alert alert-warning" role="alert"><i class="fas fa-check-circle mr-2"></i>
+		<div class="p-3 alert alert-danger" role="alert"><i class="fas fa-check-circle mr-2"></i>
 			{{$user->first_name}}'s subscription is active, but the auto renewal is off. 
 			It is se to expire in {{$user->subscription->expires_at->diffForHumans()}} on <strong>{{$user->subscription->expires_at->toFormattedDateString()}}</strong>.
 		</div>

@@ -2,7 +2,7 @@
 	@if($user->subscription->cancellation_date)
 
 	<div class="p-3 alert alert-danger" role="alert"><i class="fas fa-ban mr-2"></i>
-		{{$user->first_name}} has cancelled the subscription on <strong>{{$user->subscription->cancellation_date->toFormattedDateString()}}</strong>.
+		{{$user->first_name}}'s subscription was cancelled on <strong>{{$user->subscription->cancellation_date->toFormattedDateString()}}</strong>.
 	</div>
 
 	@else

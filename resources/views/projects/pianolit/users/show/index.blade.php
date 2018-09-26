@@ -27,11 +27,11 @@
       <li class="nav-item">
         <a class="nav-link {{request('section') == 'manage' ? 'active show' : null}}" name="manage" id="manage-tab" data-toggle="tab" href="#manage" role="tab" aria-controls="manage" aria-selected="false">Manage</a>
       </li>
-      @env('local')
+      @if(app()->environment() == 'local')
       <li class="nav-item">
         <a class="nav-link {{request('section') == 'sandbox' ? 'active show' : null}}" name="sandbox" id="sandbox-tab" data-toggle="tab" href="#sandbox" role="tab" aria-controls="sandbox" aria-selected="false">Sandbox</a>
       </li>
-      @endenv
+      @endif
     </ul>
 
     <div class="tab-content">
@@ -43,9 +43,9 @@
 
       @include('projects/pianolit/users/show/manage')
 
-      @env('local')
+      @if(app()->environment() == 'local')
       @include('projects/pianolit/users/show/sandbox')
-      @endenv
+      @endif
   </div>
   </div>
 </div>

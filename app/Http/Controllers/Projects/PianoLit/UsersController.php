@@ -161,6 +161,7 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         $user->favorites()->detach();
+        $user->subscription()->delete();
         $user->delete();
 
         return redirect(route('piano-lit.users.index'))->with('success', "The user has been successfully removed!");
