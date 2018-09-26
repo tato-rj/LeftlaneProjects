@@ -76,20 +76,25 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	Route::post('/tour', 'Projects\PianoLit\ApiController@tour')->name('tour');
 	Route::get('/discover', 'Projects\PianoLit\ApiController@discover')->name('discover');
 
-	Route::get('/users', 'Projects\PianoLit\ApiController@users')->name('users');
-	Route::get('/users/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
-	Route::post('/users', 'Projects\PianoLit\UsersController@store')->name('users.store');
+	Route::prefix('/users')->group(function() {
+		Route::get('', 'Projects\PianoLit\ApiController@users')->name('users');
+		Route::get('/{user}', 'Projects\PianoLit\ApiController@user')->name('user');
+		Route::post('', 'Projects\PianoLit\UsersController@store')->name('users.store');
 
-	Route::post('/users/login', 'Projects\PianoLit\UsersController@appLogin')->name('app-login');
-	
-	Route::post('/users/set-favorites', 'Projects\PianoLit\UsersController@setFavorite')->name('set-favorites');
-	Route::post('/users/get-favorites', 'Projects\PianoLit\ApiController@getFavorites')->name('get-favorites');
-	
-	Route::post('/users/get-suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
+		Route::post('/login', 'Projects\PianoLit\UsersController@appLogin')->name('app-login');
+		
+		Route::post('/set-favorites', 'Projects\PianoLit\UsersController@setFavorite')->name('set-favorites');
+		Route::post('/get-favorites', 'Projects\PianoLit\ApiController@getFavorites')->name('get-favorites');
+		
+		Route::post('/get-suggestions', 'Projects\PianoLit\ApiController@suggestions')->name('suggestions');
 
-	Route::post('/users/subscription', 'Projects\PianoLit\SubscriptionsController@create')->name('subscription.create');
-	Route::get('/users/subscription/status', 'Projects\PianoLit\SubscriptionsController@status')->name('subscription.status');
-	Route::post('/users/subscription/update', 'Projects\PianoLit\SubscriptionsController@update')->name('subscription.update');
+		Route::prefix('/subscription')->name('subscription.')->group(function() {
+			Route::post('', 'Projects\PianoLit\SubscriptionsController@create')->name('create');
+			Route::get('/status', 'Projects\PianoLit\SubscriptionsController@status')->name('status');
+			Route::post('/history', 'Projects\PianoLit\SubscriptionsController@history')->name('history');
+			Route::post('/update', 'Projects\PianoLit\SubscriptionsController@update')->name('update');
+		});
+	});
 
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
 	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');

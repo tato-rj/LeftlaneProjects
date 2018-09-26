@@ -24,10 +24,10 @@ class CreatePianoLitSubscriptionsTable extends Migration
             $table->string('environment')->nullable();
             $table->string('auto_renew_product_id')->nullable();
             $table->string('notification_type')->nullable();
-            $table->string('auto_renew_status')->nullable();
+            $table->boolean('auto_renew_status')->nullable();
             $table->string('auto_renew_adam_id')->nullable();
             $table->json('latest_receipt_info')->nullable();
-            $table->string('expiration_intent')->nullable();
+            $table->tinyInteger('expiration_intent')->nullable();
             $table->timestamp('cancellation_date')->nullable();
             $table->string('web_order_line_item_id')->nullable();
 

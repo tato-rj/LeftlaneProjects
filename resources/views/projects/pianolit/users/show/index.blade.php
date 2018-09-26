@@ -108,4 +108,25 @@ $('.sandbox-button').on('click', function() {
   $(this).closest('form').submit();
 });
 </script>
+
+<script type="text/javascript">
+$('#subscription-history').on('shown.bs.modal', function (e) {
+  $user_id = $(this).attr('data-user_id');
+  $url = $(this).attr('data-url');
+  $loading = $(this).find('#history-loading');
+  $container = $(this).find('#history-data');
+
+  $.post($url, {user_id: $user_id},
+  function(data, status){
+    console.log(data);
+    $loading.hide();
+    $container.html(data).fadeIn();
+  });
+});
+
+$('#subscription-history').on('hidden.bs.modal', function (e) {
+  $(this).find('#history-data').html('').hide();
+  $(this).find('#history-loading').show();
+});
+</script>
 @endsection

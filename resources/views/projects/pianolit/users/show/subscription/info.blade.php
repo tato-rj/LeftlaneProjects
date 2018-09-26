@@ -3,37 +3,34 @@
 	  <tbody>
 		@include('projects/pianolit/users/show/list-item', ['title' => 'Subscription ID', 'value' => $user->subscription->original_transaction_id])
 		@include('projects/pianolit/users/show/list-item', ['title' => 'Last updated on', 'value' => $user->subscription->updated_at->toDayDateTimeString()])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Latest event', 'value' => ucfirst(str_replace('_', ' ', $user->subscription->notification_type))])
 		@include('projects/pianolit/users/show/list-item', ['title' => 'Environment', 'value' => $user->subscription->environment ?? '-'])
-		@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration intent', 'value' => $user->subscription->expiration_intent ?? '-'])
+		@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration intent', 'value' => $user->subscription->expiration_intent_text ?? '-'])
 		@include('projects/pianolit/users/show/list-item', ['title' => 'Cancellation date', 'value' => $user->subscription->cancellation_date ?? '-'])
 	  </tbody>
 	</table>
 </div>
 <div class="col-6">
-	<div class="accordion mb-4" id="subscription-for-{{$user->id}}">
-
-		<div class="card">
-			<div class="card-header bg-pastel" id="headingOne">
-				<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt">
-					<strong><i class="fas fa-file-alt mr-2"></i>Latest Receipt</strong>
-				</div>
-			</div>
-
-			<div id="receipt" class="collapse" aria-labelledby="headingOne" data-parent="#subscription-for-{{$user->id}}">
-				<div class="card-body" style="background-color: rgba(0,0,0,0.01)">
-					<table class="table table-hover table-sm table-borderless m-0">
-						<tbody>
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Plan', 'value' => ucfirst($user->subscription->latest_receipt_info->product_id)])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase ID', 'value' => $user->subscription->latest_receipt_info->web_order_line_item_id])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->purchase_date)->toFormattedDateString()])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->expires_date)->toFormattedDateString()])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Auto-renew Status', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'On' : 'Off'])
-							@include('projects/pianolit/users/show/list-item', ['title' => 'Price Consent', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'Agree' : 'Disagree'])
-						</tbody>
-					</table>
-				</div>
+	<div class="card">
+		<div class="card-header bg-light" id="headingOne">
+			<div>
+				<strong><i class="fas fa-file-alt mr-2"></i>Latest Receipt</strong>
 			</div>
 		</div>
+
+			<div class="card-body">
+				<table class="table table-sm table-borderless m-0">
+					<tbody>
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Plan', 'value' => ucfirst($user->subscription->latest_receipt_info->product_id)])
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase ID', 'value' => $user->subscription->latest_receipt_info->web_order_line_item_id])
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->purchase_date)->toFormattedDateString()])
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Expiration Date', 'value' => \Carbon\Carbon::parse($user->subscription->latest_receipt_info->expires_date)->toFormattedDateString()])
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Auto-renew Status', 'value' => $user->subscription->auto_renew_status ? 'On' : 'Off'])
+						@include('projects/pianolit/users/show/list-item', ['title' => 'Price Consent', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'Agree' : 'Disagree'])
+					</tbody>
+				</table>
+			</div>
+
 	</div>
 
 	<div class="text-right">

@@ -22,21 +22,27 @@
       </div>
       <div>
         <label class="text-brand m-0"><small>Status</small></label>
-        @if($user->is_active)
-        <p class="text-success">Active</p>
-        @else
         <p>
           @if($user->status() == 'trial')
             <span class="text-warning">Trial ends in {{$user->trial_ends_at->diffForHumans()}} ({{$user->trial_ends_at->toFormattedDateString()}})</span>
           @elseif($user->status() == 'expired')
             <span class="text-muted">Trial expired</span>
           @elseif($user->status() == 'active')
-            <span class="text-success">Active</span>
+            <span class="text-success">Active
+              @if($user->subscription->expires_at)
+              <strong>(set to expire on {{$user->subscription->expires_at->toFormattedDateString()}})</strong>
+              @endif
+            </span>
+          @elseif($user->status() == 'pending')
+            <span class="text-warning">Active, but pending Apple's confirmation</span>
           @elseif($user->status() == 'inactive')
+            @if($user->subscription->cancellation_date)
+            <span class="text-danger">Subscription was cancelled</span>
+            @else
             <span class="text-danger">Subscription expired</span>
+            @endif
           @endif
         </p>
-        @endif
       </div>
     </div>
   </div>

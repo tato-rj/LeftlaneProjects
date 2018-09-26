@@ -35,7 +35,7 @@ trait FakeReceipt
 
 	public function purchase($date)
 	{
-		$oneMonthAfter = $date->copy()->addMonth();
+		$expirationDate = $date->copy()->addMonth();
 
 		return [
 			"quantity" => 1,
@@ -47,9 +47,9 @@ trait FakeReceipt
 			"original_purchase_date" => $this->receipt['receipt_creation_date'],
 			"original_purchase_date_pst" => $this->receipt['receipt_creation_date_pst'],
 			"original_purchase_date_ms" => $this->receipt['receipt_creation_date_ms'],
-			"expires_date" => $oneMonthAfter->setTimezone('Etc/GMT')->format($this->format),
-			"expires_date_pst" => $oneMonthAfter->setTimezone('America/Los_Angeles')->format($this->format),
-			"expires_date_ms" => $oneMonthAfter->setTimezone('Etc/GMT')->timestamp,
+			"expires_date" => $expirationDate->setTimezone('Etc/GMT')->format($this->format),
+			"expires_date_pst" => $expirationDate->setTimezone('America/Los_Angeles')->format($this->format),
+			"expires_date_ms" => $expirationDate->setTimezone('Etc/GMT')->timestamp,
 			"expiration_intent" => null,
 			"is_in_billing_retry_period" => null,
 			"web_order_line_item_id" => $this->randomNumber(16),

@@ -14,10 +14,13 @@ trait HasSubscription
 
         $record = $this->subscription()->create([
             'original_transaction_id' => $receipt['receipt']['in_app'][0]['original_transaction_id'],
+            'notification_type' => 'pending',
             'latest_receipt' => $request->receipt_data,
             'latest_receipt_info' => json_encode($receipt['receipt']['in_app'][0]),
             'password' => $request->password
         ]);
+
+        $this->update(['trial_ends_at' => null]);
 
         return $record;
     }
@@ -30,7 +33,7 @@ trait HasSubscription
         if (! $this->subscription()->exists() && $this->trial_ends_at->lt(now()))
             return 'expired';
 
-        if (! $this->subscription->environment)
+        if ($this->subscription->notification_type == 'pending')
             return 'pending';
 
         return $this->subscription->expired() || $this->subscription->cancelled() ? 'inactive' : 'active';

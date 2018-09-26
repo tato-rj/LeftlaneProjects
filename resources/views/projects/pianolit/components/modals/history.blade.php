@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="subscription-history" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" data-user_id="{{$user->id}}" data-url="{{route('piano-lit.api.subscription.history')}}" id="subscription-history" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -9,9 +9,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="p-5 text-center">
+        <div class="p-5 text-center" id="history-loading">
           <i class="fab fa-apple fa-2x mb-2"></i>
           <p class="m-0 text-muted">Hang on, we're calling Apple...</p>
+        </div>
+        <div id="history-data" style="display: none;">
+          
         </div>
       </div>
     </div>

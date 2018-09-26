@@ -1,5 +1,19 @@
 <div class="col-12 p-3">
-	<div class="p-3 alert alert-success" role="alert"><i class="fas fa-check-circle mr-2"></i>{{$user->first_name}}'s susbcribed on {{$user->subscription->receipt_creation_date->toFormattedDateString()}}! The next auto-renewal date is in {{$user->subscription->renews_at->diffForHumans()}} on <strong>{{$user->subscription->renews_at->toFormattedDateString()}}</strong>.</div>
+	@if($user->subscription->renews_at)
+
+		<div class="p-3 alert alert-success" role="alert"><i class="fas fa-check-circle mr-2"></i>
+			{{$user->first_name}}'s susbcribed on {{$user->subscription->created_at->toFormattedDateString()}}! 
+			The next auto-renewal date is in {{$user->subscription->renews_at->diffForHumans()}} on <strong>{{$user->subscription->renews_at->toFormattedDateString()}}</strong>.
+		</div>
+
+	@elseif($user->subscription->expires_at)
+
+		<div class="p-3 alert alert-warning" role="alert"><i class="fas fa-check-circle mr-2"></i>
+			{{$user->first_name}}'s subscription is active, but the auto renewal is off. 
+			It is se to expire in {{$user->subscription->expires_at->diffForHumans()}} on <strong>{{$user->subscription->expires_at->toFormattedDateString()}}</strong>.
+		</div>
+		
+	@endif
 </div>
 
 @include('projects/pianolit/users/show/subscription/info')

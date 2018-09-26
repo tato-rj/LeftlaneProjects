@@ -1,11 +1,11 @@
 <div class="tab-pane fade {{request('section') == 'manage' ? 'show active' : null}} m-3" id="manage">
   <div class="row">
-    @if($user->status() == 'trial')
+    @if(in_array($user->status(), ['trial', 'expired']))
     <div class="col-lg-4 col-md-4 col-sm-8 col-8 p-3">
       <a href="" data-toggle="modal" data-target="#trial-modal" class="link-none">
         <div class="bg-pastel p-4 rounded">
           <p class="mb-2">
-            <strong><i class="fas fa-calendar-alt mr-2"></i>Extend Trial</strong>
+            <strong><i class="fas fa-calendar-alt mr-2"></i>{{$user->status() == 'trial' ? 'Extend' : 'Restart'}} Trial</strong>
           </p>
           <span><small>Add +1 week of free trial</small></span>
         </div>
