@@ -35,14 +35,16 @@ class SubscriptionsController extends Controller
      */
     public function update(Request $request)
     {
-        $subscription = Subscription::locate($request->original_transaction_id);
-
-        if ($subscription->exists()) $subscription->handle($request);
+        $request = app()->environment() == 'testing' ? $request[0] : $request;
+        $subscription = Subscription::locate($request->latest_receipt_info->original_transaction_id);
+        
+        if ($subscription->exists()) 
+            $resposne = $subscription->handle($request);
 
         if (app()->environment() == 'local')
             return redirect()->back()->with('success', "The event notification was posted to {$subscription->user->first_name}'s subscription.");
 
-        return response(200);
+        return  response(200);
     }
 
     /**
@@ -69,11 +71,13 @@ class SubscriptionsController extends Controller
     public function history(Request $request)
     {
         $user = User::find($request->user_id);
-        $request->receipt_data = $user->subscription->latest_receipt;
-        $request->password = $user->subscription->password;
+        $request['receipt_data'] = $user->subscription->latest_receipt;
+        $request['password'] = $user->subscription->password;
 
-        $history = $user->callApple($request)['receipt'];
-        
+        $json = $user->callApple($request);
+
+        $history = json_decode($json);
+
         return view('projects/pianolit/users/show/subscription/history', compact('history'))->render();
     }
 

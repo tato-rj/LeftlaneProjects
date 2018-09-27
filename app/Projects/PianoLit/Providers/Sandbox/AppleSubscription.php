@@ -29,6 +29,6 @@ class AppleSubscription extends Sandbox
 		$response['status'] = 0;
 		$response['receipt'] = $this->receipt;
 		
-		return $response;
+		return json_encode($response);
 	}
 }

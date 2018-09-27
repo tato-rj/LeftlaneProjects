@@ -33,7 +33,9 @@ class Subscription extends PianoLit
 
 	public function expired()
 	{
-		return $this->latest_receipt_info->expires_date_ms < now()->timestamp;
+		$date = empty($this->latest_receipt_info->expires_date_ms) ? $this->latest_receipt_info->expires_date : $this->latest_receipt_info->expires_date_ms;
+
+		return $date < now()->timestamp;
 	}
 
 	public function cancelled()
@@ -48,12 +50,16 @@ class Subscription extends PianoLit
 
 	public function getRenewsAtAttribute()
 	{
-		return $this->auto_renew_status ? Carbon::parse($this->latest_receipt_info->expires_date) : null;
+		$date = empty($this->latest_receipt_info->expires_date_formatted) ? $this->latest_receipt_info->expires_date : $this->latest_receipt_info->expires_date_formatted;
+
+		return $this->auto_renew_status ? Carbon::parse($date) : null;
 	}
 
 	public function getExpiresAtAttribute()
 	{
-		return ! $this->auto_renew_status ? Carbon::parse($this->latest_receipt_info->expires_date) : null;
+		$date = empty($this->latest_receipt_info->expires_date_formatted) ? $this->latest_receipt_info->expires_date : $this->latest_receipt_info->expires_date_formatted;
+
+		return ! $this->auto_renew_status ? Carbon::parse($date) : null;
 	}
 
 	public function scopeLocate($query, $subscriptionId)
@@ -63,40 +69,40 @@ class Subscription extends PianoLit
 
 	public function handle($request)
 	{
-		$this->update([
+		return $this->update([
 			'environment' => $request->environment,
 
 			'notification_type' => strtolower($request->notification_type),
 			
-			'latest_receipt' => ! is_null($request->latest_receipt) 
+			'latest_receipt' => ! empty($request->latest_receipt) 
 				? $request->latest_receipt 
 				: $request->latest_expired_receipt,
 			
-			'latest_receipt_info' => ! is_null($request->latest_receipt_info) 
-				? $request->latest_receipt_info 
-				: $request->latest_expired_receipt_info,
+			'latest_receipt_info' => ! empty($request->latest_receipt_info) 
+				? json_encode($request->latest_receipt_info) 
+				: json_encode($request->latest_expired_receipt_info),
 			
-			'auto_renew_status' => ! is_null($request->auto_renew_status) 
+			'auto_renew_status' => ! empty($request->auto_renew_status) 
 				? $request->auto_renew_status 
 				: $this->auto_renew_status,
 			
-			'auto_renew_adam_id' => ! is_null($request->auto_renew_adam_id) 
+			'auto_renew_adam_id' => ! empty($request->auto_renew_adam_id) 
 				? $request->auto_renew_adam_id 
 				: $this->auto_renew_adam_id,
 			
-			'auto_renew_product_id' => ! is_null($request->auto_renew_product_id) 
+			'auto_renew_product_id' => ! empty($request->auto_renew_product_id) 
 				? $request->auto_renew_product_id 
 				: $this->auto_renew_product_id,
 			
-			'expiration_intent' => ! is_null($request->expiration_intent) 
+			'expiration_intent' => ! empty($request->expiration_intent) 
 				? $request->expiration_intent 
 				: $this->expiration_intent,
 			
-			'cancellation_date' => ! is_null($request->cancellation_date) 
+			'cancellation_date' => ! empty($request->cancellation_date) 
 				? Carbon::parse($request->cancellation_date) 
 				: null,
 			
-			'web_order_line_item_id' => ! is_null($request->web_order_line_item_id) 
+			'web_order_line_item_id' => ! empty($request->web_order_line_item_id) 
 				? $request->web_order_line_item_id 
 				: $this->web_order_line_item_id,
 		]);

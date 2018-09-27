@@ -114,15 +114,7 @@ class SubscriptionTest extends PianoLitTest
 		$this->assertEquals('pending', $user->status());
 
 		$this->post(route('piano-lit.api.subscription.update'), [
-			'notification_type' => 'initial_buy',
-			'original_transaction_id' => $user->subscription->original_transaction_id,
-			'environment' => 'Sandbox',
-			'latest_receipt' => $user->subscription->latest_receipt,
-			'latest_receipt_info' => json_encode($user->subscription->latest_receipt_info),
-			'auto_renew_status' => 1,
-			'auto_renew_adam_id' => 'appleId',
-			'auto_renew_product_id' => 'productId',
-			'expiration_intent' => null
+			$subscription->notification($event = 'initial_buy')
 		]);
 
 		$this->assertEquals('active', $user->fresh()->status());
@@ -140,15 +132,7 @@ class SubscriptionTest extends PianoLitTest
 		$this->assertEquals('pending', $user->status());
 
 		$this->post(route('piano-lit.api.subscription.update'), [
-			'notification_type' => 'renewal',
-			'original_transaction_id' => $user->subscription->original_transaction_id,
-			'environment' => 'Sandbox',
-			'latest_receipt' => $user->subscription->latest_receipt,
-			'latest_receipt_info' => json_encode($user->subscription->latest_receipt_info),
-			'auto_renew_status' => 1,
-			'auto_renew_adam_id' => 'appleId',
-			'auto_renew_product_id' => 'productId',
-			'expiration_intent' => null
+			$subscription->notification($event = 'renewal')
 		]);
 
 		$this->assertEquals('active', $user->fresh()->status());
@@ -171,19 +155,7 @@ class SubscriptionTest extends PianoLitTest
 		$expiredReceipt->expires_date_ms = now()->timestamp;
 
 		$this->post(route('piano-lit.api.subscription.update'), [
-			'notification_type' => 'cancel',
-			'cancellation_date' => now()->format('Y-m-d h:i:s e'),
-			'web_order_line_item_id' => '1000000040495394',
-			'original_transaction_id' => $user->subscription->original_transaction_id,
-			'environment' => 'Sandbox',
-			'latest_receipt' => $user->subscription->latest_receipt,
-			'latest_receipt_info' => json_encode($user->subscription->latest_receipt_info),
-			'latest_expired_receipt' => $user->subscription->latest_receipt,
-			'latest_expired_receipt_info' => $expiredReceipt,
-			'auto_renew_status' => 0,
-			'auto_renew_adam_id' => 'appleId',
-			'auto_renew_product_id' => 'productId',
-			'expiration_intent' => '0'
+			$subscription->notification($event = 'cancel')
 		]);
 
 		$this->assertEquals('inactive', $user->fresh()->status());
@@ -201,14 +173,7 @@ class SubscriptionTest extends PianoLitTest
 		$this->assertEquals('pending', $user->status());
 
 		$this->post(route('piano-lit.api.subscription.update'), [
-			'notification_type' => 'cancel',
-			'original_transaction_id' => $user->subscription->original_transaction_id,
-			'environment' => 'Sandbox',
-			'latest_receipt' => $user->subscription->latest_receipt,
-			'latest_receipt_info' => json_encode($user->subscription->latest_receipt_info),
-			'auto_renew_status' => 0,
-			'auto_renew_adam_id' => 'appleId',
-			'auto_renew_product_id' => 'productId',
+			$subscription->notification($event = 'did_change_renewal_pref')
 		]);
 
 		$this->assertEquals('active', $user->fresh()->status());

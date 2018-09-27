@@ -27,7 +27,7 @@
 		</div>
 
 			<div class="card-body">
-				<table class="table table-sm table-borderless m-0">
+{{-- 				<table class="table table-sm table-borderless m-0">
 					<tbody>
 						@include('projects/pianolit/users/show/list-item', ['title' => 'Plan', 'value' => ucfirst($user->subscription->latest_receipt_info->product_id)])
 						@include('projects/pianolit/users/show/list-item', ['title' => 'Purchase ID', 'value' => $user->subscription->latest_receipt_info->web_order_line_item_id])
@@ -36,7 +36,7 @@
 						@include('projects/pianolit/users/show/list-item', ['title' => 'Auto-renew Status', 'value' => $user->subscription->auto_renew_status ? 'On' : 'Off'])
 						@include('projects/pianolit/users/show/list-item', ['title' => 'Price Consent', 'value' => $user->subscription->latest_receipt_info->auto_renew_status ? 'Agree' : 'Disagree'])
 					</tbody>
-				</table>
+				</table> --}}
 			</div>
 
 	</div>

@@ -10,13 +10,15 @@ trait HasSubscription
 {
     public function subscribe(Request $request)
     {
-        $receipt = $this->callApple($request);
+        $json = $this->callApple($request);
+
+        $response = json_decode($json);
 
         $record = $this->subscription()->create([
-            'original_transaction_id' => $receipt['receipt']['in_app'][0]['original_transaction_id'],
+            'original_transaction_id' => $response->receipt->in_app[0]->original_transaction_id,
             'notification_type' => 'pending',
             'latest_receipt' => $request->receipt_data,
-            'latest_receipt_info' => json_encode($receipt['receipt']['in_app'][0]),
+            'latest_receipt_info' => json_encode($response->receipt->in_app[0]),
             'password' => $request->password
         ]);
 
@@ -51,8 +53,10 @@ trait HasSubscription
             'exclude-old-transactions' => false
         ]);
 
-        return app()->environment() != 'production' ? 
-                (new AppleSubscription)->generate()
-                : $client->post(config('services.apple.address'), ['body' => $payload]); 
+        $response = app()->environment() != 'production' 
+            ? (new AppleSubscription)->generate() 
+            : $client->post('https://sandbox.itunes.apple.com/verifyReceipt', ['body' => $payload])->getBody();
+
+        return $response;
     }
 }

@@ -10,7 +10,7 @@ abstract class Sandbox
 	public function __construct($date = null)
 	{
 		$this->originalDate = $date ?? now()->subDays(10);
-		$this->originalTransactionId = $this->randomNumber(16);
+		$this->originalTransactionId = '9568517712963430';
 		$this->receipt = $this->receipt($this->originalDate);
 	}
 
