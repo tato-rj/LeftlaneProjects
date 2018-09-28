@@ -8,9 +8,9 @@
         </button>
       </div>
       <div class="modal-body">
-        @if($user->status() == 'trial')
+        @if($user->getStatus() == 'trial')
         This will extend {{$user->first_name}}'s trial period to <strong>{{$user->trial_ends_at->addWeek()->toFormattedDateString()}}</strong>. {{$user->first_name}} will receive an email confirming this update.
-        @elseif($user->status() == 'expired')
+        @elseif($user->getStatus() == 'expired')
         This will restart {{$user->first_name}}'s trial period, setting it to expire on <strong>{{now()->addWeek()->toFormattedDateString()}}</strong>. {{$user->first_name}} will receive an email confirming this update.
         @endif
       </div>

@@ -10,16 +10,20 @@ trait HasSubscription
 {
     public function subscribe(Request $request)
     {
-        $json = $this->callApple($request);
+        $json = $this->callApple($request->receipt_data, $request->password);
 
         $response = json_decode($json);
 
+        $plan = $response->receipt->in_app[0]->product_id;
+
+        $due_date = $this->getDueDate($plan);
+
         $record = $this->subscription()->create([
-            'original_transaction_id' => $response->receipt->in_app[0]->original_transaction_id,
-            'notification_type' => 'pending',
+            'plan' => $plan,
             'latest_receipt' => $request->receipt_data,
             'latest_receipt_info' => json_encode($response->receipt->in_app[0]),
-            'password' => $request->password
+            'password' => $request->password,
+            'renews_at' => $due_date
         ]);
 
         $this->update(['trial_ends_at' => null]);
@@ -27,7 +31,12 @@ trait HasSubscription
         return $record;
     }
 
-    public function status()
+    public function getDueDate($plan)
+    {
+        return $plan == 'monthly' ? now()->addMonth() : now()->addYear();
+    }
+
+    public function getStatus($callApple = false)
     {
         if (! $this->subscription()->exists() && $this->trial_ends_at->gte(now()))
             return 'trial';
@@ -35,21 +44,37 @@ trait HasSubscription
         if (! $this->subscription()->exists() && $this->trial_ends_at->lt(now()))
             return 'expired';
 
-        if ($this->subscription->notification_type == 'pending')
-            return 'pending';
+        if (! $this->subscription->expired())
+            return 'active';
 
-        return $this->subscription->expired() || $this->subscription->cancelled() ? 'inactive' : 'active';
+        if (! $callApple)
+            return 'inactive';
+
+        $request = $this->callApple($this->subscription->receipt_data, $this->subscription->password);
+
+        $request = json_decode($request);
+
+        $latest_receipt = end($request->receipt->in_app);
+        
+        $is_valid = $latest_receipt->expires_date_ms >= now()->timestamp;
+
+        if (! $is_valid)
+            return 'inactive';
+
+        $this->subscription->reactivate($latest_receipt);
+
+        return 'active';
     }
 
-    public function callApple(Request $request)
+    public function callApple($receipt_data, $password)
     {
         $client = new Client([
             'headers' => ['Content-Type' => 'application/json']
         ]);
 
         $payload = json_encode([
-            'receipt-data' => $request->receipt_data,
-            'password' => $request->password,
+            'receipt-data' => $receipt_data,
+            'password' => $password,
             'exclude-old-transactions' => false
         ]);
 

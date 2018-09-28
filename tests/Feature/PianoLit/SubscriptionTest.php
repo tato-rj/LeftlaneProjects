@@ -37,11 +37,11 @@ class SubscriptionTest extends PianoLitTest
 			'trial_ends_at' => now()->subWeeks(3)
 		]);
 
-		$this->assertEquals('expired', $user->status());
+		$this->assertEquals('expired', $user->getStatus());
 
 		$this->post(route('piano-lit.users.update-trial', $user->id));
 
-		$this->assertEquals('trial', $user->fresh()->status());	 
+		$this->assertEquals('trial', $user->fresh()->getStatus());	 
 	}
 
 	/** @test */
@@ -53,13 +53,11 @@ class SubscriptionTest extends PianoLitTest
 
 		$this->assertFalse($user->subscription()->exists());
 
-		$this->post(route('piano-lit.api.subscription.create'), [
-			'user_id' => $user->id,
-			'receipt_data' => $subscription->withRequest()->receipt_data,
-			'password' => $subscription->withRequest()->password
-		]);
+		$this->postSubscription($user, $subscription);
 
 		$this->assertTrue($user->subscription()->exists());
+
+		$this->assertEquals('active', $user->getStatus());
 	}
 
 	/** @test */
@@ -71,39 +69,29 @@ class SubscriptionTest extends PianoLitTest
 
 		$user = create(User::class);
 
-		$this->post(route('piano-lit.api.subscription.create'), [
-			'user_id' => $user->id,
-			'receipt_data' => $subscription->withRequest()->receipt_data,
-			'password' => $subscription->withRequest()->password
-		]);
+		$this->postSubscription($user, $subscription);
 
-		$this->post(route('piano-lit.api.subscription.create'), [
-			'user_id' => $user->id,
-			'receipt_data' => $subscription->withRequest()->receipt_data,
-			'password' => $subscription->withRequest()->password
-		]);
+		$this->postSubscription($user, $subscription);
 
 		$this->assertEquals(1, Subscription::where('user_id', $user->id)->count());
 	}
 
 	/** @test */
-	public function a_users_status_is_set_to_pending_until_apples_notification_confirms_a_new_subscription()
+	public function the_app_can_check_the_status_of_a_subscription()
 	{
 		$subscription = new AppleSubscription;
 
 		$user = create(User::class);
 
-		$this->assertFalse($user->subscription()->exists());
-
-		$this->assertEquals('trial', $user->status());
-
 		$this->postSubscription($user, $subscription);
 
-		$this->assertEquals('pending', $user->status());
+		$status = $this->get(route('piano-lit.api.subscription.status', ['user_id' => $user->id]));
+
+		$this->assertTrue(json_decode($status->content()));
 	}
 
 	/** @test */
-	public function a_subscription_receives_notifications_on_initial_buy()
+	public function a_subscription_is_reactivated_if_the_due_date_has_passed_but_it_has_been_renewed()
 	{
 		$subscription = new AppleSubscription;
 
@@ -111,75 +99,10 @@ class SubscriptionTest extends PianoLitTest
 
 		$this->postSubscription($user, $subscription);
 
-		$this->assertEquals('pending', $user->status());
+		$user->subscription->update(['renews_at' => now()->subDay()]);
 
-		$this->post(route('piano-lit.api.subscription.update'), [
-			$subscription->notification($event = 'initial_buy')
-		]);
+		$this->get(route('piano-lit.api.subscription.status', ['user_id' => $user->id]));
 
-		$this->assertEquals('active', $user->fresh()->status());
-	}
-
-	/** @test */
-	public function a_subscription_receives_notifications_on_renewal_and_interactive_renewal()
-	{
-		$subscription = new AppleSubscription;
-
-		$user = create(User::class);
-
-		$this->postSubscription($user, $subscription);
-
-		$this->assertEquals('pending', $user->status());
-
-		$this->post(route('piano-lit.api.subscription.update'), [
-			$subscription->notification($event = 'renewal')
-		]);
-
-		$this->assertEquals('active', $user->fresh()->status());
-	}
-
-	/** @test */
-	public function a_subscription_receives_notifications_on_cancel()
-	{
-		$subscription = new AppleSubscription;
-
-		$user = create(User::class);
-
-		$this->postSubscription($user, $subscription);
-
-		$this->assertEquals('pending', $user->status());
-
-		$expiredReceipt = $user->subscription->latest_receipt_info;
-		$expiredReceipt->expires_date = now()->format('Y-m-d h:i:s e');
-		$expiredReceipt->expires_date_pst = now()->timezone('America/Los_Angeles')->format('Y-m-d h:i:s e');
-		$expiredReceipt->expires_date_ms = now()->timestamp;
-
-		$this->post(route('piano-lit.api.subscription.update'), [
-			$subscription->notification($event = 'cancel')
-		]);
-
-		$this->assertEquals('inactive', $user->fresh()->status());
-	}
-
-	/** @test */
-	public function a_subscription_receives_notifications_on_did_change_renewal_pref()
-	{
-		$subscription = new AppleSubscription;
-
-		$user = create(User::class);
-
-		$this->postSubscription($user, $subscription);
-
-		$this->assertEquals('pending', $user->status());
-
-		$this->post(route('piano-lit.api.subscription.update'), [
-			$subscription->notification($event = 'did_change_renewal_pref')
-		]);
-
-		$this->assertEquals('active', $user->fresh()->status());
-
-		$this->assertNull($user->subscription->fresh()->renews_at);
-
-		$this->assertNotNull($user->subscription->fresh()->expires_at);
+		$this->assertTrue(now()->lt($user->subscription->fresh()->renews_at));
 	}
 }

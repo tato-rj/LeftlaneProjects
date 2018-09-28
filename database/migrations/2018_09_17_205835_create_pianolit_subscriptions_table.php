@@ -16,21 +16,11 @@ class CreatePianoLitSubscriptionsTable extends Migration
         Schema::connection('pianolit')->create('subscriptions', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            // CREATED ON SERVER
-            $table->string('original_transaction_id')->index();
+            $table->string('plan');
             $table->text('latest_receipt');
             $table->string('password');
-            // UPDATED ON EVENT NOTIFICATION
-            $table->string('environment')->nullable();
-            $table->string('auto_renew_product_id')->nullable();
-            $table->string('notification_type')->nullable();
-            $table->boolean('auto_renew_status')->nullable();
-            $table->string('auto_renew_adam_id')->nullable();
-            $table->json('latest_receipt_info')->nullable();
-            $table->tinyInteger('expiration_intent')->nullable();
-            $table->timestamp('cancellation_date')->nullable();
-            $table->string('web_order_line_item_id')->nullable();
-
+            $table->json('latest_receipt_info');
+            $table->timestamp('renews_at')->nullable();
             $table->timestamps();
         });
     }

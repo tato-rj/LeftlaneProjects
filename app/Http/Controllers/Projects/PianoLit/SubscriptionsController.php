@@ -29,26 +29,7 @@ class SubscriptionsController extends Controller
     }
 
     /**
-     * Updates a susbcription from Apple's notification
-     * @param  Request $request
-     * @return status code       
-     */
-    public function update(Request $request)
-    {
-        $request = app()->environment() == 'testing' ? $request[0] : $request;
-        $subscription = Subscription::locate($request->latest_receipt_info->original_transaction_id);
-        
-        if ($subscription->exists()) 
-            $resposne = $subscription->handle($request);
-
-        if (app()->environment() == 'local')
-            return redirect()->back()->with('success', "The event notification was posted to {$subscription->user->first_name}'s subscription.");
-
-        return  response(200);
-    }
-
-    /**
-     * Quickly checks the status of a user (not connecting with Apple's server)
+     * Checks the status of a user
      * @return string
      */
     public function status()
@@ -58,9 +39,9 @@ class SubscriptionsController extends Controller
         if (! $user)
             return response()->json(false);
 
-        $status = $user->status();
+        $status = $user->getStatus($callApple = true);
 
-        return response()->json(! in_array($status, ['active', 'trial']));
+        return response()->json(in_array($status, ['active', 'trial']));
     }
 
     /**
@@ -71,12 +52,10 @@ class SubscriptionsController extends Controller
     public function history(Request $request)
     {
         $user = User::find($request->user_id);
-        $request['receipt_data'] = $user->subscription->latest_receipt;
-        $request['password'] = $user->subscription->password;
 
-        $json = $user->callApple($request);
+        $history = $user->callApple($user->subscription->latest_receipt, $user->subscription->password);
 
-        $history = json_decode($json);
+        $history = json_decode($history);
 
         return view('projects/pianolit/users/show/subscription/history', compact('history'))->render();
     }
