@@ -4,7 +4,7 @@
 	  	@if($field != 'in_app')
 	  	@include('projects/pianolit/users/show/list-item', [
 	  		'title' => ucfirst(str_replace('_', ' ', $field)), 
-	  		'value' => $value])
+	  		'value' => (strpos($value, 'GMT') !== false) ? \Carbon\Carbon::parse(stripcslashes($value))->timezone(config('app.timezone'))->format('M dS, Y \a\t h:i A') : $value])
 	  	@endif
   	@endforeach
   </tbody>
@@ -12,7 +12,7 @@
 
 <div class="accordion mb-4" id="subscription-history-receipts">
 
-{{-- 	@foreach($history->receipt->latest_receipt_info as $receipt)
+	@foreach($history->receipt->in_app as $receipt)
 	<div class="card">
 		<div class="card-header bg-pastel" id="receipt-{{$loop->iteration}}">
 			<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt-history-{{$loop->iteration}}">
@@ -27,12 +27,12 @@
 						@foreach($receipt as $field => $value)
 						  	@include('projects/pianolit/users/show/list-item', [
 						  		'title' => ucfirst(str_replace('_', ' ', $field)), 
-						  		'value' => $value])
+						  		'value' => (strpos($value, 'GMT') !== false) ? \Carbon\Carbon::parse(stripcslashes($value))->timezone(config('app.timezone'))->format('M dS, Y \a\t h:i A') : ucfirst($value)])
 						@endforeach
 					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
-	@endforeach --}}
+	@endforeach
 </div>

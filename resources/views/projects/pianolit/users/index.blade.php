@@ -10,10 +10,17 @@
 
     <div class="row">
       <div class="col-12 d-flex justify-content-between align-items-center">
-        <div>
-          <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#add-modal">
+        <div class="d-flex align-items-center">
+          <button type="button" class="btn btn-sm btn-default mr-3" data-toggle="modal" data-target="#add-modal">
             <i class="fas fa-plus mr-2"></i>Create a new user
           </button>
+    
+          <form method="POST" action="{{route('piano-lit.users.subscription.verify-all')}}">
+            {{csrf_field()}}
+            <input type="hidden" name="admin_id" value="{{auth()->guard('pianolit-admin')->user()->id}}">
+            <button class="btn btn-sm btn-success"><i class="fas fa-clipboard-check mr-2"></i>Validate all subscriptions</button>
+          </form>
+
         </div>
         <div>
           @include('projects/pianolit/components/filters', ['filters' => []])
@@ -40,10 +47,10 @@
 
             <div>
               @if($user->subscription()->exists())
-                @if($user->status() == 'pending')
-                  <div class="text-muted"><i>pending</i></div>
+                @if($user->subscription->expired())
+                <span class="text-muted"><i><small>validated {{$user->subscription->validated_at->diffForHumans()}}</small></i></span>
                 @else
-                  <div><i class="fas fa-credit-card"></i></div>
+                <div><i class="fas fa-credit-card"></i></div>
                 @endif
               @endif
             </div>

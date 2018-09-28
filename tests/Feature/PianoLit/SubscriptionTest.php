@@ -85,7 +85,7 @@ class SubscriptionTest extends PianoLitTest
 
 		$this->postSubscription($user, $subscription);
 
-		$status = $this->get(route('piano-lit.api.subscription.status', ['user_id' => $user->id]));
+		$status = $this->json('POST', route('piano-lit.api.subscription.status'), ['user_id' => $user->id]);
 
 		$this->assertTrue(json_decode($status->content()));
 	}
@@ -101,8 +101,29 @@ class SubscriptionTest extends PianoLitTest
 
 		$user->subscription->update(['renews_at' => now()->subDay()]);
 
-		$this->get(route('piano-lit.api.subscription.status', ['user_id' => $user->id]));
+		$this->json('POST', route('piano-lit.api.subscription.status'), ['user_id' => $user->id]);
 
 		$this->assertTrue(now()->lt($user->subscription->fresh()->renews_at));
+	}
+
+	/** @test */
+	public function an_admin_can_validate_the_status_of_a_subscription()
+	{
+		$subscription = new AppleSubscription;
+
+		$user = create(User::class);
+
+		$this->postSubscription($user, $subscription);
+
+		$user->subscription->update([
+			'validated_at' =>now()->subDay(),
+			'renews_at' => now()->subDay()
+		]);
+
+		$originalValidationDate = $user->subscription->validated_at;
+
+		$this->post(route('piano-lit.api.subscription.status'), ['user_id' => $user->id]);
+
+		$this->assertNotEquals($user->subscription->fresh()->validated_at, $originalValidationDate);
 	}
 }

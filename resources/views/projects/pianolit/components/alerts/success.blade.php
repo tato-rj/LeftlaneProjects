@@ -1,6 +1,4 @@
-@component('projects/pianolit/components/alerts/alert')
-	@slot('alert')success
-	@endslot
+@component('projects/pianolit/components/alerts/alert', ['alert' => 'success'])
 	@slot('message')
 		<strong class="mr-2">Success |  </strong>{{$message}}
 	@endslot

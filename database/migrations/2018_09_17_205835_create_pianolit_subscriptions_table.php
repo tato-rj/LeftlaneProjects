@@ -21,6 +21,7 @@ class CreatePianoLitSubscriptionsTable extends Migration
             $table->string('password');
             $table->json('latest_receipt_info');
             $table->timestamp('renews_at')->nullable();
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
         });
     }

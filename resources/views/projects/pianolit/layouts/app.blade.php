@@ -27,9 +27,13 @@
 
   @include('projects/pianolit/components/footer')
   @include('projects/pianolit/components/modals/logout')
-  {{-- Feedback Messages --}}
+
   @if($message = session('success'))
     @include('projects/pianolit/components/alerts/success')
+  @endif
+
+  @if($message = session('error'))
+    @include('projects/pianolit/components/alerts/error')
   @endif
 
   <script type="text/javascript" src="{{asset('js/app.js')}}"></script>

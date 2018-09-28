@@ -66,6 +66,9 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::post('', 'Projects\PianoLit\UsersController@store');
 		Route::post('/{user}/extend-trial', 'Projects\PianoLit\SubscriptionsController@updateTrial')->name('update-trial');
 		Route::delete('/{user}', 'Projects\PianoLit\UsersController@destroy');
+		Route::post('/subscription/verify', 'Projects\PianoLit\SubscriptionsController@verify')->name('subscription.verify');
+		Route::post('/subscription/verify-all', 'Projects\PianoLit\SubscriptionsController@verifyAll')->name('subscription.verify-all');
+		Route::delete('/{user}/subscription', 'Projects\PianoLit\SubscriptionsController@destroy')->name('subscription.destroy');
 	});
 
 });
@@ -90,9 +93,8 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 
 		Route::prefix('/subscription')->name('subscription.')->group(function() {
 			Route::post('', 'Projects\PianoLit\SubscriptionsController@create')->name('create');
-			Route::get('/status', 'Projects\PianoLit\SubscriptionsController@status')->name('status');
+			Route::post('/status', 'Projects\PianoLit\SubscriptionsController@status')->name('status');
 			Route::post('/history', 'Projects\PianoLit\SubscriptionsController@history')->name('history');
-			Route::post('/update', 'Projects\PianoLit\SubscriptionsController@update')->name('update');
 		});
 	});
 

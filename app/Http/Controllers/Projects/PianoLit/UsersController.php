@@ -30,6 +30,26 @@ class UsersController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(User $user)
+    {
+        if (request('format') == 'json')
+            return $user->subscription;
+
+        $pieces = Piece::orderBy('name')->get();
+
+        $pieces->each(function($piece) use ($user) {
+            $this->api->setCustomAttributes($piece, $user->id);
+        });
+
+        return view('projects/pianolit/users/show/index', compact(['user', 'pieces']));
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -91,26 +111,6 @@ class UsersController extends Controller
         $response->error = $error;
 
         return response()->json($response);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
-    {
-        if (request('format') == 'json')
-            return $user->subscription;
-
-        $pieces = Piece::orderBy('name')->get();
-
-        $pieces->each(function($piece) use ($user) {
-            $this->api->setCustomAttributes($piece, $user->id);
-        });
-
-        return view('projects/pianolit/users/show/index', compact(['user', 'pieces']));
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Projects\PianoLit\Traits;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Projects\PianoLit\Providers\Sandbox\AppleSubscription;
+use Carbon\Carbon;
 
 trait HasSubscription
 {
@@ -14,26 +15,20 @@ trait HasSubscription
 
         $response = json_decode($json);
 
-        $plan = $response->receipt->in_app[0]->product_id;
-
-        $due_date = $this->getDueDate($plan);
+        $latest_receipt = $response->receipt->in_app[0];
 
         $record = $this->subscription()->create([
-            'plan' => $plan,
+            'plan' => $latest_receipt->product_id,
             'latest_receipt' => $request->receipt_data,
-            'latest_receipt_info' => json_encode($response->receipt->in_app[0]),
+            'latest_receipt_info' => json_encode($latest_receipt),
             'password' => $request->password,
-            'renews_at' => $due_date
+            'renews_at' => Carbon::parse($latest_receipt->expires_date)->timezone(config('app.timezone')),
+            'validated_at' => now()
         ]);
 
         $this->update(['trial_ends_at' => null]);
 
         return $record;
-    }
-
-    public function getDueDate($plan)
-    {
-        return $plan == 'monthly' ? now()->addMonth() : now()->addYear();
     }
 
     public function getStatus($callApple = false)
@@ -50,20 +45,9 @@ trait HasSubscription
         if (! $callApple)
             return 'inactive';
 
-        $request = $this->callApple($this->subscription->receipt_data, $this->subscription->password);
+        $request = $this->callApple($this->subscription->latest_receipt, $this->subscription->password);
 
-        $request = json_decode($request);
-
-        $latest_receipt = end($request->receipt->in_app);
-        
-        $is_valid = $latest_receipt->expires_date_ms >= now()->timestamp;
-
-        if (! $is_valid)
-            return 'inactive';
-
-        $this->subscription->reactivate($latest_receipt);
-
-        return 'active';
+        return $this->subscription->validate($request);
     }
 
     public function callApple($receipt_data, $password)
@@ -83,5 +67,36 @@ trait HasSubscription
             : $client->post('https://sandbox.itunes.apple.com/verifyReceipt', ['body' => $payload])->getBody();
 
         return $response;
+    }
+
+    public function cleanReceipt($request)
+    {
+        $request = json_decode($request);
+
+        foreach ($request->receipt as $field => $value) {
+            if (preg_match('(pst|ms)', $field) === 1 || is_null($value))
+                unset($request->receipt->$field);   
+        }
+
+        foreach ($request->receipt->in_app as $receipt) {
+            foreach ($receipt as $field => $value) {
+                if (preg_match('(pst|ms)', $field) === 1 || is_null($value))
+                    unset($receipt->$field);   
+            }
+        }
+
+        return $request;
+    }
+
+    public function scopeExpired($query)
+    {
+        $users = $query->has('subscription')->get();
+
+        foreach ($users as $index => $user) {
+            if (! $user->subscription->expired())
+                $users->forget($index);
+        }
+
+        return $users;
     }
 }

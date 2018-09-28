@@ -2,7 +2,7 @@
 	@if($user->subscription->renews_at)
 
 		<div class="p-3 alert alert-success" role="alert"><i class="fas fa-check-circle mr-2"></i>
-			{{$user->first_name}}'s susbcribed on {{$user->subscription->created_at->toFormattedDateString()}}! 
+			{{$user->first_name}}'s susbcribed is active! 
 			The next auto-renewal date is in {{$user->subscription->renews_at->diffForHumans()}} on <strong>{{$user->subscription->renews_at->toFormattedDateString()}}</strong>.
 		</div>
 
