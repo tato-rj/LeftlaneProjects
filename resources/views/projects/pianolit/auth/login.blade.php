@@ -18,7 +18,7 @@
                 <form class="form-horizontal" method="POST" action="{{ route('pianolit.admin.login.submit') }}">
                     {{ csrf_field() }}
                     <div class="col-lg-5 col-md-6 col-sm-6 col-xs-6 mx-auto mb-4 text-center">
-                        <img class="w-100 mb-2" src="{{asset('images/projects/pianolit/app-icon.svg')}}" style="border-radius: 22%; vertical-align: sub;">
+                        <img class="w-100 mb-2" src="{{asset('images/projects/pianolit/app-icon.svg')}}" style="border-radius: 50%; vertical-align: sub;">
                         <h4 class="text-brand">PIANO<strong>LIT</strong></h4>
                     </div>
                     

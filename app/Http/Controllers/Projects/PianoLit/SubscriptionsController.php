@@ -41,7 +41,7 @@ class SubscriptionsController extends Controller
 
         $status = $user->getStatus($callApple = true);
 
-        return response()->json(in_array($status, ['active', 'trial']));
+        return response()->json($status);
     }
 
     /**

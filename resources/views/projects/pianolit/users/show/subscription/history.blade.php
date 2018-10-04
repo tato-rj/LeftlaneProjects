@@ -1,5 +1,8 @@
 <table class="table table-striped table-borderless">
   <tbody>
+  	@include('projects/pianolit/users/show/list-item', [
+  		'title' => 'Auto renewal status', 
+  		'value' => $history->pending_renewal_info[0]->auto_renew_status ? 'On' : 'Off'])
   	@foreach($history->receipt as $field => $value)
 	  	@if($field != 'in_app')
 	  	@include('projects/pianolit/users/show/list-item', [
@@ -12,7 +15,7 @@
 
 <div class="accordion mb-4" id="subscription-history-receipts">
 
-	@foreach($history->receipt->in_app as $receipt)
+	@foreach($history->latest_receipt_info as $receipt)
 	<div class="card">
 		<div class="card-header bg-pastel" id="receipt-{{$loop->iteration}}">
 			<div class="d-flex justify-content-between cursor-pointer" data-toggle="collapse" data-target="#receipt-history-{{$loop->iteration}}">
