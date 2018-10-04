@@ -75,9 +75,9 @@ class Subscription extends PianoLit
         if (empty($request->receipt))
         	abort(400, $this->appleError($request->status));
 
-        $latest_receipt = end($request->receipt->in_app);
+        $latest_receipt = end($request->latest_receipt_info);
         
-        $is_valid = $latest_receipt->expires_date_ms >= now()->timestamp;
+        $is_valid = Carbon::parse($latest_receipt->expires_date)->setTimezone(config('app.timezone')) >= now();
 
         $this->update(['validated_at' => now()]);
 

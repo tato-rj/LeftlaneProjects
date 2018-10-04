@@ -17,10 +17,6 @@ Route::post('/{guard}/logout', 'Auth\LoginController@logoutFrom')->name('logoutF
 
 Route::get('/', function () {
 	// \Artisan::call('cache:clear');
-    return view('leftlane');
-});
-
-Route::get('/new', function () {
     return view('leftlane/index');
 });
 

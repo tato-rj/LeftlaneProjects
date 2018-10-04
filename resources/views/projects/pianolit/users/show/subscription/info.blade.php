@@ -25,6 +25,5 @@
 	<a href="" data-toggle="modal" data-target="#subscription-history" class="link-default">
 		<div class="mb-2">Request receipts history</div>
 	</a>
-	<a href="{{url()->current()}}?format=json" target="_blank" class="link-default"><div>See JSON response</div></a>
 
 </div>

@@ -78,7 +78,7 @@ trait HasSubscription
                 unset($request->receipt->$field);   
         }
 
-        foreach ($request->receipt->in_app as $receipt) {
+        foreach ($request->latest_receipt_info as $receipt) {
             foreach ($receipt as $field => $value) {
                 if (preg_match('(pst|ms)', $field) === 1 || is_null($value))
                     unset($receipt->$field);   
