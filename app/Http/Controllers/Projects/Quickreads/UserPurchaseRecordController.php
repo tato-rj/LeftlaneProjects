@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\{User, Story, UserPurchaseRecord};
 use Illuminate\Http\Request;
@@ -9,6 +9,7 @@ class UserPurchaseRecordController extends QuickreadsController
 {
     public function store(Request $request)
     {
+        return $request->all();
         $request->validate([
             'title' => 'required',
         ]);
