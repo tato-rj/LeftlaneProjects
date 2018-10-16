@@ -243,6 +243,7 @@ class Api
             $inputArray = $this->fixException($inputArray, $key, $tag, ['broken', 'block'], 'chords');
             $inputArray = $this->fixException($inputArray, $key, $tag, ['alberti'], 'bass');
             $inputArray = $this->fixException($inputArray, $key, $tag, ['finger'], 'substitution');
+            $inputArray = $this->fixException($inputArray, $key, $tag, ['4', '8'], 'hands');
 
         }
 

@@ -122,7 +122,7 @@ class ApiController extends Controller
     public function search(Request $request)
     {
         $inputArray = $this->api->prepareInput($request);
-
+        
         $pieces = Piece::search($inputArray, $request)->get();
 
         $this->api->prepare($request, $pieces, $inputArray);
