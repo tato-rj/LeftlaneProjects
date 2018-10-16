@@ -9,7 +9,6 @@ class UserPurchaseRecordController extends QuickreadsController
 {
     public function store(Request $request)
     {
-        return $request->all();
         $request->validate([
             'title' => 'required',
         ]);
