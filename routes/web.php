@@ -20,5 +20,9 @@ Route::get('/', function () {
     return view('leftlane/index');
 });
 
+Route::get('/test', function () {
+    return view('leftlane/test');
+});
+
 require base_path('routes/projects/quickreads.php');
 require base_path('routes/projects/pianolit.php');

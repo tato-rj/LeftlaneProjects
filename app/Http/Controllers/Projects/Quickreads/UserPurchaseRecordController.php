@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\{User, Story, UserPurchaseRecord};
 use Illuminate\Http\Request;
