@@ -10,7 +10,7 @@
 
     <!-- Styles -->
     <link href="{{asset('leftlane/css/page.min.css')}}" rel="stylesheet">
-    <link href="{{asset('leftlane/css/style.css')}}" rel="stylesheet">
+    <link href="{{asset('leftlane/css/style.css?version=1')}}" rel="stylesheet">
 
     <!-- Favicons -->
     <!-- <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png"> -->
@@ -155,7 +155,7 @@
 
             <div class="col-md-6 col-xl-4">
               <div class="text-center">
-                <p class="mb-6"><i class="icon-tools text-primary lead-8"></i></p>
+                <p class="mb-6"><i class="icon-tools text-danger lead-8"></i></p>
                 <h5><strong>Branding & Design</strong></h5>
                 <p>Deliver high-quality design solutions that create value and define your brand.</p>
               </div>
@@ -163,7 +163,7 @@
 
             <div class="col-md-6 col-xl-4">
               <div class="text-center">
-                <p class="mb-6"><i class="icon-mobile text-primary lead-8"></i></p>
+                <p class="mb-6"><i class="icon-mobile text-danger lead-8"></i></p>
                 <h5><strong>Mobile App</strong></h5>
                 <p>Create professional and modern iOS & Android apps for startups and enterprise clients.</p>
               </div>
@@ -171,7 +171,7 @@
 
             <div class="col-md-6 col-xl-4">
               <div class="text-center">
-                <p class="mb-6"><i class="icon-browser text-primary lead-8"></i></p>
+                <p class="mb-6"><i class="icon-browser text-danger lead-8"></i></p>
                 <h5><strong>Web Applications</strong></h5>
                 <p>Provide stunning frontend and backend development to bring your idea to life.</p>
               </div>

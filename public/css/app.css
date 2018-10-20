@@ -15425,6 +15425,51 @@ a.ui-button:active,
   box-shadow: 0 0 5px #666;
 }
 
+.elipsis {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hover-bg-light:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.link-none {
+  color: inherit !important;
+}
+
+.link-none:hover {
+  text-decoration: none !important;
+}
+
+.clamp-1 {
+  overflow: hidden !important;
+  max-height: 80px !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical;
+}
+
+.clamp-2 {
+  overflow: hidden !important;
+  max-height: 80px !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical;
+}
+
+.color-inherit {
+  color: inherit;
+}
+
+a.color-inherit:hover {
+  color: inherit !important;
+}
+
 .w-100 {
   width: 100%;
 }
@@ -15435,6 +15480,33 @@ a.ui-button:active,
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.t-2 {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.shadow-light,
+.hover-shadow-light:hover {
+  -webkit-box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-dark,
+.hover-shadow-dark:hover {
+  -webkit-box-shadow: 0 5px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.25);
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rounded-pill {
+  border-radius: 100px;
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav,
@@ -15468,6 +15540,19 @@ a.ui-button:active,
   bottom: 1em;
 }
 
+.nav-link.active,
+.nav-item.show .nav-link {
+  color: #ff4954 !important;
+}
+
+.portfolio-1::before {
+  background-color: #ff4954 !important;
+}
+
+.portfolio-1::after {
+  border: none !important;
+}
+
 textarea {
   overflow-x: hidden;
 }
@@ -15476,12 +15561,18 @@ a {
   color: #2093a5;
 }
 
+.no-underline:hover {
+  text-decoration: none;
+}
+
 a:hover {
   color: #1c8090;
 }
 
 .navbar-brand img {
-  width: 22px;
+  width: 26px;
+  border-radius: 50%;
+  vertical-align: sub;
 }
 
 .btn:focus,
@@ -15501,6 +15592,7 @@ button:active {
 .btn-default:hover,
 .btn-default:active,
 .btn-default:focus {
+  color: white;
   background: #1e8898;
 }
 
@@ -15518,7 +15610,7 @@ button:active {
 /* width */
 
 .custom-scroll::-webkit-scrollbar {
-  width: 4px;
+  height: 6px;
 }
 
 /* Track */
@@ -15538,5 +15630,9 @@ button:active {
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #e0dfdf;
+}
+
+.list-style-none li {
+  list-style-type: none;
 }
 
