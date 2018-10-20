@@ -55,7 +55,7 @@
 
 
     <!-- Header -->
-    <header class="header text-white h-fullscreen overflow-hidden" style="background-image: linear-gradient(-45deg, #FF6973 0%, #F44336 100%); height: 100vh">
+    <header class="header text-white overflow-hidden" style="background-image: linear-gradient(-45deg, #FF6973 0%, #F44336 100%); height: 100vh">
       <canvas class="constellation" data-radius="0"></canvas>
       <div class="container position-static">
         <div class="row align-items-center h-100">
