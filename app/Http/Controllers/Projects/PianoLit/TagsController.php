@@ -17,9 +17,8 @@ class TagsController extends Controller
     {
         $this->authorize('create');
 
-        $tags = Tag::orderBy('name')->paginate(72);
-        
-        return view('projects/pianolit/tags/index', compact('tags'));
+        $types = Tag::byTypes();
+        return view('projects/pianolit/tags/index', compact('types'));
     }
 
     /**
@@ -91,7 +90,10 @@ class TagsController extends Controller
             'name' => 'required|max:255',
         ]);
 
-        $tag->update(['name' => $request->name]);
+        $tag->update([
+            'name' => $request->name,
+            'type' => $request->type,
+        ]);
 
         return redirect()->back()->with('success', "The tag has been successfully updated!");
     }

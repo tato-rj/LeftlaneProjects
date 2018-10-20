@@ -21,23 +21,21 @@
 
     <div class="row my-3">
       <div class="col-12 text-center">
-        <p class="text-center"><small>Showing {{$tags->count()}} of {{$tags->total()}}</small></p>
+        {{-- <p class="text-center"><small>Showing {{$tags->count()}} of {{$tags->total()}}</small></p> --}}
       </div>
-      <div class="col-12 d-flex flex-wrap">
-        @foreach($tags as $tag)
-          @include('projects/pianolit/tags/tag')
+      <div class="col-12">
+        @foreach($types as $type => $tags)
+          <label class="p-2 border-bottom w-100"><strong>{{ucfirst($type)}}</strong></label>
+          <div class="d-flex flex-wrap mb-2">
+          @foreach($tags as $tag)
+            @include('projects/pianolit/tags/tag')
+          @endforeach
+          </div>
         @endforeach
       </div>
       <div class="col-12 mt-4 ml-2">
         <p class="text-muted"><small>Ps: Tags with a <i class="fas fa-star text-warning fa-xs"></i> are the ones showing in the tour screen on the app.</small></p>
       </div>
-    </div>
-
-    {{-- PAGINATION --}}
-    <div class="row mb-3">
-          <div class="d-flex align-items-center w-100 justify-content-center my-4">
-        {{ $tags->links() }}    
-        </div>
     </div>
 
   </div>
@@ -52,6 +50,7 @@
 $('.tag').on('click', function (e) {
   $tag = $(this);
   name = $tag.attr('data-name');
+  type = $tag.attr('data-type');
   creator = $tag.attr('data-creator');
   edit_url = $tag.attr('data-edit-url');
   delete_url = $tag.attr('data-delete-url');
@@ -59,6 +58,7 @@ $('.tag').on('click', function (e) {
   $('#tag-modal').find('form#delete-tag').attr('action', delete_url);
   $('#tag-modal').find('form#edit-tag').attr('action', edit_url);
   $('#tag-modal').find('input#name').val(name);
+  $('#tag-modal').find('select[name="type"] option[value="'+type+'"]').prop('selected', true);
   $('#tag-modal').find('#creator').text(creator);
 })
 </script>

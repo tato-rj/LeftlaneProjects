@@ -103,9 +103,9 @@ class PiecesController extends Controller
     public function create()
     {
         $composers = Composer::orderBy('name')->get();
-        $tags = Tag::whereNotIn('type', ['length', 'period', 'level'])->orderBy('name')->get();
+        $types = Tag::byTypes($except = ['levels', 'periods', 'lengths']);
 
-        return view('projects/pianolit/pieces/create', compact(['composers', 'tags']));
+        return view('projects/pianolit/pieces/create', compact(['composers', 'types']));
     }
 
     /**
@@ -176,9 +176,9 @@ class PiecesController extends Controller
     public function edit(Piece $piece)
     {
         $composers = Composer::orderBy('name')->get();
-        $tags = Tag::whereNotIn('type', ['length', 'period', 'level'])->orderBy('name')->get();
+        $types = Tag::byTypes($except = ['levels', 'periods', 'lengths']);
 
-        return view('projects/pianolit/pieces/edit', compact(['composers', 'piece', 'tags']));
+        return view('projects/pianolit/pieces/edit', compact(['composers', 'piece', 'types']));
     }
 
     /**

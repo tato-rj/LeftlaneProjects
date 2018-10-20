@@ -174,16 +174,19 @@
         @endmanager
         {{-- Tags --}}
         <div class="rounded bg-light px-3 py-2 mb-3">
-          <p class="text-brand border-bottom pb-1"><strong>TAGS</strong></p>
+          <p class="text-brand border-bottom pb-1 mb-1"><strong>TAGS</strong></p>
           <div class="d-flex flex-wrap">
-            @foreach($tags as $tag)
-            <div class="custom-control custom-checkbox mx-2 mb-2">
-              <input type="checkbox" class="custom-control-input" name="tags[]" value="{{$tag->id}}" id="{{$tag->name}}">
-              <label class="custom-control-label" for="{{$tag->name}}">{{$tag->name}}</label>
-            </div>
+            @foreach($types as $type => $tags)
+            <label class="p-2 mb-1 text-center w-100"><strong>{{ucfirst($type)}}</strong></label>
+              @foreach($tags as $tag)
+              <div class="custom-control custom-checkbox mx-2 mb-2">
+                <input type="checkbox" class="custom-control-input" name="tags[]" value="{{$tag->id}}" id="{{$tag->name}}">
+                <label class="custom-control-label" for="{{$tag->name}}">{{$tag->name}}</label>
+              </div>
+              @endforeach
             @endforeach
           </div>
-          <div class="mb-1 ml-2 text-muted">
+          <div class="mb-1 mt-4 ml-2 text-muted">
             <small>Special tags are: {{\App\Projects\PianoLit\Tag::special()->get()->implode('name', ', ')}}</small>
           </div>
         </div>

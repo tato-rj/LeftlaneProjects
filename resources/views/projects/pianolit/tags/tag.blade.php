@@ -2,6 +2,7 @@
 	 style="border-color: lightgrey"
 	 data-name="{{$tag->name}}"
 	 data-creator="{{$tag->creator->name}}"
+	 data-type="{{$tag->type}}"
 	 data-edit-url="/piano-lit/tags/{{$tag->id}}" 
 	 data-delete-url="/piano-lit/tags/{{$tag->id}}" 
 	 data-toggle="modal" 
