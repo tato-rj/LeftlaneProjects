@@ -149,7 +149,7 @@ class Api
         $classname = get_class($model);
 
         if ($classname == 'App\Projects\PianoLit\Piece') {
-
+            dd($model->period());
             $model->setAttribute('tips_array', $model->tips);
             $model->setAttribute('youtube_array', $model->youtube);
             $model->setAttribute('level', $model->level_name);

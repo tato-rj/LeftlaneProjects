@@ -37,7 +37,7 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        
+
         if (request('format') == 'json')
             return $user->subscription;
 
@@ -46,7 +46,7 @@ class UsersController extends Controller
         $pieces->each(function($piece) use ($user) {
             $this->api->setCustomAttributes($piece, $user->id);
         });
-return $user;
+
         return view('projects/pianolit/users/show/index', compact(['user', 'pieces']));
     }
 
