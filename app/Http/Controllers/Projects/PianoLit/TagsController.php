@@ -47,7 +47,8 @@ class TagsController extends Controller
 
         Tag::create([
             'name' => $request->name,
-            'creator_id' => auth()->user()->id
+            'creator_id' => auth()->user()->id,
+            'type' => $request->type
         ]);
 
         return redirect()->back()->with('success', "The tag has been successfully added!");
