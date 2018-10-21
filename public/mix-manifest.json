@@ -1,6 +1,5 @@
 {
-    "/js/app.js": "/js/app.js?id=e111250bcdebdced407d",
-    "/css/app.css": "/css/app.css?id=7a4f2ec0f2010c2336e1",
-    "/css/quickreads.css": "/css/quickreads.css?id=7a4f2ec0f2010c2336e1",
-    "/css/pianolit.css": "/css/pianolit.css?id=fc95ce3eb5b52f8d116a"
+    "/js/app.js": "/js/app.js",
+    "/css/quickreads.css": "/css/quickreads.css",
+    "/css/pianolit.css": "/css/pianolit.css"
 }

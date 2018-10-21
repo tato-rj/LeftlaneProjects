@@ -15546,19 +15546,6 @@ a.color-inherit:hover {
   bottom: 1em;
 }
 
-.nav-link.active,
-.nav-item.show .nav-link {
-  color: #ff4954 !important;
-}
-
-.portfolio-1::before {
-  background-color: #ff4954 !important;
-}
-
-.portfolio-1::after {
-  border: none !important;
-}
-
 textarea {
   overflow-x: hidden;
 }
