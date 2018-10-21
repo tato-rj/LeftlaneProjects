@@ -53,6 +53,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/', 'Projects\PianoLit\TagsController@index')->name('index');
 		Route::get('/add', 'Projects\PianoLit\TagsController@create');
 		Route::get('/{tag}', 'Projects\PianoLit\TagsController@edit')->name('edit');
+		Route::get('/{tag}/pieces', 'Projects\PianoLit\TagsController@pieces');
 
 		Route::post('', 'Projects\PianoLit\TagsController@store')->name('store');
 		Route::patch('/{tag}', 'Projects\PianoLit\TagsController@update')->name('update');

@@ -65,6 +65,13 @@ class TagsController extends Controller
         //
     }
 
+    public function pieces($tagName)
+    {
+        $pieces = Tag::where('name', $tagName)->first()->load('pieces')->pieces;
+
+        return view('projects/pianolit/tags/pieces', compact('pieces'))->render();
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

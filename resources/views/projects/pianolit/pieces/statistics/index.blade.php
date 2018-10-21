@@ -14,6 +14,9 @@
   </div>
 </div>
 
+@component('projects/pianolit/components/modals/results', ['title' => 'This tag has the following pieces'])
+@endcomponent
+
 @endsection
 
 @section('scripts')
@@ -52,6 +55,9 @@ var tagsChart = new Chart(ctx, {
         legend: {
           display: false
         },
+        tooltips: {
+          enabled: false
+        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -64,6 +70,17 @@ var tagsChart = new Chart(ctx, {
                   autoSkip: false
                 }
             }]
+        },
+        events: ['click', 'hover'],
+        onClick: function(element, item) {
+            let tag = item[0]._view.label;
+            let $modal = $('#results-modal');
+            $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
+            $modal.modal('show');
+          $.get("/piano-lit/tags/"+tag+"/pieces", function(data, status){
+            
+            $modal.find('.modal-body').html(data);
+          });
         }
     }
 });
