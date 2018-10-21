@@ -61,7 +61,7 @@ class User extends Authenticatable
         }
 
         if (! $this->favorites()->exists())
-            array_push($tags, $this->preferredLevel);
+            array_push($tags, $this->preferredLevel, $this->preferredLevel);
         
         array_push($tags, $this->preferredLevel, $this->preferredMood);
         
