@@ -61,8 +61,10 @@ class User extends Authenticatable
         }
 
         if (! $this->favorites()->exists())
-            array_push($tags, $this->preferredLevel, $this->preferredLevel, $this->preferredLevel, $this->preferredMood);
-
+            array_push($tags, $this->preferredLevel);
+        
+        array_push($tags, $this->preferredLevel, $this->preferredMood);
+        
         foreach ($this->favorites as $piece) {
             array_push($tags, $piece->tags->pluck('name'));
         }
@@ -72,7 +74,7 @@ class User extends Authenticatable
         
         arsort($orderedTags);
 
-        return array_keys(array_slice($orderedTags, 0, 4));       
+        return array_keys(array_slice($orderedTags, 0, 6));       
     }
 
     public function suggestions($limit)
