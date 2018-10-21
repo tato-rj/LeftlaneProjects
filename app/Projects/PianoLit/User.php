@@ -84,7 +84,7 @@ class User extends Authenticatable
             if ($this->favorites->contains($piece))
                 $suggestions->forget($key);
 
-            if ($piece->tags->whereIn('name', $this->preferredMood)->isEmpty())
+            if (! $this->favorites()->exists() && $piece->tags->whereIn('name', $this->preferredMood)->isEmpty())
                 $suggestions->forget($key);
 
         });
