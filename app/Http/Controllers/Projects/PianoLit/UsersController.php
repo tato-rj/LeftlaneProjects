@@ -85,7 +85,7 @@ class UsersController extends Controller
             'trial_ends_at' => Carbon::now()->addWeek()
         ]);
 
-        \Mail::to($user->email)->send(new \App\Mail\PianoLit\WelcomeEmail($user));
+        // \Mail::to($user->email)->send(new \App\Mail\PianoLit\WelcomeEmail($user));
 
         if ($request->has('from_backend'))
             return redirect()->back()->with('success', "The user has been successfully created!");

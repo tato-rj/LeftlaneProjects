@@ -116,7 +116,7 @@ class SubscriptionsController extends Controller
 
         $user->update(['trial_ends_at' => $newDate]);
 
-        \Mail::to($user->email)->send(new \App\Mail\PianoLit\TrialExtendedEmail($user));
+        // \Mail::to($user->email)->send(new \App\Mail\PianoLit\TrialExtendedEmail($user));
 
         return redirect()->back()->with('success', "The trial has been update. It now expires on {$newDate->toFormattedDateString()}.");
     }
