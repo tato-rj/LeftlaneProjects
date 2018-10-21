@@ -153,7 +153,7 @@ class Api
             $model->setAttribute('tips_array', $model->tips);
             $model->setAttribute('youtube_array', $model->youtube);
             $model->setAttribute('level', $model->level_name);
-            $model->setAttribute('period', $model->period()->name);
+            $model->setAttribute('period', $model->period() ? $model->period()->name : null);
             $model->setAttribute('itunes_array', $model->itunes);
             $model->setAttribute('catalogue', $model->catalogue);
             $model->setAttribute('collection', $model->collection);
