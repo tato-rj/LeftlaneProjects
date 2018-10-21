@@ -37,7 +37,6 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-
         if (request('format') == 'json')
             return $user->subscription;
 
