@@ -58,9 +58,6 @@ class User extends Authenticatable
 
         foreach ($this->preferred_piece->tags as $tag) {
             array_push($tags, $tag->name);
-            
-            if ($tag->type == 'level')
-                array_push($tags, $tag->name);
         }
 
         if (! $this->favorites()->exists())
