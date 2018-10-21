@@ -148,7 +148,7 @@ class PiecesController extends Controller
             'audio_path_rh' => Piece::upload($request, 'audio_path_rh','audio_rh'),
             'audio_path_lh' => Piece::upload($request, 'audio_path_lh','audio_lh'),
             'creator_id' => auth()->user()->id,
-            'views' => mt_rand(5,20),
+            'views' => mt_rand(5,15),
         ]);
 
         $piece->tags()->attach(array_merge($request->tags ?? [], $request->level ?? [], $request->length ?? [], $request->period ?? []));

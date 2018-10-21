@@ -189,6 +189,13 @@
               </div>
             </div>
           </div>
+{{--           <div class="form-group">
+            <select class="form-control {{$errors->has('performer_id') ? 'is-invalid' : ''}}" name="performer_id" >
+              <option selected disabled>Performer</option>
+              <option>PianoLIT</option>
+            </select>
+            @include('projects/pianolit/components/feedback', ['field' => 'key'])
+          </div> --}}
           @endmanager
           {{-- Tags --}}
           <div class="rounded bg-light px-3 py-2 mb-3">

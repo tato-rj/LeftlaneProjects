@@ -38,9 +38,16 @@ class User extends Authenticatable
         return Piece::find($this->preferred_piece_id);
     }
 
+    public function getPreferredLevelAttribute()
+    {
+        // return 
+    }
+
     public function tags()
     {
         $tags = $this->preferred_piece->tags->pluck('name')->toArray();
+
+        // array_push($tags, $this->);
 
         foreach ($this->favorites as $piece) {
             array_push($tags, $piece->tags->pluck('name'));

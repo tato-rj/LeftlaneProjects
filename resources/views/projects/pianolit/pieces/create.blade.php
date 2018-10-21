@@ -118,6 +118,7 @@
         </div>
         @manager
         {{-- Score Info --}}
+        <hr class="my-4">
         <div class="form-group form-row">
           <div class="col">
             <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{old('score_editor')}}">
@@ -171,8 +172,16 @@
             </div>
           </div>
         </div>
+{{--         <div class="form-group">
+          <select class="form-control {{$errors->has('performer_id') ? 'is-invalid' : ''}}" name="performer_id" >
+            <option selected disabled>Performer</option>
+            <option>PianoLIT</option>
+          </select>
+          @include('projects/pianolit/components/feedback', ['field' => 'key'])
+        </div> --}}
         @endmanager
         {{-- Tags --}}
+        <hr class="my-4">
         <div class="rounded bg-light px-3 py-2 mb-3">
           <p class="text-brand border-bottom pb-1 mb-1"><strong>TAGS</strong></p>
           <div class="d-flex flex-wrap">
