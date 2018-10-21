@@ -160,4 +160,14 @@ class ApiController extends Controller
 
         return view('projects/pianolit/discover/index', compact(['collection', 'pieces', 'inputArray']));
     }
+
+    public function view(Request $request)
+    {
+        Piece::find($request->piece_id)->increment('views');
+        
+        if (request()->wantsJson())
+            return response(200);
+
+        return redirect()->back()->with('success', "The number of views has been incremented!");
+    }
 }

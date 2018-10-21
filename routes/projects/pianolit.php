@@ -99,10 +99,10 @@ Route::prefix('/piano-lit/api')->name('piano-lit.api.')->group(function() {
 	});
 
 	Route::get('/pieces', 'Projects\PianoLit\ApiController@pieces')->name('pieces');
+	Route::post('/pieces/view', 'Projects\PianoLit\ApiController@view')->name('piece.view');
 	Route::post('/pieces/find', 'Projects\PianoLit\ApiController@piece')->name('piece');
 	
 	Route::get('/composers', 'Projects\PianoLit\ApiController@composers')->name('composers');
 	
 	Route::get('/tags', 'Projects\PianoLit\ApiController@tags')->name('tags');
-
 });

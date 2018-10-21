@@ -9,246 +9,258 @@
     'description' => 'Edit a piece'])
     
     <div class="row my-5 mx-2">
-      <form id="edit-form" method="POST" action="/piano-lit/pieces/{{$piece->id}}" class="col-lg-6 col-sm-10 col-12 mx-auto" enctype="multipart/form-data">
-        {{csrf_field()}}
-        {{method_field('PATCH')}}
-        {{-- Name --}}
-        <div class="form-group form-row">
-          <div class="col">
-            <label class="text-brand"><small>Name</small></label>
-            <input type="text" class="form-control" name="name" placeholder="Piece name" value="{{$piece->name}}" >
+      <div class="col-lg-6 col-sm-10 col-12 mx-auto">
+        <div class="px-3 py-2 rounded mb-4 bg-light d-flex justify-content-between align-items-center">
+          <div>
+            <i class="fas fa-eye text-brand mr-2"></i><small class="text-muted">{{$piece->views}} {{str_plural('view', $piece->views) }}</small>
           </div>
-          <div class="col">
-            <label class="text-brand"><small>Nickname</small></label>
-            <input type="text" class="form-control" name="nickname" placeholder="Nickname" value="{{$piece->nickname}}" >
-          </div>
+          <form method="POST" action="{{route('piano-lit.api.piece.view')}}">
+            @csrf
+            <input type="hidden" name="piece_id" value="{{$piece->id}}">
+            <button type="submit" class="btn btn-link btn-sm text-brand m-0 p-0"><i class="fas fa-plus"></i></button>
+          </form>
         </div>
-        <div class="form-group form-row">
-          <div class="col">
-            <label class="text-brand"><small>Collection name</small></label>
-            <input type="text" class="form-control" name="collection_name" placeholder="Collection name" value="{{$piece->collection_name}}">
+        <form id="edit-form" method="POST" action="/piano-lit/pieces/{{$piece->id}}" enctype="multipart/form-data">
+          @csrf
+          {{method_field('PATCH')}}
+          {{-- Name --}}
+          <div class="form-group form-row">
+            <div class="col">
+              <label class="text-brand"><small>Name</small></label>
+              <input type="text" class="form-control" name="name" placeholder="Piece name" value="{{$piece->name}}" >
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Nickname</small></label>
+              <input type="text" class="form-control" name="nickname" placeholder="Nickname" value="{{$piece->nickname}}" >
+            </div>
           </div>
-          <div class="col">
-            <label class="text-brand"><small>Catalogue</small></label>
-            <div class="input-group">
+          <div class="form-group form-row">
+            <div class="col">
+              <label class="text-brand"><small>Collection name</small></label>
+              <input type="text" class="form-control" name="collection_name" placeholder="Collection name" value="{{$piece->collection_name}}">
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Catalogue</small></label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <select class="form-control rounded-left" style="border-radius: 0" name="catalogue_name" >
+                    <option selected disabled>Catalogue</option>
+                    @foreach(\App\Projects\PianoLit\Piece::catalogues() as $catalogue)
+                    <option value="{{$catalogue}}" {{($piece->catalogue_name == $catalogue) ? 'selected' : ''}}>{{$catalogue}}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <input type="text" class="form-control" name="catalogue_number" placeholder="Catalogue number" value="{{$piece->catalogue_number}}">
+              </div>
+            </div>
+          </div>
+          {{-- Catalogue and number --}}
+          <div class="form-row form-group">
+            <div class="col">
+              <label class="text-brand"><small>Collection number</small></label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">No.</div>
+                </div>
+                <input type="text" class="form-control" name="collection_number" placeholder="Number" value="{{$piece->collection_number}}">
+              </div>
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Movement number</small></label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Mov.</div>
+                </div>
+                <input type="text" class="form-control" name="movement_number" placeholder="Number" value="{{$piece->movement_number}}">
+              </div>
+            </div>
+          </div>
+          {{-- Key and Composer --}}
+          <div class="form-row form-group">
+            <div class="col">
+              <label class="text-brand"><small>Composer</small></label>
+              <select class="form-control" name="composer_id">
+                <option selected disabled>Composer</option>
+                @foreach($composers as $composer)
+                <option value="{{$composer->id}}" {{($piece->composer_id == $composer->id) ? 'selected' : ''}}>{{$composer->short_name}}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Key</small></label>
+              <select class="form-control" name="key">
+                <option selected disabled>Key</option>
+                @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
+                <option value="{{$key}}" {{($piece->key == $key) ? 'selected' : ''}}>{{$key}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          {{-- Period, Length and Level --}}
+          <div class="form-row form-group">
+            <div class="col">
+              <label class="text-brand"><small>Period</small></label>
+              <select class="form-control" name="period[]" >
+                <option selected disabled>Period</option>
+                @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
+                <option value="{{$period->id}}" {{($piece->period()->name == $period->name) ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Length</small></label>
+              <select class="form-control" name="length[]" >
+                <option selected disabled>Length</option>
+                @foreach(\App\Projects\PianoLit\Tag::lengths()->get() as $length)
+                <option value="{{$length->id}}" {{($piece->length()->name == $length->name) ? 'selected' : ''}}>{{ucfirst($length->name)}}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Level</small></label>
+              <select class="form-control" name="level[]" >
+                <option selected disabled>Level</option>
+                @foreach(\App\Projects\PianoLit\Tag::levels()->get() as $level)
+                <option value="{{$level->id}}" {{($piece->level()->name == $level->name) ? 'selected' : ''}}>{{ucfirst($level->name)}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          {{-- Did you know? --}}
+          <div class="form-group">
+            <label class="text-brand"><small>Did you know?</small></label>
+            <textarea class="form-control" rows="3" name="curiosity" placeholder="Enter a curiosity here">{{ $piece->curiosity }}</textarea>
+          </div>
+          @manager
+          {{-- Score Info --}}
+          <div class="form-group form-row">
+            <div class="col">
+              <label class="text-brand"><small>Score editor</small></label>
+              <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{$piece->score_editor}}" >
+            </div>
+            <div class="col">
+              <label class="text-brand"><small>Score copyright</small></label>
+              <input type="text" class="form-control" name="score_copyright" placeholder="Score copyright" value="{{$piece->score_copyright}}">
+            </div>
+          </div>
+          <div class="form-group">
+              <label class="text-brand"><small>Score publisher</small></label>
+              <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{$piece->score_publisher}}">
+          </div>
+          {{-- Files --}}
+          <label class="text-brand"><small>Uploads</small></label>
+          <div class="form-row form-group">
+            <div class="col input-group">
               <div class="input-group-prepend">
-                <select class="form-control rounded-left" style="border-radius: 0" name="catalogue_name" >
-                  <option selected disabled>Catalogue</option>
-                  @foreach(\App\Projects\PianoLit\Piece::catalogues() as $catalogue)
-                  <option value="{{$catalogue}}" {{($piece->catalogue_name == $catalogue) ? 'selected' : ''}}>{{$catalogue}}</option>
-                  @endforeach
-                </select>
+                <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path)}}" href="{{$piece->file_path('audio_path')}}" target="_blank"><i class="fas fa-microphone"></i></a>
               </div>
-              <input type="text" class="form-control" name="catalogue_number" placeholder="Catalogue number" value="{{$piece->catalogue_number}}">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="audio_path" id="customFile">
+                <label class="custom-file-label truncate" for="customFile">Both hands</label>
+              </div>
             </div>
-          </div>
-        </div>
-        {{-- Catalogue and number --}}
-        <div class="form-row form-group">
-          <div class="col">
-            <label class="text-brand"><small>Collection number</small></label>
-            <div class="input-group">
+            <div class="col input-group">
               <div class="input-group-prepend">
-                <div class="input-group-text">No.</div>
+                <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->score_path)}}" href="{{$piece->file_path('score_path')}}" target="_blank"><i class="fas fa-file-alt"></i></a>
               </div>
-              <input type="text" class="form-control" name="collection_number" placeholder="Number" value="{{$piece->collection_number}}">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="score_path" id="customFile">
+                <label class="custom-file-label truncate" for="customFile">Score</label>
+              </div>
             </div>
           </div>
-          <div class="col">
-            <label class="text-brand"><small>Movement number</small></label>
-            <div class="input-group">
+          <div class="form-row form-group">
+            <div class="col input-group">
               <div class="input-group-prepend">
-                <div class="input-group-text">Mov.</div>
+                <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path_lh)}}" href="{{$piece->file_path('audio_path_lh')}}" target="_blank"><i class="fas fa-hand-paper" style="transform: scaleX(-1)"></i></a>
               </div>
-              <input type="text" class="form-control" name="movement_number" placeholder="Number" value="{{$piece->movement_number}}">
-            </div>
-          </div>
-        </div>
-        {{-- Key and Composer --}}
-        <div class="form-row form-group">
-          <div class="col">
-            <label class="text-brand"><small>Composer</small></label>
-            <select class="form-control" name="composer_id">
-              <option selected disabled>Composer</option>
-              @foreach($composers as $composer)
-              <option value="{{$composer->id}}" {{($piece->composer_id == $composer->id) ? 'selected' : ''}}>{{$composer->short_name}}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col">
-            <label class="text-brand"><small>Key</small></label>
-            <select class="form-control" name="key">
-              <option selected disabled>Key</option>
-              @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
-              <option value="{{$key}}" {{($piece->key == $key) ? 'selected' : ''}}>{{$key}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-        {{-- Period, Length and Level --}}
-        <div class="form-row form-group">
-          <div class="col">
-            <label class="text-brand"><small>Period</small></label>
-            <select class="form-control" name="period[]" >
-              <option selected disabled>Period</option>
-              @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
-              <option value="{{$period->id}}" {{($piece->period()->name == $period->name) ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col">
-            <label class="text-brand"><small>Length</small></label>
-            <select class="form-control" name="length[]" >
-              <option selected disabled>Length</option>
-              @foreach(\App\Projects\PianoLit\Tag::lengths()->get() as $length)
-              <option value="{{$length->id}}" {{($piece->length()->name == $length->name) ? 'selected' : ''}}>{{ucfirst($length->name)}}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col">
-            <label class="text-brand"><small>Level</small></label>
-            <select class="form-control" name="level[]" >
-              <option selected disabled>Level</option>
-              @foreach(\App\Projects\PianoLit\Tag::levels()->get() as $level)
-              <option value="{{$level->id}}" {{($piece->level()->name == $level->name) ? 'selected' : ''}}>{{ucfirst($level->name)}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-        {{-- Did you know? --}}
-        <div class="form-group">
-          <label class="text-brand"><small>Did you know?</small></label>
-          <textarea class="form-control" rows="3" name="curiosity" placeholder="Enter a curiosity here">{{ $piece->curiosity }}</textarea>
-        </div>
-        @manager
-        {{-- Score Info --}}
-        <div class="form-group form-row">
-          <div class="col">
-            <label class="text-brand"><small>Score editor</small></label>
-            <input type="text" class="form-control" name="score_editor" placeholder="Score editor" value="{{$piece->score_editor}}" >
-          </div>
-          <div class="col">
-            <label class="text-brand"><small>Score copyright</small></label>
-            <input type="text" class="form-control" name="score_copyright" placeholder="Score copyright" value="{{$piece->score_copyright}}">
-          </div>
-        </div>
-        <div class="form-group">
-            <label class="text-brand"><small>Score publisher</small></label>
-            <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{$piece->score_publisher}}">
-        </div>
-        {{-- Files --}}
-        <label class="text-brand"><small>Uploads</small></label>
-        <div class="form-row form-group">
-          <div class="col input-group">
-            <div class="input-group-prepend">
-              <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path)}}" href="{{$piece->file_path('audio_path')}}" target="_blank"><i class="fas fa-microphone"></i></a>
-            </div>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" name="audio_path" id="customFile">
-              <label class="custom-file-label truncate" for="customFile">Both hands</label>
-            </div>
-          </div>
-          <div class="col input-group">
-            <div class="input-group-prepend">
-              <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->score_path)}}" href="{{$piece->file_path('score_path')}}" target="_blank"><i class="fas fa-file-alt"></i></a>
-            </div>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" name="score_path" id="customFile">
-              <label class="custom-file-label truncate" for="customFile">Score</label>
-            </div>
-          </div>
-        </div>
-        <div class="form-row form-group">
-          <div class="col input-group">
-            <div class="input-group-prepend">
-              <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path_lh)}}" href="{{$piece->file_path('audio_path_lh')}}" target="_blank"><i class="fas fa-hand-paper" style="transform: scaleX(-1)"></i></a>
-            </div>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" name="audio_path_lh" id="customFile">
-              <label class="custom-file-label truncate" for="customFile">Left hand</label>
-            </div>
-          </div>
-          <div class="col input-group">
-            <div class="input-group-prepend">
-              <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path_rh)}}" href="{{$piece->file_path('audio_path_rh')}}" target="_blank"><i class="fas fa-hand-paper"></i></a>
-            </div>
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" name="audio_path_rh" id="customFile">
-              <label class="custom-file-label truncate" for="customFile">Right hand</label>
-            </div>
-          </div>
-        </div>
-        @endmanager
-        {{-- Tags --}}
-        <div class="rounded bg-light px-3 py-2 mb-3">
-          <p class="text-brand border-bottom pb-1 mb-1"><strong>TAGS</strong></p>
-          <div class="d-flex flex-wrap">
-            @foreach($types as $type => $tags)
-            <label class="p-2 mb-1 text-center w-100"><strong>{{ucfirst($type)}}</strong></label>
-              @foreach($tags as $tag)
-              <div class="custom-control custom-checkbox mx-2 mb-2">
-                <input type="checkbox" class="custom-control-input" name="tags[]" value="{{$tag->id}}" id="{{$tag->name}}" {{($piece->tags->contains($tag->id)) ? 'checked' : ''}}>
-                <label class="custom-control-label" for="{{$tag->name}}">{{$tag->name}}</label>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="audio_path_lh" id="customFile">
+                <label class="custom-file-label truncate" for="customFile">Left hand</label>
               </div>
+            </div>
+            <div class="col input-group">
+              <div class="input-group-prepend">
+                <a class="input-group-text no-underline {{\App\Projects\PianoLit\Piece::lookup($piece->audio_path_rh)}}" href="{{$piece->file_path('audio_path_rh')}}" target="_blank"><i class="fas fa-hand-paper"></i></a>
+              </div>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name="audio_path_rh" id="customFile">
+                <label class="custom-file-label truncate" for="customFile">Right hand</label>
+              </div>
+            </div>
+          </div>
+          @endmanager
+          {{-- Tags --}}
+          <div class="rounded bg-light px-3 py-2 mb-3">
+            <p class="text-brand border-bottom pb-1 mb-1"><strong>TAGS</strong></p>
+            <div class="d-flex flex-wrap">
+              @foreach($types as $type => $tags)
+              <label class="p-2 mb-1 text-center w-100"><strong>{{ucfirst($type)}}</strong></label>
+                @foreach($tags as $tag)
+                <div class="custom-control custom-checkbox mx-2 mb-2">
+                  <input type="checkbox" class="custom-control-input" name="tags[]" value="{{$tag->id}}" id="{{$tag->name}}" {{($piece->tags->contains($tag->id)) ? 'checked' : ''}}>
+                  <label class="custom-control-label" for="{{$tag->name}}">{{$tag->name}}</label>
+                </div>
+                @endforeach
               @endforeach
-            @endforeach
+            </div>
+            <div class="mb-1 mt-4 ml-2 text-muted">
+              <small>Special tags are: {{\App\Projects\PianoLit\Tag::special()->get()->implode('name', ', ')}}</small>
+            </div>
           </div>
-          <div class="mb-1 mt-4 ml-2 text-muted">
-            <small>Special tags are: {{\App\Projects\PianoLit\Tag::special()->get()->implode('name', ', ')}}</small>
-          </div>
-        </div>
-        @manager
-        {{-- iTunes --}}
-        @component('projects/pianolit/components/itunes/layout')
-          @if($piece->itunes_array)
-            @foreach($piece->itunes_array as $itunes)
-            @include('projects/pianolit/components/itunes/input', [
-              'names' => ["itunes[{$loop->index}][album]", "itunes[{$loop->index}][artist]", "itunes[{$loop->index}][link]"],
-              'album' => $itunes['album'],
-              'artist' => $itunes['artist'],
-              'link' => $itunes['link']])
-            @endforeach
-          @endif
-        @endcomponent
+          @manager
+          {{-- iTunes --}}
+          @component('projects/pianolit/components/itunes/layout')
+            @if($piece->itunes_array)
+              @foreach($piece->itunes_array as $itunes)
+              @include('projects/pianolit/components/itunes/input', [
+                'names' => ["itunes[{$loop->index}][album]", "itunes[{$loop->index}][artist]", "itunes[{$loop->index}][link]"],
+                'album' => $itunes['album'],
+                'artist' => $itunes['artist'],
+                'link' => $itunes['link']])
+              @endforeach
+            @endif
+          @endcomponent
 
-        {{-- Youtube --}}
-        @component('projects/pianolit/components/youtube/layout')
-          @if($piece->youtube_array)
-            @foreach($piece->youtube_array as $youtube)
-            @include('projects/pianolit/components/youtube/input', [
-              'value' => $youtube,
-              'type' => 'd-flex',
-              'name' => 'youtube[]'])
-            @endforeach
-          @endif
-        @endcomponent
-        @endmanager
-        {{-- Tips --}}
-        @component('projects/pianolit/components/tips/layout')
-          @if($piece->tips_array)
-            @foreach($piece->tips_array as $tip)
-            @include('projects/pianolit/components/tips/input', [
-              'value' => $tip,
-              'type' => 'd-flex',
-              'name' => 'tips[]'])
-            @endforeach
-          @endif
-        @endcomponent
-        
-        @can('update', $piece)
-        <div class="text-center mt-5">
-          <button type="submit" class="btn btn-block btn-default">Save changes</button>
-        </div>
-        @endcan
+          {{-- Youtube --}}
+          @component('projects/pianolit/components/youtube/layout')
+            @if($piece->youtube_array)
+              @foreach($piece->youtube_array as $youtube)
+              @include('projects/pianolit/components/youtube/input', [
+                'value' => $youtube,
+                'type' => 'd-flex',
+                'name' => 'youtube[]'])
+              @endforeach
+            @endif
+          @endcomponent
+          @endmanager
+          {{-- Tips --}}
+          @component('projects/pianolit/components/tips/layout')
+            @if($piece->tips_array)
+              @foreach($piece->tips_array as $tip)
+              @include('projects/pianolit/components/tips/input', [
+                'value' => $tip,
+                'type' => 'd-flex',
+                'name' => 'tips[]'])
+              @endforeach
+            @endif
+          @endcomponent
+          
+          @can('update', $piece)
+          <div class="text-center mt-5">
+            <button type="submit" class="btn btn-block btn-default">Save changes</button>
+          </div>
+          @endcan
 
-        <div class="mt-3">
-          @if($piece->creator()->exists())
-          <p class="text-muted text-right"><small><i>This piece was created by <strong>{{$piece->creator->name}}</strong></i></small></p>
-          @else
-          <p class="text-muted text-right"><small><i>The creator of this piece has been removed</i></small></p>
-          @endif
-        </div>
-      </form>
+          <div class="mt-3">
+            @if($piece->creator()->exists())
+            <p class="text-muted text-right"><small><i>This piece was created by <strong>{{$piece->creator->name}}</strong></i></small></p>
+            @else
+            <p class="text-muted text-right"><small><i>The creator of this piece has been removed</i></small></p>
+            @endif
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
