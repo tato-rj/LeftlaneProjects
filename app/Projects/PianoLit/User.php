@@ -40,14 +40,18 @@ class User extends Authenticatable
 
     public function getPreferredLevelAttribute()
     {
-        // return 
+        $levels = ['none' => 'elementary', 'little' => 'beginner', 'a lot' => 'advanced'];
+
+        $level = array_key_exists($this->experience, $levels) ? $levels[$this->experience] : 'unknown';
+
+        return $level;
     }
 
     public function tags()
     {
         $tags = $this->preferred_piece->tags->pluck('name')->toArray();
 
-        // array_push($tags, $this->);
+        array_push($tags, $this->preferredLevel, $this->preferredLevel);
 
         foreach ($this->favorites as $piece) {
             array_push($tags, $piece->tags->pluck('name'));
