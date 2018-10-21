@@ -7,13 +7,12 @@ Route::prefix('/piano-lit')->name('pianolit.admin.')->group(function() {
 
 Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.')->group(function() {
 	Route::get('', 'Projects\PianoLit\AdminController@index');
-	
-	Route::get('/statistics', 'Projects\PianoLit\AdminController@statistics');
 
 	Route::prefix('/users')->group(function() {
 		Route::get('', 'Projects\PianoLit\UsersController@index');
 		Route::post('/register', 'Projects\PianoLit\UsersController@register');
 		Route::post('/facebook', 'Projects\PianoLit\UsersController@store');
+		Route::get('/statistics', 'Projects\PianoLit\UsersController@statistics');
 	});
 
 	Route::prefix('/editors')->name('editors.')->group(function() {
@@ -38,6 +37,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::get('/search', 'Projects\PianoLit\PiecesController@search')->name('search');
 		Route::get('/tour', 'Projects\PianoLit\PiecesController@tour')->name('tour');
 		Route::get('/add', 'Projects\PianoLit\PiecesController@create');
+		Route::get('/statistics', 'Projects\PianoLit\PiecesController@statistics');
 		Route::get('/{piece}', 'Projects\PianoLit\PiecesController@edit')->name('edit');
 
 		Route::post('/single-lookup', 'Projects\PianoLit\PiecesController@singleLookup')->name('single-lookup');
