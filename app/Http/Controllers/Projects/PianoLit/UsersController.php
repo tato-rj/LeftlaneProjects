@@ -37,12 +37,12 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        return $user;
+        
         if (request('format') == 'json')
             return $user->subscription;
 
         $pieces = Piece::orderBy('name')->get();
-
+return $user;
         $pieces->each(function($piece) use ($user) {
             $this->api->setCustomAttributes($piece, $user->id);
         });
