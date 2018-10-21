@@ -60,7 +60,7 @@ class User extends Authenticatable
             array_push($tags, $tag->name);
         }
 
-        array_push($tags, $this->preferredLevel, $this->preferredLevel);
+        array_push($tags, $this->preferredLevel, $this->preferredLevel, $this->preferredMood);
 
         foreach ($this->favorites as $piece) {
             array_push($tags, $piece->tags->pluck('name'));
