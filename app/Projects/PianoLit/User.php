@@ -40,16 +40,25 @@ class User extends Authenticatable
 
     public function getPreferredLevelAttribute()
     {
-        $levels = ['none' => 'elementary', 'little' => 'beginner', 'a lot' => 'advanced'];
+        $levels = ['none' => 'beginner', 'little' => 'intermediate', 'a lot' => 'advanced'];
 
         $level = array_key_exists($this->experience, $levels) ? $levels[$this->experience] : 'unknown';
 
         return $level;
     }
 
+    public function getPreferredMoodAttribute()
+    {
+        return $this->preferredPiece->tags->where('type', 'mood')->pluck('name');
+    }
+
     public function tags()
     {
-        $tags = $this->preferred_piece->tags->pluck('name')->toArray();
+        $tags = [];
+
+        foreach ($this->preferred_piece->tags as $tag) {
+            array_push($tags, $tag->name);
+        }
 
         array_push($tags, $this->preferredLevel, $this->preferredLevel);
 
@@ -62,7 +71,7 @@ class User extends Authenticatable
         
         arsort($orderedTags);
 
-        return array_keys(array_slice($orderedTags, 0, 3));       
+        return array_keys(array_slice($orderedTags, 0, 4));       
     }
 
     public function suggestions($limit)
@@ -74,6 +83,10 @@ class User extends Authenticatable
         $suggestions->each(function($piece, $key) use ($suggestions) {
             if ($this->favorites->contains($piece))
                 $suggestions->forget($key);
+
+            if (! $this->favorites()->exists() && $piece->tags->whereIn('name', $this->preferredMood)->isEmpty())
+                $suggestions->forget($key);
+
         });
 
         return $suggestions;
