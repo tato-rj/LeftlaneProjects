@@ -42,11 +42,11 @@ class UsersController extends Controller
             return $user->subscription;
 
         $pieces = Piece::orderBy('name')->get();
-return $user;
+
         $pieces->each(function($piece) use ($user) {
             $this->api->setCustomAttributes($piece, $user->id);
         });
-
+return $user;
         return view('projects/pianolit/users/show/index', compact(['user', 'pieces']));
     }
 
