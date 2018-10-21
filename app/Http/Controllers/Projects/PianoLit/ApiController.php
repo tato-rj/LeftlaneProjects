@@ -61,6 +61,7 @@ class ApiController extends Controller
     public function user(User $user)
     {
         $user = $user->load('favorites');
+        $user->relevant_tags = $user->tags();
 
         $user->favorites->each(function($piece) use ($user) {
             $this->api->setCustomAttributes($piece, $user->id);
