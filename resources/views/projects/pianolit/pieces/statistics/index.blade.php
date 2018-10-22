@@ -116,6 +116,14 @@ var composersChart = new Chart(composersChartElement, {
                 }
             }]
         },
+        layout: {
+            padding: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+            }
+        },
         events: ['click', 'hover'],
         onClick: function(element, item) {
             let composer = item[0]._view.label;
