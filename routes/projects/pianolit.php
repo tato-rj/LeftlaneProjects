@@ -72,7 +72,6 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 		Route::post('/subscription/verify-all', 'Projects\PianoLit\SubscriptionsController@verifyAll')->name('subscription.verify-all');
 		Route::delete('/{user}/subscription', 'Projects\PianoLit\SubscriptionsController@destroy')->name('subscription.destroy');
 	});
-
 });
 
 // App Routes

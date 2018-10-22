@@ -14,6 +14,11 @@
     <div class="row my-5 mx-2">
       <canvas id="composersChart" class="w-100" height="300" data-records="{{$composersStats}}"></canvas>
     </div>
+    <div class="row my-5 mx-2">
+        <div class="col-3">
+          <canvas id="levelsChart" height="300" data-records="{{$levelsStats}}"></canvas>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -131,6 +136,47 @@ var composersChart = new Chart(composersChartElement, {
             $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
             $modal.modal('show');
           $.get("/piano-lit/composers/"+composer+"/pieces", function(data, status){
+            $modal.find('.modal-body').html(data);
+          });
+        }
+    }
+});
+</script>
+<script type="text/javascript">
+let levelsRecords = JSON.parse($('#levelsChart').attr('data-records'));
+let levels = [];
+let levels_pieces_count = [];
+
+for (var i=0; i < levelsRecords.length; i++) {
+  levels.push(levelsRecords[i].name);
+  levels_pieces_count.push(levelsRecords[i].pieces_count);
+}
+
+var levelsChartElement = document.getElementById("levelsChart").getContext('2d');
+var levelsChart = new Chart(levelsChartElement,{
+    type: 'pie',
+    data: {
+        labels: levels,
+        datasets: [{
+            data: levels_pieces_count,
+            backgroundColor: ['#2d995b', '#f2da00', '#d9700a', '#c51f1a']
+        }]
+    },
+    options: {
+        legend: {
+          // display: false
+        },
+        tooltips: {
+          // enabled: false
+        },
+        events: ["mousemove", "mouseout", "click"],
+        onClick: function(element, item) {
+            let level = item[0]._view.label;
+            let $modal = $('#results-modal');
+            $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
+            $modal.modal('show');
+          $.get("/piano-lit/tags/"+level+"/pieces", function(data, status){
+            
             $modal.find('.modal-body').html(data);
           });
         }
