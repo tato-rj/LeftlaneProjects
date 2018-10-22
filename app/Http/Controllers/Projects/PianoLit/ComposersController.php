@@ -36,6 +36,13 @@ class ComposersController extends Controller
         return view('projects/pianolit/composers/index', compact(['composers', 'countries']));
     }
 
+    public function pieces($name)
+    {
+        $pieces = Composer::where('name', $name)->first()->load('pieces')->pieces;
+
+        return view('projects/pianolit/components/render/pieces', compact('pieces'))->render();
+    }
+
     /**
      * Show the form for creating a new resource.
      *

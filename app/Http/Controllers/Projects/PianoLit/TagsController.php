@@ -69,7 +69,7 @@ class TagsController extends Controller
     {
         $pieces = Tag::where('name', $tagName)->first()->load('pieces')->pieces;
 
-        return view('projects/pianolit/tags/pieces', compact('pieces'))->render();
+        return view('projects/pianolit/components/render/pieces', compact('pieces'))->render();
     }
 
     /**

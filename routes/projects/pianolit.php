@@ -26,6 +26,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 	Route::prefix('/composers')->name('composers.')->group(function() {
 		Route::get('/', 'Projects\PianoLit\ComposersController@index');
 		Route::get('/{composer}', 'Projects\PianoLit\ComposersController@edit');
+		Route::get('/{composer}/pieces', 'Projects\PianoLit\ComposersController@pieces');
 
 		Route::post('', 'Projects\PianoLit\ComposersController@store')->name('store');
 		Route::patch('/{composer}', 'Projects\PianoLit\ComposersController@update')->name('update');
