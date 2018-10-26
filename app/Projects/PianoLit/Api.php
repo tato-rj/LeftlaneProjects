@@ -84,6 +84,7 @@ class Api
     public function levels()
     {
         $collection = Tag::levels()->select('name')->withCount('pieces')->get();
+
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),

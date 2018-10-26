@@ -29,13 +29,22 @@
 
 @section('scripts')
 <script type="text/javascript">
+function shadeColor(color, percent) {  // deprecated. See below.
+    var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
+    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+}
+</script>
+<script type="text/javascript">
 let tagsRecords = JSON.parse($('#tagsChart').attr('data-records'));
 let tags = [];
 let tags_pieces_count = [];
+let tags_backgrounds = [];
+let tags_count = tagsRecords.length;
 
-for (var i=0; i < tagsRecords.length; i++) {
+for (var i=0; i < tags_count; i++) {
   tags.push(tagsRecords[i].name);
   tags_pieces_count.push(tagsRecords[i].pieces_count);
+  tags_backgrounds.push(shadeColor('#2e5ab9', (80/tags_count)*i));
 }
 var tagsChartElement = document.getElementById("tagsChart").getContext('2d');
 var tagsChart = new Chart(tagsChartElement, {
@@ -44,10 +53,13 @@ var tagsChart = new Chart(tagsChartElement, {
         labels: tags,
         datasets: [{
             data: tags_pieces_count,
-            backgroundColor: '#2e5ab9'
+            backgroundColor: tags_backgrounds
         }]
     },
     options: {
+        legend: {
+          display: false
+        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -80,11 +92,15 @@ var tagsChart = new Chart(tagsChartElement, {
 let composersRecords = JSON.parse($('#composersChart').attr('data-records'));
 let composers = [];
 let composers_pieces_count = [];
+let composers_backgrounds = [];
+let composers_count = composersRecords.length;
 
-for (var i=0; i < composersRecords.length; i++) {
+for (var i=0; i < composers_count; i++) {
   composers.push(composersRecords[i].name);
   composers_pieces_count.push(composersRecords[i].pieces_count);
+  composers_backgrounds.push(shadeColor('#2e5ab9', (80/composers_count)*i));
 }
+
 var composersChartElement = document.getElementById("composersChart").getContext('2d');
 var composersChart = new Chart(composersChartElement, {
     type: 'bar',
@@ -92,10 +108,13 @@ var composersChart = new Chart(composersChartElement, {
         labels: composers,
         datasets: [{
             data: composers_pieces_count,
-            backgroundColor: '#2e5ab9'
+            backgroundColor: composers_backgrounds
         }]
     },
     options: {
+        legend: {
+          display: false
+        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -147,10 +166,13 @@ var levelsChart = new Chart(levelsChartElement,{
         labels: levels,
         datasets: [{
             data: levels_pieces_count,
-            backgroundColor: ['#2d995b', '#f2da00', '#d9700a', '#c51f1a']
+            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0']
         }]
     },
     options: {
+        legend: {
+          display: true
+        },
         events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
             let level = item[0]._view.label;
