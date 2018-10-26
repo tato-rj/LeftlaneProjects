@@ -15,7 +15,7 @@
       <canvas id="composersChart" class="w-100" height="300" data-records="{{$composersStats}}"></canvas>
     </div>
     <div class="row my-5 mx-2">
-        <div class="col-3">
+        <div class="col-4">
           <canvas id="levelsChart" height="300" data-records="{{$levelsStats}}"></canvas>
       </div>
     </div>
@@ -171,7 +171,8 @@ var levelsChart = new Chart(levelsChartElement,{
     },
     options: {
         legend: {
-          display: true
+          display: true,
+          position: 'left'
         },
         events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
