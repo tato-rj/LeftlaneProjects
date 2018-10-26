@@ -75,9 +75,16 @@
           <div class="col">
             <select class="form-control {{$errors->has('key') ? 'is-invalid' : ''}}" name="key" >
               <option selected disabled>Key</option>
-              @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
-              <option value="{{$key}}" {{ old('key') == $key ? 'selected' : ''}}>{{$key}}</option>
-              @endforeach
+              <optgroup label="Tonal">
+                @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
+                <option value="{{$key}}" {{ old('key') == $key ? 'selected' : ''}}>{{$key}}</option>
+                @endforeach
+              </optgroup>
+              <optgroup label="Non-tonal">
+                <option value="Modal" {{ old('key') == 'Modal' ? 'selected' : ''}}>Modal</option>
+                <option value="Serial" {{ old('key') == 'Serial' ? 'selected' : ''}}>Serial</option>
+                <option value="Chromatic" {{ old('key') == 'Chromatic' ? 'selected' : ''}}>Chromatic</option>
+              </optgroup>
             </select>
             @include('projects/pianolit/components/feedback', ['field' => 'key'])
           </div>

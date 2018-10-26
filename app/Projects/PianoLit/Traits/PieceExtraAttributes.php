@@ -36,8 +36,11 @@ trait PieceExtraAttributes
 
     public function getLongNameAttribute()
     {
-        $fullName = "$this->short_name in $this->key";
+        $fullName = "$this->short_name";
 
+        if (! in_array($this->key, ['Modal', 'Serial', 'Chromatic']))
+            $fullName .= " in $this->key";
+        
         if ($this->collection_name)
             $fullName .= " from $this->collection_name";
 

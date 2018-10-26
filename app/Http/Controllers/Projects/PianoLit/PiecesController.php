@@ -39,7 +39,7 @@ class PiecesController extends Controller
             }
         }
 
-        $pieces = $pieces->orderBy('catalogue_number', $sort ?? 'asc')->paginate(20);
+        $pieces = $pieces->orderBy('updated_at', $sort ?? 'desc')->paginate(20);
 
         return view('projects/pianolit/pieces/index', compact('pieces'));
     }

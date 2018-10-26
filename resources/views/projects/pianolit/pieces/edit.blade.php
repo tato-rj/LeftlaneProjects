@@ -57,7 +57,9 @@
           {{-- Catalogue and number --}}
           <div class="form-row form-group">
             <div class="col">
-              <label class="text-brand"><small>Collection number</small></label>
+              <label class="text-brand"><small>Collection number
+                @include('projects.pianolit.components.info', ['message' => 'This number will appear after the name of the piece. Ex: <i>Piece Name Op.1</i> <u>No.1</u>'])
+              </small></label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <div class="input-group-text">No.</div>
@@ -66,7 +68,9 @@
               </div>
             </div>
             <div class="col">
-              <label class="text-brand"><small>Movement number</small></label>
+              <label class="text-brand"><small>Movement number
+                @include('projects.pianolit.components.info', ['message' => 'This number will appear before the name of the piece: <u>1.</u> <i>Piece Name</i>'])
+              </small></label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <div class="input-group-text">Mov.</div>
@@ -90,9 +94,16 @@
               <label class="text-brand"><small>Key</small></label>
               <select class="form-control" name="key">
                 <option selected disabled>Key</option>
-                @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
-                <option value="{{$key}}" {{($piece->key == $key) ? 'selected' : ''}}>{{$key}}</option>
-                @endforeach
+                <optgroup label="Tonal">
+                  @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
+                  <option value="{{$key}}" {{($piece->key == $key) ? 'selected' : ''}}>{{$key}}</option>
+                  @endforeach
+                </optgroup>
+                <optgroup label="Non-tonal">
+                  <option value="Modal" {{($piece->key == 'Modal') ? 'selected' : ''}}>Modal</option>
+                  <option value="Serial" {{($piece->key == 'Serial') ? 'selected' : ''}}>Serial</option>
+                  <option value="Chromatic" {{($piece->key == 'Chromatic') ? 'selected' : ''}}>Chromatic</option>
+                </optgroup>
               </select>
             </div>
           </div>

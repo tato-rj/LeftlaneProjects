@@ -1,5 +1,8 @@
 <div class="rounded bg-light px-3 py-2 mb-3">
-  <p class="text-brand border-bottom pb-1"><strong>YOUTUBE</strong></p>
+	<div class="d-flex justify-content-between pb-1 mb-3 text-brand border-bottom">
+	  <p class="m-0"><strong>YOUTUBE</strong></p>
+	  <p class="m-0">@include('projects.pianolit.components.link', ['link' => "https://www.youtube.com"])</p>
+	</div>
 
   @include('projects/pianolit/components/youtube/input', [
     'display' => 'none',
