@@ -48,12 +48,6 @@ var tagsChart = new Chart(tagsChartElement, {
         }]
     },
     options: {
-        legend: {
-          display: false
-        },
-        tooltips: {
-          enabled: false
-        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -102,12 +96,6 @@ var composersChart = new Chart(composersChartElement, {
         }]
     },
     options: {
-        legend: {
-          display: false
-        },
-        tooltips: {
-          enabled: false
-        },
         scales: {
             yAxes: [{
                 ticks: {
@@ -163,12 +151,6 @@ var levelsChart = new Chart(levelsChartElement,{
         }]
     },
     options: {
-        legend: {
-          // display: false
-        },
-        tooltips: {
-          // enabled: false
-        },
         events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
             let level = item[0]._view.label;
