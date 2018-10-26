@@ -67,7 +67,7 @@ var tagsChart = new Chart(tagsChartElement, {
                 }
             }]
         },
-        events: ['click', 'hover'],
+        events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
             let tag = item[0]._view.label;
             let $modal = $('#results-modal');
@@ -129,7 +129,7 @@ var composersChart = new Chart(composersChartElement, {
                 bottom: 0
             }
         },
-        events: ['click', 'hover'],
+        events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
             let composer = item[0]._view.label;
             let $modal = $('#results-modal');
