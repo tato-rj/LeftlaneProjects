@@ -228,6 +228,26 @@
 @section('scripts')
 <script type="text/javascript" src="{{asset('js/vendor/jquery.ba-throttle-debounce.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/lookup.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript">
+function showTooltip(element) {
+    $(element).tooltip('show');
+
+    setTimeout(function(){
+        $(element).tooltip('hide');
+    },1000);
+}
+
+$('[data-toggle="tooltip"]').tooltip();
+
+var clipboard = new ClipboardJS('.clip');
+
+clipboard.on('success', function(e) {
+    showTooltip(e.trigger);
+    e.clearSelection();
+});
+
+</script>
 <script type="text/javascript">
 function lastWord(words) {
   var n = words.split(" ");
@@ -235,9 +255,9 @@ function lastWord(words) {
 }
 $('select[name="level[]"], select[name="composer_id"]').on('change', function() {
   let level = $('select[name="level[]"] option:selected').text();
-  let composer = $('select[name="composer_id"] option:selected').text();
-  let search = level + ' ' + lastWord(composer);
-  $.get('/piano-lit/pieces/suggest-tips?global=true&search='+search, function(data, status){
+  let composer = lastWord($('select[name="composer_id"] option:selected').text());
+
+  $.get('/piano-lit/pieces/suggest-tips?composer='+composer+'&level='+level, function(data, status){
       $('#suggestions').html(data);
   });
 }); 

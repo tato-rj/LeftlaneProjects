@@ -293,7 +293,40 @@ $('#edit-form input, #edit-form select, #edit-form textarea').attr('disabled', t
 $('.add-new-field, .remove-field').remove();
 </script>
 @endcannot
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script type="text/javascript">
+function showTooltip(element) {
+    $(element).tooltip('show');
 
+    setTimeout(function(){
+        $(element).tooltip('hide');
+    },1000);
+}
+
+$('[data-toggle="tooltip"]').tooltip();
+
+var clipboard = new ClipboardJS('.clip');
+
+clipboard.on('success', function(e) {
+    showTooltip(e.trigger);
+    e.clearSelection();
+});
+
+</script>
+<script type="text/javascript">
+function lastWord(words) {
+  var n = words.split(" ");
+  return n[n.length - 1];
+}
+$('select[name="level[]"], select[name="composer_id"]').on('change', function() {
+  let level = $('select[name="level[]"] option:selected').text();
+  let composer = lastWord($('select[name="composer_id"] option:selected').text());
+
+  $.get('/piano-lit/pieces/suggest-tips?composer='+composer+'&level='+level, function(data, status){
+      $('#suggestions').html(data);
+  });
+}); 
+</script>
 <script type="text/javascript">
 /////////////////
 // ADD NEW TIP //

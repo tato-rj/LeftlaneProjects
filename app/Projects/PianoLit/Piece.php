@@ -110,4 +110,13 @@ class Piece extends PianoLit
 
         return $results;
     }
+
+    public function scopeSuggestedTips($query, $request)
+    {
+        return $query->whereHas('composer', function($query) use ($request) {
+                    $query->where('name', 'LIKE', '%'.$request->composer.'%');
+                })->whereHas('tags', function($query) use ($request) {
+                    $query->where('type', 'level')->where('name', $request->level);
+                })->pluck('tips');
+    }
 }

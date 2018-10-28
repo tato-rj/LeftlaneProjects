@@ -122,11 +122,15 @@ class ApiController extends Controller
 
     public function suggestTips(Request $request)
     {
-        $inputArray = $this->api->prepareInput($request);
-        
-        $tipsArray = Piece::search($inputArray, $request)->pluck('tips');
-
-        return view('projects/pianolit/components/tips/suggestions', compact('tipsArray'))->render();
+        $results = Piece::suggestedTips($request);
+        $tips = [];
+        foreach ($results as $result) {
+            array_push($tips, unserialize($result));
+        }
+        $tips = collect($tips)->flatten()->unique();
+        $count = $tips->count() > 4 ? 5 : $tips->count(); 
+        $tips = $tips->random($count);
+        return view('projects/pianolit/components/tips/suggestions', compact('tips'))->render();
     }
 
     public function search(Request $request)
