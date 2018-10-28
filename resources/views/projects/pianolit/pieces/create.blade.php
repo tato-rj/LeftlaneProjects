@@ -228,6 +228,20 @@
 @section('scripts')
 <script type="text/javascript" src="{{asset('js/vendor/jquery.ba-throttle-debounce.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/lookup.js')}}"></script>
+<script type="text/javascript">
+function lastWord(words) {
+  var n = words.split(" ");
+  return n[n.length - 1];
+}
+$('select[name="level[]"], select[name="composer_id"]').on('change', function() {
+  let level = $('select[name="level[]"] option:selected').text();
+  let composer = $('select[name="composer_id"] option:selected').text();
+  let search = level + ' ' + lastWord(composer);
+  $.get('/piano-lit/pieces/suggest-tips?global=true&search='+search, function(data, status){
+      $('#suggestions').html(data);
+  });
+}); 
+</script>
 
 <script type="text/javascript">
 

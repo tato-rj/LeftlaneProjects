@@ -10,4 +10,7 @@
   <a class="add-new-field text-warning cursor-pointer d-block text-center" data-type="tips">
     <small><i class="fas fa-plus mr-2"></i>Add a new one</small>
   </a>
+  <div id="suggestions">
+  	
+  </div>
 </div>

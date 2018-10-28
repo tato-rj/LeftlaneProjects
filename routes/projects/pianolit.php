@@ -35,6 +35,7 @@ Route::middleware('auth:pianolit-admin')->prefix('/piano-lit')->name('piano-lit.
 
 	Route::prefix('/pieces')->name('pieces.')->group(function() {
 		Route::get('/', 'Projects\PianoLit\PiecesController@index')->name('index');
+		Route::get('/suggest-tips', 'Projects\PianoLit\ApiController@suggestTips');
 		Route::get('/search', 'Projects\PianoLit\PiecesController@search')->name('search');
 		Route::get('/tour', 'Projects\PianoLit\PiecesController@tour')->name('tour');
 		Route::get('/add', 'Projects\PianoLit\PiecesController@create');

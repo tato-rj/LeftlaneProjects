@@ -120,6 +120,15 @@ class ApiController extends Controller
         return view('projects/pianolit/tour/index', compact(['pieces', 'inputArray', 'levels', 'lengths', 'moods']));
     }
 
+    public function suggestTips(Request $request)
+    {
+        $inputArray = $this->api->prepareInput($request);
+        
+        $tipsArray = Piece::search($inputArray, $request)->pluck('tips');
+
+        return view('projects/pianolit/components/tips/suggestions', compact('tipsArray'))->render();
+    }
+
     public function search(Request $request)
     {
         $inputArray = $this->api->prepareInput($request);
