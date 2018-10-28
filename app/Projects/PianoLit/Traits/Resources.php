@@ -75,7 +75,7 @@ trait Resources
 
 	public static function lookup($file)
 	{
-		return $file ? 'text-success' : 'text-danger';
+		return $file ? 'text-success' : 'text-muted';
 	}
 
     public function file_path($filename)
