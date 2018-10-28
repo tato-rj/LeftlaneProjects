@@ -318,13 +318,17 @@ function lastWord(words) {
   var n = words.split(" ");
   return n[n.length - 1];
 }
-$('select[name="level[]"], select[name="composer_id"]').on('change', function() {
+function getSuggestions() {
   let level = $('select[name="level[]"] option:selected').text();
   let composer = lastWord($('select[name="composer_id"] option:selected').text());
 
   $.get('/piano-lit/pieces/suggest-tips?composer='+composer+'&level='+level, function(data, status){
       $('#suggestions').html(data);
   });
+}
+getSuggestions();
+$('select[name="level[]"], select[name="composer_id"]').on('change', function() {
+  getSuggestions();
 }); 
 </script>
 <script type="text/javascript">
