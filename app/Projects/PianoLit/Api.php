@@ -135,14 +135,19 @@ class Api
                 $model->name = ucfirst($model->name);
                 $number = $model->pieces_count;
                 $string = 'pieces';
+                if ($model->name == 'Johann Sebastian Bach') {
+                    $background = empty($args['background']) ? null : asset("pianolit/images/backgrounds/{$args['background']}.png");
+                    $model->setAttribute('background', $background);
+                }
             }
 
-            $background = empty($args['background']) ? null : asset("pianolit/images/backgrounds/{$args['background']}.png");
+
+            
 
             $model->setAttribute('source', $args['source']);
             $model->setAttribute('type', $args['type']);
             $model->setAttribute('color', $args['color']);
-            $model->setAttribute('background', $background);
+            // $model->setAttribute('background', $background);
             $model->setAttribute('special_attribute', $args['special_attribute'] ?? null);
             $model->setAttribute('count', $number.' '.$string);
         }
