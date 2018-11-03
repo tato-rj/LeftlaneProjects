@@ -54,7 +54,7 @@ class Api
         $this->withAttributes($collection, [
             'type' => 'collection',
             'source' => \URL::to('/piano-lit/api/search'),
-            'color' => 'darkBlue']);
+            'color' => 'darkblue']);
 
         return $this->createPlaylist($collection, ['title' => 'Composers']);
     }
