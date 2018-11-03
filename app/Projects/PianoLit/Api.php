@@ -136,10 +136,12 @@ class Api
                 $string = 'pieces';
             }
 
+            $background = empty($args['background']) ? null : asset("pianolit/images/backgrounds/{$args['background']}.png");
+
             $model->setAttribute('source', $args['source']);
             $model->setAttribute('type', $args['type']);
             $model->setAttribute('color', $args['color']);
-            $model->setAttribute('background', asset("pianolit/images/backgrounds/{$args['color']}.png"));
+            $model->setAttribute('background', $background);
             $model->setAttribute('special_attribute', $args['special_attribute'] ?? null);
             $model->setAttribute('count', $number.' '.$string);
         }
