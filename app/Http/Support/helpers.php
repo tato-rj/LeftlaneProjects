@@ -15,6 +15,27 @@ function keys()
 	return ['C major', 'C minor', 'C# major', 'C# minor', 'Db major', 'Db minor', 'D major', 'D minor', 'D# major', 'D# minor', 'Eb major', 'Eb minor', 'E major', 'E minor', 'F major', 'F minor', 'F# major', 'F# minor', 'Gb major', 'Gb minor', 'G major', 'G minor', 'G# major', 'G# minor', 'Ab major', 'Ab minor', 'A major', 'A minor', 'A# major', 'A# minor', 'Bb major', 'Bb minor', 'B major', 'B minor'];
 }
 
+function gradient($color)
+{
+	$colors = [
+		'red' => ['#C40025FF', '#F72545FF'],
+		'orange' => ['#DA2D00FF', '#F0683BFF'],
+		'yellow' => ['#E68300FF', '#EFB600FF'],
+		'pink' => ['#D0277EFF', '#F167ABFF'],
+		'lightblue' => ['#0078DEFF', '#4FAAF0FF'],
+		'darkblue' => ['#0048BBFF', '#2F77DDFF'],
+		'green' => ['#00A490FF', '#44D0B2FF'],
+		'teal' => ['#0098C3FF', '#34CAD2FF'],
+		'purple' => ['#4C22B9FF', '#7952E5FF'],
+		'blue' => ['#2960F7FF', '#008CF5FF']
+	];
+
+	if (array_key_exists($color, $colors))
+		return $colors[$color];
+
+	return ['#fff', '#000'];
+}
+
 function catalogues()
 {
 	$catalogues = ['Op.', 'KV', 'H', 'D', 'Hob', 'BWV', 'WoO', 'Op. posth.', 'Anh', 'Sz'];

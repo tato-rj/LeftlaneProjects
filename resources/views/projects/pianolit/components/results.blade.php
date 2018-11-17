@@ -1,11 +1,6 @@
 <div class="col-12 mb-2">
   <div class="d-flex justify-content-between px-3 py-2 
-    @if(is_null($piece->creator_id))
-    bg-white text-muted border
-    @else
-    bg-{{strtolower($piece->level()->name)}}
-    @endif
-    rounded">
+  {{is_null($piece->creator_id) ? 'bg-white text-muted border' : 'bg-'.strtolower($piece->level()->name)}} rounded">
     <div class="truncate">
       @include('projects/pianolit/components/play')
       <strong>{{$piece->long_name}}</strong> by {{$piece->composer->short_name}}
