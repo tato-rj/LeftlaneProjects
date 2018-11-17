@@ -53,8 +53,8 @@ class Tag extends PianoLit
 
     public function scopeByTypes($query, $except = [])
     {
-        $tags['mood'] = $this->mood()->get();
-        $tags['technique'] = $this->technique()->get();
+        $tags['mood'] = $this->mood()->orderBy('name')->get();
+        $tags['technique'] = $this->technique()->orderBy('name')->get();
         $tags['genre'] = $this->genre()->get();
         $tags['levels'] = $this->levels()->get();
         $tags['lengths'] = $this->lengths()->get();

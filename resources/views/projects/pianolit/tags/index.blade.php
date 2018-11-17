@@ -35,7 +35,7 @@
 
     <div class="row my-3">
       <div class="col-12 text-center">
-        {{-- <p class="text-center"><small>Showing {{$tags->count()}} of {{$tags->total()}}</small></p> --}}
+        <p class="text-center"><small>Showing {{\App\Projects\PianoLit\Tag::count()}} tags</small></p>
       </div>
       <div class="col-12">
         @foreach($types as $type => $tags)
