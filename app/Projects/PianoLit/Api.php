@@ -217,13 +217,13 @@ class Api
                             if ($pieceTag == $inputTag)
                                 $matchesCount++;
                         } else {
-                            if (strpos($pieceTag, $inputTag) !== false)
+                            if (strpos(removeAccents($pieceTag), removeAccents($inputTag)) !== false)
                                 $matchesCount++;
                         }
                     }
                 }
 
-                if ($matchesCount != count($inputArray))
+                if ($matchesCount < count($inputArray))
                     $pieces->forget($key);
             });
         }
