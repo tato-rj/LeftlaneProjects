@@ -86,13 +86,16 @@ class PiecesController extends Controller
 
     public function validateName(Request $request)
     {
-        $result = Piece::where([
-            ['name', '=', $request->name ?? null],
-            ['catalogue_number', '=', $request->catalogue_number ?? null],
-            ['collection_number', '=', $request->collection_number ?? null]
-        ])->first();
+        $results = Piece::where('name', 'LIKE', "%$request->name%")
+                        ->where('catalogue_number', 'like', $request->catalogue_number ?? '%')->get();
 
-        return $result->medium_name ?? null;        
+        // $result = Piece::where('name', 'LIKE', "%$request->name%")
+        //                 ->where('collection_name', $request->collection_name)
+        //                 ->where('catalogue_number', $request->collection_number)
+        //                 ->where('collection_number', $request->collection_number)
+        //                 ->where('movement_number', $request->movement_number)->get()->pluck('medium_name');
+
+        return view('projects.pianolit.pieces.validation', compact('results'))->render();        
     }
 
     public function tour()

@@ -10,6 +10,7 @@ class Piece extends PianoLit
 
     protected $casts = ['tips' => 'array'];
     protected $with = ['composer', 'tags'];
+    protected $appends = ['medium_name'];
     protected $api;
 
     public function __construct($attributes = [])
