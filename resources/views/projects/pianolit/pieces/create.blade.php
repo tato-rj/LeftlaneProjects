@@ -317,11 +317,11 @@ new Lukup({
 
 <script type="text/javascript">
 $('input.validate-name').on('blur', function() {
-  $element = $(this);
+
   setTimeout(function(){
     input = {};
     $('.validate-name').each(function() {
-      input[$element.attr('name')] = $element.val();
+      input[$(this).attr('name')] = $(this).val();
     });
 
     $.post(app.url+'/piano-lit/pieces/validate-name', input, function(data, status, xhr) {
