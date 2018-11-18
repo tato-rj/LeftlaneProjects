@@ -86,6 +86,7 @@ class PiecesController extends Controller
 
     public function validateName(Request $request)
     {
+        $request->validate(['name' => 'required']);
         $results = Piece::where('name', 'LIKE', "%$request->name%")
                         ->where('catalogue_number', 'like', $request->catalogue_number ?? '%')->get();
 

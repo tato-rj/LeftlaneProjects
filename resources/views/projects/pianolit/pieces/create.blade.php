@@ -322,10 +322,10 @@ $('input.validate-name').on('blur', function() {
     input[$(this).attr('name')] = $(this).val();
   });
 
-  $.post(app.url+'/piano-lit/pieces/validate-name', input, function(data, status) {
+  $.post(app.url+'/piano-lit/pieces/validate-name', input, function(data, status, xhr) {
     
     $('#validation-results .results').html('');
-    
+
     if (data != '') {
         $('#validation-results .empty').hide();
 
@@ -335,6 +335,9 @@ $('input.validate-name').on('blur', function() {
       $('#validation-results .empty').show();
     
     }
+  }).fail(function(error) {
+    $('#validation-results .results').html('');
+    $('#validation-results .empty').show();
   });
 });
 </script>
