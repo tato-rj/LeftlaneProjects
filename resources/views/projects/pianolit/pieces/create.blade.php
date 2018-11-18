@@ -317,28 +317,32 @@ new Lukup({
 
 <script type="text/javascript">
 $('input.validate-name').on('blur', function() {
-  input = {};
-  $('.validate-name').each(function() {
-    input[$(this).attr('name')] = $(this).val();
-  });
+  $element = $(this);
+  setTimeout(function(){
+    input = {};
+    $('.validate-name').each(function() {
+      input[$element.attr('name')] = $element.val();
+    });
 
-  $.post(app.url+'/piano-lit/pieces/validate-name', input, function(data, status, xhr) {
-    
-    $('#validation-results .results').html('');
+    $.post(app.url+'/piano-lit/pieces/validate-name', input, function(data, status, xhr) {
 
-    if (data != '') {
+      $('#validation-results .results').html('');
+
+      if (data != '') {
         $('#validation-results .empty').hide();
 
         $('#validation-results .results').append(data);
-    } else {
+      } else {
 
+        $('#validation-results .empty').show();
+
+      }
+    }).fail(function(error) {
+      $('#validation-results .results').html('');
       $('#validation-results .empty').show();
-    
-    }
-  }).fail(function(error) {
-    $('#validation-results .results').html('');
-    $('#validation-results .empty').show();
-  });
+    });
+  }, 500);
+
 });
 </script>
 
