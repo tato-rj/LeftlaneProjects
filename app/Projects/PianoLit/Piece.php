@@ -59,6 +59,22 @@ class Piece extends PianoLit
         return $this->belongsToThrough(Country::class, Composer::class);
     }
 
+    public function hasAudio()
+    {
+        return $this->audio_path || $this->audio_path_lh || $this->audio_path_rh;
+    }
+
+    public function recordingsAvailable()
+    {
+        $count = 0;
+
+        if ($this->audio_path) $count += 1;
+        if ($this->audio_path_rh) $count += 1;
+        if ($this->audio_path_lh) $count += 1;
+
+        return $count;
+    }
+
     public function isFavorited($user_id)
     {
         $result = \DB::connection('pianolit')->table('favorites')->where([
