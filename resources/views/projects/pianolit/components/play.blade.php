@@ -4,7 +4,7 @@
 	@if($piece->recordingsAvailable() == 3)
 	<div class="position-absolute rounded-circle bg-success text-white font-weight-bold d-flex align-items-center justify-content-center" style="bottom: 0; right: 2px; width: 10px; height: 10px; font-size: .4em" title="This piece has all three recordings"><i class="fas fa-check"></i></div>	
 	@else
-	<div class="position-absolute rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="bottom: 0; right: 2px; width: 10px; height: 10px; font-size: .5em" title="This pieces has only {{$piece->recordingsAvailable()}} recordings">{{$piece->recordingsAvailable()}}</div>
+	<div class="position-absolute rounded-circle bg-secondary text-white font-weight-bold d-flex align-items-center justify-content-center" style="bottom: 0; right: 2px; width: 10px; height: 10px; font-size: .5em" title="This pieces has only {{$piece->recordingsAvailable()}} {{str_plural('recording', $piece->recordingsAvailable())}}">{{$piece->recordingsAvailable()}}</div>
 	@endif
 </div>
 @elseif($piece->youtube_array)
