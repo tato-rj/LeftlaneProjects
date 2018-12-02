@@ -261,11 +261,6 @@ clipboard.on('success', function(e) {
 
 </script>
 <script type="text/javascript">
-function lastWord(words) {
-  var n = words.split(" ");
-  return n[n.length - 1];
-}
-
 $('input[name="tags[]"]').on('change', function() {
 
   let tags = [];

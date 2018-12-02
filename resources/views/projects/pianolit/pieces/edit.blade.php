@@ -314,16 +314,14 @@ clipboard.on('success', function(e) {
 
 </script>
 <script type="text/javascript">
-function lastWord(words) {
-  var n = words.split(" ");
-  return n[n.length - 1];
-}
 function getSuggestions() {
-  let level = $('select[name="level[]"] option:selected').text();
-  let composer = lastWord($('select[name="composer_id"] option:selected').text());
+  let tags = [];
+  $('input[name="tags[]"]:checked').each(function(i) {
+    tags[i] = $(this).val();
+  });
 
-  $.get('/piano-lit/pieces/suggest-tips?composer='+composer+'&level='+level, function(data, status){
-      $('#suggestions').html(data);
+  $.get('/piano-lit/pieces/suggest-tips?tags='+tags.join(), function(data, status){
+    $('#suggestions').html(data);
   });
 }
 getSuggestions();
