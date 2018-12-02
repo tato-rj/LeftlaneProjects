@@ -5,6 +5,7 @@ namespace App\Projects\PianoLit;
 class Composer extends PianoLit
 {
     protected $dates = ['date_of_birth', 'date_of_death'];
+    protected $appends = ['last_name'];
     protected $withCount = ['pieces'];
 
     public function creator()
