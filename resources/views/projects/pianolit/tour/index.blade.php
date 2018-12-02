@@ -30,7 +30,7 @@
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="0"><strong>Just started</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="1"><strong>Less than one year</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="2"><strong>Less than five years</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="3"><strong>More than five years</strong></button>
+                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="3"><strong>More than five years</strong></button>
                 </div>
               </div>
               <div class="carousel-item text-center carousel-level">

@@ -33,7 +33,7 @@ trait Resources
 
     public static function catalogues()
     {
-        $catalogues = ['Op.', 'KV', 'H', 'D', 'Hob', 'BWV', 'WoO', 'Op. posth.', 'Anh', 'Sz', 'L'];
+        $catalogues = ['Op.', 'KV', 'H', 'D', 'Hob', 'BWV', 'WoO', 'Op. posth.', 'Anh', 'Sz', 'S', 'L'];
         
         sort($catalogues);
 
