@@ -87,12 +87,22 @@ if ($('#results-modal').length > 0)
     $('#results-modal').modal('show');
 </script>
 <script type="text/javascript">
+
 function average(array) {
   let total = 0;
   for(var i = 0; i < array.length; i++) {
       total += parseInt(array[i]);
   }
   return Math.floor(total / array.length);
+}
+
+function prepareInput() {
+  let tagsArray = [];
+  $('#app-intro .carousel-item').slice(1).each(function() {
+    tagsArray.push($(this).attr('value'));
+  });
+  $input.val(tagsArray.shift());
+  $input.val($input.val()+' '+tagsArray[Math.floor(Math.random()*tagsArray.length)]);
 }
 
 $('#app-intro .tag-button').on('click', function() {
@@ -118,9 +128,7 @@ $('#app-intro .tag-button').on('click', function() {
       $(this).attr('value', levelNames[average(levelsArray)]);
     });
 
-    $('#app-intro .carousel-item').slice(1).each(function() {
-      $input.val($input.val()+$(this).attr('value')+' ');
-    });
+    prepareInput();
 
     alert('Searching for: ' + $input.val());
 
