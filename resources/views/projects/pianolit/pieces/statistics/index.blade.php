@@ -214,12 +214,12 @@ var levelsChart = new Chart(levelsChartElement,{
 let recRecords = JSON.parse($('#recChart').attr('data-records'));
 let rec = [];
 let rec_pieces_count = [];
-
+console.log(recRecords);
 for (var i=0; i < Object.keys(recRecords).length; i++) {
   rec.push(i + ' audio');
   rec_pieces_count.push(recRecords[i].count);
 }
-console.log(rec);
+
 var recChartElement = document.getElementById("recChart").getContext('2d');
 var recChart = new Chart(recChartElement,{
     type: 'pie',
