@@ -49,6 +49,7 @@ class PiecesController extends Controller
         $tagStats = Tag::whereIn('type', ['mood', 'technique'])->withCount('pieces')->orderBy('pieces_count', 'DESC')->get();
         $composersStats = Composer::select('name')->withCount('pieces')->orderBy('pieces_count', 'DESC')->get();
         $levelsStats = Tag::levels()->withCount('pieces')->get();
+
         
         return view('projects/pianolit/pieces/statistics/index', compact(['tagStats', 'composersStats', 'levelsStats']));
     }

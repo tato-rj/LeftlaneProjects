@@ -7,15 +7,21 @@
   @include('projects/pianolit/components/breadcrumb', [
     'title' => 'Statistics',
     'description' => 'See how are the pieces and their tags being used across the database'])
-    
-    <div class="row my-5 mx-2">
-      <canvas id="tagsChart" class="w-100" height="300" data-records="{{$tagStats}}"></canvas>
-    </div>
-    <div class="row my-5 mx-2">
-      <canvas id="composersChart" class="w-100" height="300" data-records="{{$composersStats}}"></canvas>
-    </div>
-    <div class="row my-5 mx-2">
-        <div class="col-4">
+
+    @include('projects.pianolit.pieces.statistics.row', [
+      'title' => 'Tags',
+      'id' => 'tagsChart',
+      'col' => '12',
+      'data' => $tagStats])
+
+    @include('projects.pianolit.pieces.statistics.row', [
+      'title' => 'Composers',
+      'id' => 'composersChart',
+      'col' => '12',
+      'data' => $composersStats])
+
+    <div class="col-12 bg-light py-4">
+        <div class="col-12">
           <canvas id="levelsChart" height="300" data-records="{{$levelsStats}}"></canvas>
       </div>
     </div>
@@ -64,7 +70,7 @@ var tagsChart = new Chart(tagsChartElement, {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    stepSize: 1
+                    stepSize: 2
                 }
             }],
             xAxes: [{
@@ -119,7 +125,7 @@ var composersChart = new Chart(composersChartElement, {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    stepSize: 1
+                    stepSize: 2
                 }
             }],
             xAxes: [{
