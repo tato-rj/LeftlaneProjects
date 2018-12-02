@@ -30,28 +30,25 @@
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Just started</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than one year</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than five years</strong></button>
-                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag=""><strong>More than five years</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>More than five years</strong></button>
                 </div>
               </div>
               <div class="carousel-item text-center">
                 <div>
                   <h5 class="text-brand my-4">In an ideal situation, how often would you play piano?</h5>
                 </div>
-                <div class="row no-gutters"> 
-                  @foreach(\App\Projects\PianoLit\Tag::special()->pluck('name') as $tag)
-                  <div class="col-6 mb-2 px-1">
-                    <button class="tag-button btn btn-light py-3 btn-block"><strong>{{ucfirst($tag)}}</strong></button>
-                  </div>
-                  @endforeach
-                </div>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Rarely, every now and then</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Sometime, about once a week</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>I would try to play everyday</strong></button>
+                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag=""><strong>Two or more hours each day</strong></button>
               </div>
               <div class="carousel-item row">
                 <div class="col-8 mx-auto text-center my-2">
                   <div>
                     <h5 class="text-brand my-4">Select the length</h5>
                   </div>
-                  @foreach(\App\Projects\PianoLit\Tag::lengths()->pluck('name') as $tag)
-                  <button class="tag-button tag-final btn btn-light py-3 btn-block"><strong>{{ucfirst($tag)}}</strong></button>
+                  @foreach(\App\Projects\PianoLit\Tag::special()->pluck('name') as $tag)
+                  <button class="tag-button tag-final btn btn-light m-0 rounded-0 bottom-bottom py-3 btn-block" data-tag="{{$tag}}"><strong>{{ucfirst($tag)}}</strong></button>
                   @endforeach
                 </div>
               </div>

@@ -265,11 +265,15 @@ function lastWord(words) {
   var n = words.split(" ");
   return n[n.length - 1];
 }
-$('select[name="level[]"], select[name="composer_id"]').on('change', function() {
-  let level = $('select[name="level[]"] option:selected').text();
-  let composer = lastWord($('select[name="composer_id"] option:selected').text());
 
-  $.get('/piano-lit/pieces/suggest-tips?composer='+composer+'&level='+level, function(data, status){
+$('input[name="tags[]"]').on('change', function() {
+
+  let tags = [];
+  $('input[name="tags[]"]:checked').each(function(i) {
+    tags[i] = $(this).val();
+  });
+
+  $.get('/piano-lit/pieces/suggest-tips?tags='+tags.join(), function(data, status){
       $('#suggestions').html(data);
   });
 }); 

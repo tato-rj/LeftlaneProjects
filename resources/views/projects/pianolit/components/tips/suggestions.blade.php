@@ -1,5 +1,5 @@
 <div class="mt-3" data-test="{{count($tips)}}">
-@if(count($tips) > 0 && ! empty($tips[0]))
+@if(count($tips) > 0)
 <p class="text-muted mb-2"><strong>Suggested tips:</strong></p>
 <ul class="list-style-none p-0 m-0">
 	@foreach($tips as $tip)
