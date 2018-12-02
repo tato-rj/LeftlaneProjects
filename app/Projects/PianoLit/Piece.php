@@ -77,7 +77,9 @@ class Piece extends PianoLit
 
     public function scopeByRecordingsAvailable($query)
     {
-        return $query->get()->groupBy('recordingsAvailable')->each(function($group) {
+        return $query->whereHas('tags', function($q) {
+            return $q->whereIn('name', ['elementary', 'beginner', 'intermediate']);
+        })->get()->groupBy('recordingsAvailable')->each(function($group) {
             $group['count'] = $group->count();
         });
     }
