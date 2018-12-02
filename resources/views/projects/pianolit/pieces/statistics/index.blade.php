@@ -48,22 +48,14 @@
 
 @section('scripts')
 <script type="text/javascript">
-function shadeColor(color, percent) {  // deprecated. See below.
-    var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
-    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
-}
-</script>
-<script type="text/javascript">
 let tagsRecords = JSON.parse($('#tagsChart').attr('data-records'));
 let tags = [];
 let tags_pieces_count = [];
-let tags_backgrounds = [];
 let tags_count = tagsRecords.length;
 
 for (var i=0; i < tags_count; i++) {
   tags.push(tagsRecords[i].name);
   tags_pieces_count.push(tagsRecords[i].pieces_count);
-  tags_backgrounds.push(shadeColor('#2e5ab9', (80/tags_count)*i));
 }
 var tagsChartElement = document.getElementById("tagsChart").getContext('2d');
 var tagsChart = new Chart(tagsChartElement, {
@@ -72,7 +64,7 @@ var tagsChart = new Chart(tagsChartElement, {
         labels: tags,
         datasets: [{
             data: tags_pieces_count,
-            backgroundColor: tags_backgrounds
+            backgroundColor: '#2e5ab9'
         }]
     },
     options: {
@@ -111,13 +103,11 @@ var tagsChart = new Chart(tagsChartElement, {
 let composersRecords = JSON.parse($('#composersChart').attr('data-records'));
 let composers = [];
 let composers_pieces_count = [];
-let composers_backgrounds = [];
 let composers_count = composersRecords.length;
 
 for (var i=0; i < composers_count; i++) {
   composers.push(composersRecords[i].name);
   composers_pieces_count.push(composersRecords[i].pieces_count);
-  composers_backgrounds.push(shadeColor('#2e5ab9', (80/composers_count)*i));
 }
 
 var composersChartElement = document.getElementById("composersChart").getContext('2d');
@@ -127,7 +117,7 @@ var composersChart = new Chart(composersChartElement, {
         labels: composers,
         datasets: [{
             data: composers_pieces_count,
-            backgroundColor: composers_backgrounds
+            backgroundColor: '#2e5ab9'
         }]
     },
     options: {
