@@ -8,23 +8,36 @@
     'title' => 'Statistics',
     'description' => 'See how are the pieces and their tags being used across the database'])
 
-    @include('projects.pianolit.pieces.statistics.row', [
-      'title' => 'Tags',
-      'id' => 'tagsChart',
-      'col' => '12',
-      'data' => $tagStats])
-
-    @include('projects.pianolit.pieces.statistics.row', [
-      'title' => 'Composers',
-      'id' => 'composersChart',
-      'col' => '12',
-      'data' => $composersStats])
-
-    <div class="col-12 bg-light py-4">
-        <div class="col-12">
-          <canvas id="levelsChart" height="300" data-records="{{$levelsStats}}"></canvas>
-      </div>
+    <div class="row"> 
+      @include('projects.pianolit.pieces.statistics.row', [
+        'title' => 'Tags',
+        'id' => 'tagsChart',
+        'col' => '12',
+        'data' => $tagStats])
     </div>
+
+    <div class="row"> 
+      @include('projects.pianolit.pieces.statistics.row', [
+        'title' => 'Composers',
+        'id' => 'composersChart',
+        'col' => '12',
+        'data' => $composersStats])
+    </div>
+
+    <div class="row"> 
+      @include('projects.pianolit.pieces.statistics.row', [
+        'title' => 'Levels',
+        'id' => 'levelsChart',
+        'col' => '4',
+        'data' => $levelsStats])
+
+      @include('projects.pianolit.pieces.statistics.row', [
+        'title' => 'Recordings count',
+        'id' => 'recChart',
+        'col' => '4',
+        'data' => $recStats])
+    </div>
+
   </div>
 </div>
 
@@ -178,7 +191,10 @@ var levelsChart = new Chart(levelsChartElement,{
     options: {
         legend: {
           display: true,
-          position: 'left'
+          position: 'bottom',
+          labels: {
+            padding: 20
+          }
         },
         events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
@@ -191,6 +207,48 @@ var levelsChart = new Chart(levelsChartElement,{
             $modal.find('.modal-body').html(data);
           });
         }
+    }
+});
+</script>
+<script type="text/javascript">
+let recRecords = JSON.parse($('#recChart').attr('data-records'));
+let rec = [];
+let rec_pieces_count = [];
+
+for (var i=0; i < Object.keys(recRecords).length; i++) {
+  rec.push(i + ' audio');
+  rec_pieces_count.push(recRecords[i].count);
+}
+// console.log();
+var recChartElement = document.getElementById("recChart").getContext('2d');
+var recChart = new Chart(recChartElement,{
+    type: 'pie',
+    data: {
+        labels: rec,
+        datasets: [{
+            data: rec_pieces_count,
+            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c']
+        }]
+    },
+    options: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            padding: 20
+          }
+        },
+        events: ["mousemove", "mouseout", "click"],
+        // onClick: function(element, item) {
+        //     let level = item[0]._view.label;
+        //     let $modal = $('#results-modal');
+        //     $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
+        //     $modal.modal('show');
+        //   $.get("/piano-lit/tags/"+level+"/pieces", function(data, status){
+            
+        //     $modal.find('.modal-body').html(data);
+        //   });
+        // }
     }
 });
 </script>

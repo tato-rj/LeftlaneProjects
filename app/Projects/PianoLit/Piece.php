@@ -10,7 +10,7 @@ class Piece extends PianoLit
 
     protected $casts = ['tips' => 'array'];
     protected $with = ['composer', 'tags'];
-    protected $appends = ['medium_name'];
+    protected $appends = ['medium_name', 'recordingsAvailable'];
     protected $api;
 
     public function __construct($attributes = [])
@@ -64,7 +64,7 @@ class Piece extends PianoLit
         return $this->audio_path || $this->audio_path_lh || $this->audio_path_rh;
     }
 
-    public function recordingsAvailable()
+    public function getRecordingsAvailableAttribute()
     {
         $count = 0;
 
@@ -73,6 +73,13 @@ class Piece extends PianoLit
         if ($this->audio_path_lh) $count += 1;
 
         return $count;
+    }
+
+    public function scopeByRecordingsAvailable($query)
+    {
+        return $query->get()->groupBy('recordingsAvailable')->each(function($group) {
+            $group['count'] = $group->count();
+        });
     }
 
     public function isFavorited($user_id)
