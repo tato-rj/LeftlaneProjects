@@ -214,7 +214,7 @@ var levelsChart = new Chart(levelsChartElement,{
 let recRecords = JSON.parse($('#recChart').attr('data-records'));
 let rec = [];
 let rec_pieces_count = [];
-console.log(recRecords);
+console.log(Object.keys(recRecords));
 console.log(recRecords[2]);
 for (var i=0; i < Object.keys(recRecords).length; i++) {
   rec.push(i + ' audio');
