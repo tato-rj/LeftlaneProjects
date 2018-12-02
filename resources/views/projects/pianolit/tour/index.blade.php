@@ -22,35 +22,48 @@
         </form>
           <div class="carousel-inner">
             
-              <div class="carousel-item row active">
+              <div class="carousel-item row active carousel-level">
                 <div class="col-8 mx-auto text-center my-2">
                   <div>
                     <h5 class="text-brand my-4">How long have you been playing piano?</h5>
                   </div>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Just started</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than one year</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than five years</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>More than five years</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="0"><strong>Just started</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="1"><strong>Less than one year</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="2"><strong>Less than five years</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="3"><strong>More than five years</strong></button>
                 </div>
               </div>
-              <div class="carousel-item text-center">
+              <div class="carousel-item text-center carousel-level">
                 <div>
                   <h5 class="text-brand my-4">In an ideal situation, how often would you play piano?</h5>
                 </div>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Rarely, every now and then</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Sometime, about once a week</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>I would try to play everyday</strong></button>
-                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag=""><strong>Two or more hours each day</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="0"><strong>Rarely, every now and then</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="1"><strong>Sometime, about once a week</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="2"><strong>I would try to play everyday</strong></button>
+                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="3"><strong>Two or more hours each day</strong></button>
               </div>
               <div class="carousel-item row">
                 <div class="col-8 mx-auto text-center my-2">
                   <div>
-                    <h5 class="text-brand my-4">Select the length</h5>
+                    <h5 class="text-brand my-4">Which mood defines you most?</h5>
                   </div>
-                  @foreach(\App\Projects\PianoLit\Tag::special()->pluck('name') as $tag)
-                  <button class="tag-button tag-final btn btn-light m-0 rounded-0 bottom-bottom py-3 btn-block" data-tag="{{$tag}}"><strong>{{ucfirst($tag)}}</strong></button>
-                  @endforeach
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="playful"><strong>Playful</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="dreamy"><strong>Dreamy</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="elegant"><strong>Elegant</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="crazy"><strong>Crazy</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="sad"><strong>Sad</strong></button>
+                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="passionate"><strong>Passionate</strong></button>
                 </div>
+              </div>
+              <div class="carousel-item text-center">
+                <div>
+                  <h5 class="text-brand my-4">If you were a composer you would be:</h5>
+                </div>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="classical"><strong>Mozart</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="baroque"><strong>Bach</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="romantic"><strong>Chopin</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="romantic"><strong>Debussy</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="modern"><strong>Bartók</strong></button>
               </div>
             
           </div>
@@ -81,16 +94,24 @@ $('#app-intro .tag-button').on('click', function() {
   $tag.siblings('button').addClass('btn-light').removeClass('btn-default');
   $tag.addClass('btn-default').removeClass('btn-light');
 
-  $tag.closest('.carousel-item').attr('value', $tag.text());
+  $tag.closest('.carousel-item').attr('value', $tag.attr('data-tag'));
 
   if ($tag.hasClass('tag-final')) {
     $input.val('');
-    
+    let levelNames = ['elementary', 'beginner', 'intermediate', 'advanced'];
+    let levelsArray = [];
+
+    $('#app-intro .carousel-level').each(function() {
+      // levelsArray.push($(this).attr())
+    });
+
     $('#app-intro .carousel-item').each(function() {
       $input.val($input.val()+$(this).attr('value')+' ');
     });
 
-    $('#app-intro form').submit();
+    console.log('Searching for: ' + $input.val());
+
+    // $('#app-intro form').submit();
   } else {
     $('#app-intro').carousel('next');
   }

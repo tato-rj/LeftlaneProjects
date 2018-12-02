@@ -130,8 +130,8 @@ class ApiController extends Controller
         }
 
         $tips = collect($tips)->flatten()->unique();
-        $count = $tips->count() > 4 ? 5 : $tips->count(); 
-        $tips = $tips->random($count);
+        // $count = $tips->count() > 4 ? 5 : $tips->count(); 
+        // $tips = $tips->random($count);
 
         return view('projects/pianolit/components/tips/suggestions', compact('tips'))->render();
     }
