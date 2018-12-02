@@ -10,7 +10,8 @@
   <a class="add-new-field text-warning cursor-pointer d-block text-center" data-type="tips">
     <small><i class="fas fa-plus mr-2"></i>Add a new one</small>
   </a>
-  <div id="suggestions">
+  <div id="suggestions" style="max-height: 312px;
+    overflow-y: scroll;">
   	
   </div>
 </div>
