@@ -86,6 +86,14 @@ if ($('#results-modal').length > 0)
     $('#results-modal').modal('show');
 </script>
 <script type="text/javascript">
+function average(array) {
+  let total = 0;
+  for(var i = 0; i < array.length; i++) {
+      total += parseInt(array[i]);
+  }
+  return Math.floor(total / array.length);
+}
+
 $('#app-intro .tag-button').on('click', function() {
   $tag = $(this);
   $form = $('#app-intro form');
@@ -100,18 +108,22 @@ $('#app-intro .tag-button').on('click', function() {
     $input.val('');
     let levelNames = ['elementary', 'beginner', 'intermediate', 'advanced'];
     let levelsArray = [];
-
+    
     $('#app-intro .carousel-level').each(function() {
-      // levelsArray.push($(this).attr())
+      levelsArray.push($(this).attr('value'));
     });
 
-    $('#app-intro .carousel-item').each(function() {
+    $('#app-intro .carousel-level').each(function() {
+      $(this).attr('value', levelNames[average(levelsArray)]);
+    });
+
+    $('#app-intro .carousel-item').slice(1).each(function() {
       $input.val($input.val()+$(this).attr('value')+' ');
     });
 
-    console.log('Searching for: ' + $input.val());
-
-    // $('#app-intro form').submit();
+    alert('Searching for: ' + $input.val());
+    
+    $('#app-intro form').submit();
   } else {
     $('#app-intro').carousel('next');
   }
