@@ -353,7 +353,7 @@ $('a.add-new-field').on('click', function() {
     $clone.removeClass('original-type').insertBefore($button).addClass('d-flex');
 
   } else {
-    $clone.find('input').attr('name',  'tips[]');
+    $clone.find('textarea').attr('name',  'tips[]');
     $clone.removeClass('original-type').insertBefore($button).addClass('d-flex');
   }
 });

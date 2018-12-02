@@ -25,17 +25,17 @@
               <div class="carousel-item row active">
                 <div class="col-8 mx-auto text-center my-2">
                   <div>
-                    <h5 class="text-brand my-4">Select the level</h5>
+                    <h5 class="text-brand my-4">How long have you been playing piano?</h5>
                   </div>
-                  
-                  @foreach(\App\Projects\PianoLit\Tag::levels()->pluck('name') as $tag)
-                  <button class="tag-button btn btn-light py-3 btn-block"><strong>{{ucfirst($tag)}}</strong></button>
-                  @endforeach
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Just started</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than one year</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag=""><strong>Less than five years</strong></button>
+                  <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag=""><strong>More than five years</strong></button>
                 </div>
               </div>
               <div class="carousel-item text-center">
                 <div>
-                  <h5 class="text-brand my-4">Select the mood</h5>
+                  <h5 class="text-brand my-4">In an ideal situation, how often would you play piano?</h5>
                 </div>
                 <div class="row no-gutters"> 
                   @foreach(\App\Projects\PianoLit\Tag::special()->pluck('name') as $tag)
