@@ -212,23 +212,21 @@ var levelsChart = new Chart(levelsChartElement,{
 </script>
 <script type="text/javascript">
 let recRecords = JSON.parse($('#recChart').attr('data-records'));
-let rec = [];
-let rec_pieces_count = [];
+let rec_pieces_count = [0,0,0,0];
 
 for (var i=0; i < Object.keys(recRecords).length; i++) {
-    let item = Object.keys(recRecords)[i]; 
-    rec.push(item + ' audio');
-    rec_pieces_count.push(recRecords[item].count);
+    let index = Object.keys(recRecords)[i];
+    rec_pieces_count[index] = recRecords[index].count;
 }
 
 var recChartElement = document.getElementById("recChart").getContext('2d');
 var recChart = new Chart(recChartElement,{
     type: 'pie',
     data: {
-        labels: rec,
+        labels: ['0 recorgings', '1 recording','2 recordings','3 recordings'],
         datasets: [{
             data: rec_pieces_count,
-            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c']
+            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0']
         }]
     },
     options: {
