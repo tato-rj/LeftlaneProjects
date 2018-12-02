@@ -51,7 +51,7 @@
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="dreamy"><strong>Dreamy</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="elegant"><strong>Elegant</strong></button>
                   <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="crazy"><strong>Crazy</strong></button>
-                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="sad"><strong>Sad</strong></button>
+                  <button class="tag-button btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="melancholic"><strong>Melancholic</strong></button>
                   <button class="tag-button btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="passionate"><strong>Passionate</strong></button>
                 </div>
               </div>
@@ -59,11 +59,12 @@
                 <div>
                   <h5 class="text-brand my-4">If you were a composer you would be:</h5>
                 </div>
-                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="classical"><strong>Mozart</strong></button>
-                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="baroque"><strong>Bach</strong></button>
-                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="romantic"><strong>Chopin</strong></button>
-                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="romantic"><strong>Debussy</strong></button>
-                  <button class="tag-button tag-final btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="modern"><strong>Bartók</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="happy"><strong>Mozart</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="counterpoint"><strong>Bach</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="serious"><strong>Beethoven</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="meditative"><strong>Chopin</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 border-bottom m-0 rounded-0 btn-block" data-tag="mysterious"><strong>Debussy</strong></button>
+                  <button class="tag-button tag-final btn btn-light py-3 m-0 rounded-0 btn-block" data-tag="percussive"><strong>Bartók</strong></button>
               </div>
             
           </div>
@@ -122,7 +123,7 @@ $('#app-intro .tag-button').on('click', function() {
     });
 
     alert('Searching for: ' + $input.val());
-    
+
     $('#app-intro form').submit();
   } else {
     $('#app-intro').carousel('next');
