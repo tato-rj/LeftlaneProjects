@@ -25,8 +25,8 @@ footer.sticky-footer, #mainNav.fixed-top.navbar-light .sidenav-toggler, .breadcr
 }
 
 .bg-elementary {
-	background: lighten($elementary, 30) !important;
-	color: darken($elementary, 15);
+	background: lighten($elementary, 35) !important;
+	color: darken($elementary, 12);
 }
 
 .bg-beginner {
@@ -40,8 +40,8 @@ footer.sticky-footer, #mainNav.fixed-top.navbar-light .sidenav-toggler, .breadcr
 }
 
 .bg-advanced {
-	background: lighten($advanced, 35) !important;
-	color: darken($advanced, 5);
+	background: lighten($advanced, 40) !important;
+	color: lighten($advanced, 10);
 }
 
 .text-elementary {
