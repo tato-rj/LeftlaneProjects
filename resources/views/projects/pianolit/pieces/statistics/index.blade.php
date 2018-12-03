@@ -54,6 +54,28 @@
 
 @section('scripts')
 <script type="text/javascript">
+var colors = ['#5eb58a', '#f5c86d', '#f3686f', '#9a40d5', '#e3342f', '#f6993f', '#38c172', '#4dc0b5', '#3490dc', '#6574cd', '#9561e2', '#f66d9b'];
+function getRandom(arr, n = 1) {
+    var requests = n;
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+
+    return requests == 1 ? result[0] : result;
+}
+function getElements(arr, n) {
+    return arr.slice(0, n);
+}
+</script>
+<script type="text/javascript">
+
 let tagsRecords = JSON.parse($('#tagsChart').attr('data-records'));
 let tags = [];
 let tags_pieces_count = [];
@@ -70,7 +92,7 @@ var tagsChart = new Chart(tagsChartElement, {
         labels: tags,
         datasets: [{
             data: tags_pieces_count,
-            backgroundColor: '#2e5ab9'
+            backgroundColor: getRandom(colors)
         }]
     },
     options: {
@@ -123,7 +145,7 @@ var composersChart = new Chart(composersChartElement, {
         labels: composers,
         datasets: [{
             data: composers_pieces_count,
-            backgroundColor: '#2e5ab9'
+            backgroundColor: getRandom(colors)
         }]
     },
     options: {
@@ -181,7 +203,7 @@ var periodsChart = new Chart(periodsChartElement,{
         labels: periods,
         datasets: [{
             data: periods_pieces_count,
-            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0', '#2e5ab9']
+            backgroundColor: getRandom(colors, 5)
         }]
     },
     options: {
@@ -223,7 +245,7 @@ var levelsChart = new Chart(levelsChartElement,{
         labels: levels,
         datasets: [{
             data: levels_pieces_count,
-            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0']
+            backgroundColor: getElements(colors, 4)
         }]
     },
     options: {
@@ -264,7 +286,7 @@ var recChart = new Chart(recChartElement,{
         labels: ['0 recorgings', '1 recording','2 recordings','3 recordings'],
         datasets: [{
             data: rec_pieces_count,
-            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0']
+            backgroundColor: getRandom(colors, 4)
         }]
     },
     options: {

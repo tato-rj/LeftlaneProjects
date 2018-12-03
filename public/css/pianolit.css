@@ -15667,39 +15667,39 @@ footer.sticky-footer,
 }
 
 .bg-elementary {
-  background: #f7f7fb !important;
-  color: #6f6fb7;
+  background: #5eb58a !important;
+  color: #163124;
 }
 
 .bg-beginner {
-  background: #fdf7e8 !important;
-  color: #edb62c;
+  background: #f5c86d !important;
+  color: #8c610a;
 }
 
 .bg-intermediate {
-  background: #E6F4F1 !important;
-  color: #58b6a2;
+  background: #f3686f !important;
+  color: #840b11;
 }
 
 .bg-advanced {
-  background: #fdf1f1 !important;
-  color: #e43f3f;
+  background: #9a40d5 !important;
+  color: #290d3c;
 }
 
 .text-elementary {
-  color: #6f6fb7;
+  color: #163124;
 }
 
 .text-beginner {
-  color: #edb62c;
+  color: #8c610a;
 }
 
 .text-intermediate {
-  color: #58b6a2;
+  color: #840b11;
 }
 
 .text-advanced {
-  color: #e43f3f;
+  color: #290d3c;
 }
 
 .random-pill-1 {
