@@ -26,6 +26,12 @@
 
     <div class="row"> 
       @include('projects.pianolit.pieces.statistics.row', [
+        'title' => 'Periods',
+        'id' => 'periodsChart',
+        'col' => '4',
+        'data' => $periodsStats])
+
+      @include('projects.pianolit.pieces.statistics.row', [
         'title' => 'Levels',
         'id' => 'levelsChart',
         'col' => '4',
@@ -152,6 +158,48 @@ var composersChart = new Chart(composersChartElement, {
             $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
             $modal.modal('show');
           $.get("/piano-lit/composers/"+composer+"/pieces", function(data, status){
+            $modal.find('.modal-body').html(data);
+          });
+        }
+    }
+});
+</script>
+<script type="text/javascript">
+let periodsRecords = JSON.parse($('#periodsChart').attr('data-records'));
+let periods = [];
+let periods_pieces_count = [];
+
+for (var i=0; i < periodsRecords.length; i++) {
+  periods.push(periodsRecords[i].name);
+  periods_pieces_count.push(periodsRecords[i].pieces_count);
+}
+
+var periodsChartElement = document.getElementById("periodsChart").getContext('2d');
+var periodsChart = new Chart(periodsChartElement,{
+    type: 'pie',
+    data: {
+        labels: periods,
+        datasets: [{
+            data: periods_pieces_count,
+            backgroundColor: ['#34b887', '#fec45a', '#ff5f6c', '#aa35e0', '#2e5ab9']
+        }]
+    },
+    options: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            padding: 20
+          }
+        },
+        events: ["mousemove", "mouseout", "click"],
+        onClick: function(element, item) {
+            let period = item[0]._view.label;
+            let $modal = $('#results-modal');
+            $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
+            $modal.modal('show');
+          $.get("/piano-lit/tags/"+period+"/pieces", function(data, status){
+            
             $modal.find('.modal-body').html(data);
           });
         }
