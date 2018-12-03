@@ -5,7 +5,7 @@ namespace App\Projects\PianoLit;
 class Composer extends PianoLit
 {
     protected $dates = ['date_of_birth', 'date_of_death'];
-    protected $appends = ['last_name'];
+    protected $appends = ['last_name', 'short_name'];
     protected $withCount = ['pieces'];
 
     public function creator()
@@ -60,7 +60,7 @@ class Composer extends PianoLit
             $initials .= $name[0].'.';
         }
 
-        return "$initials $lastName";
+        return "$initials$lastName";
     }
 
     public function getLastNameAttribute()

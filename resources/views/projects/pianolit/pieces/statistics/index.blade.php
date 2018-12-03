@@ -134,7 +134,7 @@ let composers_pieces_count = [];
 let composers_count = composersRecords.length;
 
 for (var i=0; i < composers_count; i++) {
-  composers.push(composersRecords[i].name);
+  composers.push(composersRecords[i].short_name);
   composers_pieces_count.push(composersRecords[i].pieces_count);
 }
 
