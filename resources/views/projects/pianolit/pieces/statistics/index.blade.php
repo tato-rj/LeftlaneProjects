@@ -175,7 +175,10 @@ var composersChart = new Chart(composersChartElement, {
         },
         events: ["mousemove", "mouseout", "click"],
         onClick: function(element, item) {
-            let composer = item[0]._view.label;
+            let label = item[0]._view.label;
+            let cut = label.lastIndexOf('.') + 1;
+            let composer = label.substring(cut, label.length);
+            console.log(composer);
             let $modal = $('#results-modal');
             $modal.find('.modal-body').html('<p class="text-center text-muted my-4"><i>loading...</i></p>');
             $modal.modal('show');

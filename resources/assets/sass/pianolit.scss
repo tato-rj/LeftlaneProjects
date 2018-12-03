@@ -25,23 +25,23 @@ footer.sticky-footer, #mainNav.fixed-top.navbar-light .sidenav-toggler, .breadcr
 }
 
 .bg-elementary {
-	background: $elementary !important;
-	color: darken($elementary, 40);
+	background: lighten($elementary, 25) !important;
+	color: darken($elementary, 15);
 }
 
 .bg-beginner {
-	background: $beginner !important;
-	color: darken($beginner, 40);
+	background: lighten($beginner, 25) !important;
+	color: darken($beginner, 15);
 }
 
 .bg-intermediate {
-	background: $intermediate !important;
-	color: darken($intermediate, 40);
+	background: lighten($intermediate, 25) !important;
+	color: darken($intermediate, 5);
 }
 
 .bg-advanced {
-	background: $advanced !important;
-	color: darken($advanced, 40);
+	background: lighten($advanced, 35) !important;
+	color: darken($advanced, 5);
 }
 
 .text-elementary {

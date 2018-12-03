@@ -15667,23 +15667,23 @@ footer.sticky-footer,
 }
 
 .bg-elementary {
-  background: #5eb58a !important;
-  color: #163124;
+  background: #b5ddc9 !important;
+  color: #3f8864;
 }
 
 .bg-beginner {
-  background: #f5c86d !important;
-  color: #8c610a;
+  background: #fdf5e4 !important;
+  color: #f0ad25;
 }
 
 .bg-intermediate {
-  background: #f3686f !important;
-  color: #840b11;
+  background: #fcdee0 !important;
+  color: #f15058;
 }
 
 .bg-advanced {
-  background: #9a40d5 !important;
-  color: #290d3c;
+  background: #e7d2f5 !important;
+  color: #8e2dce;
 }
 
 .text-elementary {

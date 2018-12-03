@@ -38,7 +38,7 @@ class ComposersController extends Controller
 
     public function pieces($name)
     {
-        $pieces = Composer::where('name', $name)->first()->load('pieces')->pieces;
+        $pieces = Composer::where('name', 'LIKE', "%$name%")->first()->load('pieces')->pieces;
 
         return view('projects/pianolit/components/render/pieces', compact('pieces'))->render();
     }
