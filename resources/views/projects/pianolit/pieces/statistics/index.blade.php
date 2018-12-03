@@ -203,7 +203,7 @@ var periodsChart = new Chart(periodsChartElement,{
         labels: periods,
         datasets: [{
             data: periods_pieces_count,
-            backgroundColor: getRandom(colors, 5)
+            backgroundColor: getRandom(colors, 6)
         }]
     },
     options: {
