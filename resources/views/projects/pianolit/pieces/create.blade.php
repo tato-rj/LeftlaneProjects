@@ -10,12 +10,12 @@
     
     <div class="row my-5 mx-2">
       <div class="col-lg-6 col-md-8 col-12">
-        <form method="POST" action="/piano-lit/pieces" autocomplete="off" enctype="multipart/form-data">
+        <form method="POST" id="create-piece" action="/piano-lit/pieces" autocomplete="off" enctype="multipart/form-data">
           {{csrf_field()}}
           {{-- Name --}}
           <div class="form-group form-row">
             <div class="col">
-              <input type="text" class="validate-name form-control {{$errors->has('name') ? 'is-invalid' : ''}}" required name="name" placeholder="Piece name" value="{{ old('name') }}" >
+              <input type="text" class="validate-name form-control required {{$errors->has('name') ? 'is-invalid' : ''}}" name="name" placeholder="Piece name" value="{{ old('name') }}" >
               @include('projects/pianolit/components/feedback', ['field' => 'name'])
             </div>
             <div class="col">
@@ -30,7 +30,7 @@
               <div class="input-group">
                 <div class="input-group-prepend">
                   <select class="form-control rounded-left" style="border-radius: 0" name="catalogue_name" >
-                    <option selected disabled>Catalogue</option>
+                    <option class="default" selected disabled>Catalogue</option>
                     @foreach(\App\Projects\PianoLit\Piece::catalogues() as $catalogue)
                     <option value="{{$catalogue}}" {{ old('catalogue_name') == $catalogue ? 'selected' : ''}}>{{$catalogue}}</option>
                     @endforeach
@@ -62,8 +62,8 @@
           {{-- Key and Composer --}}
           <div class="form-row form-group">
             <div class="col">
-              <select class="form-control {{$errors->has('composer_id') ? 'is-invalid' : ''}}" required name="composer_id">
-                <option selected disabled>Composer</option>
+              <select class="form-control required {{$errors->has('composer_id') ? 'is-invalid' : ''}}" name="composer_id">
+                <option class="default" selected disabled>Composer</option>
                 @foreach($composers as $composer)
                 <option value="{{$composer->id}}" {{ old('composer_id') == $composer->id ? 'selected' : ''}}>{{$composer->short_name}}</option>
                 @endforeach
@@ -71,8 +71,8 @@
               @include('projects/pianolit/components/feedback', ['field' => 'composer_id'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('key') ? 'is-invalid' : ''}}" required name="key" >
-                <option selected disabled>Key</option>
+              <select class="form-control required {{$errors->has('key') ? 'is-invalid' : ''}}" name="key" >
+                <option class="default" selected disabled>Key</option>
                 <optgroup label="Tonal">
                   @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
                   <option value="{{$key}}" {{ old('key') == $key ? 'selected' : ''}}>{{$key}}</option>
@@ -90,8 +90,8 @@
           {{-- Period, Length and Level --}}
           <div class="form-row form-group">
             <div class="col">
-              <select class="form-control {{$errors->has('period') ? 'is-invalid' : ''}}" required name="period[]" >
-                <option disabled>Period</option>
+              <select class="form-control required {{$errors->has('period') ? 'is-invalid' : ''}}" name="period[]" >
+                <option class="default" selected disabled>Period</option>
                 @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
                 <option value="{{$period->id}}" {{ old('period') == $period->id ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
                 @endforeach
@@ -99,8 +99,8 @@
               @include('projects/pianolit/components/feedback', ['field' => 'period'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('length') ? 'is-invalid' : ''}}" required name="length[]" >
-                <option disabled>Length</option>
+              <select class="form-control required {{$errors->has('length') ? 'is-invalid' : ''}}" name="length[]">
+                <option class="default" selected disabled>Length</option>
                 @foreach(\App\Projects\PianoLit\Tag::lengths()->get() as $length)
                 <option value="{{$length->id}}" {{ old('length') == $length->id ? 'selected' : ''}}>{{ucfirst($length->name)}}</option>
                 @endforeach
@@ -108,8 +108,8 @@
               @include('projects/pianolit/components/feedback', ['field' => 'length'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('level') ? 'is-invalid' : ''}}" required name="level[]" >
-                <option disabled>Level</option>
+              <select class="form-control required {{$errors->has('level') ? 'is-invalid' : ''}}" name="level[]" >
+                <option class="default" selected disabled>Level</option>
                 @foreach(\App\Projects\PianoLit\Tag::levels()->get() as $level)
                 <option value="{{$level->id}}" {{ old('level') == $level->id ? 'selected' : ''}}>{{ucfirst($level->name)}}</option>
                 @endforeach
@@ -183,7 +183,7 @@
           </div>
   {{--         <div class="form-group">
             <select class="form-control {{$errors->has('performer_id') ? 'is-invalid' : ''}}" name="performer_id" >
-              <option selected disabled>Performer</option>
+              <option class="default" selected disabled>Performer</option>
               <option>PianoLIT</option>
             </select>
             @include('projects/pianolit/components/feedback', ['field' => 'key'])
@@ -218,7 +218,7 @@
           @include('projects/pianolit/components/tips/layout', ['subject' => 'TIPS'])
 
           <div class="text-center my-5">
-            <button type="submit" class="btn btn-block btn-default">Add piece</button>
+            <button type="submit" id="submit-button" class="btn btn-block btn-default">Add piece</button>
           </div>
         </form>
       </div>
@@ -403,6 +403,52 @@ $('body').on('paste', '.itunes-link', function() {
     $(this).val(newUrl);
   });
     
+});
+</script>
+
+<script type="text/javascript">
+function validateForm() {
+  var isValid = true;
+
+  $('input.required').each(function() {
+    if ( $(this).val() === '' )
+        isValid = false;
+  });
+
+  $('select.required').each(function() {
+    if ($('option:selected', this).hasClass('default'))
+        isValid = false;    
+  });
+
+  return isValid;
+}
+
+function nameToString(name) {
+  name = name.replace('[]', '');
+  name = name.replace('_id', '');
+  name = name.replace('_', ' ');
+  return name;
+}
+
+function arrayToString(array) {
+  return array.join(', ');
+}
+
+function showAlert() {
+    let names = [];
+    $('.required').each(function() {
+      names.push(nameToString($(this).attr('name')));
+    })
+    alert('The following fields are required: ' + arrayToString(names));
+}
+
+$('#submit-button').on('click', function(event) {
+  event.preventDefault();
+  if (validateForm()) {
+    $('#create-piece').submit();
+  } else {
+    showAlert();
+  }
 });
 </script>
 @endsection
