@@ -91,7 +91,7 @@
           <div class="form-row form-group">
             <div class="col">
               <select class="form-control {{$errors->has('period') ? 'is-invalid' : ''}}" required name="period[]" >
-                <option selected disabled>Period</option>
+                <option disabled>Period</option>
                 @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
                 <option value="{{$period->id}}" {{ old('period') == $period->id ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
                 @endforeach
@@ -100,7 +100,7 @@
             </div>
             <div class="col">
               <select class="form-control {{$errors->has('length') ? 'is-invalid' : ''}}" required name="length[]" >
-                <option selected disabled>Length</option>
+                <option disabled>Length</option>
                 @foreach(\App\Projects\PianoLit\Tag::lengths()->get() as $length)
                 <option value="{{$length->id}}" {{ old('length') == $length->id ? 'selected' : ''}}>{{ucfirst($length->name)}}</option>
                 @endforeach
@@ -109,7 +109,7 @@
             </div>
             <div class="col">
               <select class="form-control {{$errors->has('level') ? 'is-invalid' : ''}}" required name="level[]" >
-                <option selected disabled>Level</option>
+                <option disabled>Level</option>
                 @foreach(\App\Projects\PianoLit\Tag::levels()->get() as $level)
                 <option value="{{$level->id}}" {{ old('level') == $level->id ? 'selected' : ''}}>{{ucfirst($level->name)}}</option>
                 @endforeach
