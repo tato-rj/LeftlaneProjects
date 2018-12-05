@@ -395,4 +395,14 @@ $('input[type="file"]').on('change', function(e) {
   $label.text(filename);
 });
 </script>
+
+<script type="text/javascript">
+$('body').on('paste', '.itunes-link', function() {
+  window.setTimeout(() => {
+    var newUrl = $(this).val().replace('https', 'itms');
+    $(this).val(newUrl);
+  });
+    
+});
+</script>
 @endsection

@@ -4,13 +4,13 @@
 	<input rows="1" class="form-control-sm form-control mb-1" placeholder="iTunes artist" name="{{$names[1] or null}}" value="{{$artist or null}}">
 	
 	@if(! empty($type) && $type == 'original-type')
-	<input rows="1" class="form-control form-control-sm mb-1" placeholder="iTunes link">
+	<input rows="1" class="form-control form-control-sm mb-1 itunes-link" placeholder="iTunes link">
 	@else
 	<div class="input-group input-group-sm mb-1">
 		<div class="input-group-prepend">
 			<a href="{{$link}}" target="_blank" class="input-group-text no-underline"><i class="text-success fas fa-globe"></i></a>
 		</div>
-		<input rows="1" class="form-control" placeholder="iTunes link" name="{{$names[2]}}" value="{{$link}}">		
+		<input rows="1" class="form-control itunes-link" placeholder="iTunes link" name="{{$names[2]}}" value="{{$link}}">		
 	</div>
 	@endif
 
