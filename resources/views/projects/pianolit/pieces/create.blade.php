@@ -15,7 +15,7 @@
           {{-- Name --}}
           <div class="form-group form-row">
             <div class="col">
-              <input type="text" class="validate-name form-control {{$errors->has('name') ? 'is-invalid' : ''}}" name="name" placeholder="Piece name" value="{{ old('name') }}" >
+              <input type="text" class="validate-name form-control {{$errors->has('name') ? 'is-invalid' : ''}}" required name="name" placeholder="Piece name" value="{{ old('name') }}" >
               @include('projects/pianolit/components/feedback', ['field' => 'name'])
             </div>
             <div class="col">
@@ -62,7 +62,7 @@
           {{-- Key and Composer --}}
           <div class="form-row form-group">
             <div class="col">
-              <select class="form-control {{$errors->has('composer_id') ? 'is-invalid' : ''}}" name="composer_id">
+              <select class="form-control {{$errors->has('composer_id') ? 'is-invalid' : ''}}" required name="composer_id">
                 <option selected disabled>Composer</option>
                 @foreach($composers as $composer)
                 <option value="{{$composer->id}}" {{ old('composer_id') == $composer->id ? 'selected' : ''}}>{{$composer->short_name}}</option>
@@ -71,7 +71,7 @@
               @include('projects/pianolit/components/feedback', ['field' => 'composer_id'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('key') ? 'is-invalid' : ''}}" name="key" >
+              <select class="form-control {{$errors->has('key') ? 'is-invalid' : ''}}" required name="key" >
                 <option selected disabled>Key</option>
                 <optgroup label="Tonal">
                   @foreach(\App\Projects\PianoLit\Piece::keys() as $key)
@@ -90,7 +90,7 @@
           {{-- Period, Length and Level --}}
           <div class="form-row form-group">
             <div class="col">
-              <select class="form-control {{$errors->has('period') ? 'is-invalid' : ''}}" name="period[]" >
+              <select class="form-control {{$errors->has('period') ? 'is-invalid' : ''}}" required name="period[]" >
                 <option selected disabled>Period</option>
                 @foreach(\App\Projects\PianoLit\Tag::periods()->get() as $period)
                 <option value="{{$period->id}}" {{ old('period') == $period->id ? 'selected' : ''}}>{{ucfirst($period->name)}}</option>
@@ -99,7 +99,7 @@
               @include('projects/pianolit/components/feedback', ['field' => 'period'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('length') ? 'is-invalid' : ''}}" name="length[]" >
+              <select class="form-control {{$errors->has('length') ? 'is-invalid' : ''}}" required name="length[]" >
                 <option selected disabled>Length</option>
                 @foreach(\App\Projects\PianoLit\Tag::lengths()->get() as $length)
                 <option value="{{$length->id}}" {{ old('length') == $length->id ? 'selected' : ''}}>{{ucfirst($length->name)}}</option>
@@ -108,7 +108,7 @@
               @include('projects/pianolit/components/feedback', ['field' => 'length'])
             </div>
             <div class="col">
-              <select class="form-control {{$errors->has('level') ? 'is-invalid' : ''}}" name="level[]" >
+              <select class="form-control {{$errors->has('level') ? 'is-invalid' : ''}}" required name="level[]" >
                 <option selected disabled>Level</option>
                 @foreach(\App\Projects\PianoLit\Tag::levels()->get() as $level)
                 <option value="{{$level->id}}" {{ old('level') == $level->id ? 'selected' : ''}}>{{ucfirst($level->name)}}</option>
