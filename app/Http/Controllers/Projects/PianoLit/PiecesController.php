@@ -155,6 +155,7 @@ class PiecesController extends Controller
             'youtube' => $request->youtube ? serialize($request->youtube) : null,
             'itunes' => $request->itunes ? serialize($request->itunes) : null,
             'key' => $request->key,
+            'score_url' => $request->score_url,
             'score_editor' => $request->score_editor,
             'score_publisher' => $request->score_publisher,
             'score_copyright' => $request->score_copyright,
@@ -230,6 +231,7 @@ class PiecesController extends Controller
         $piece->youtube = $request->youtube ? serialize($request->youtube) : null;
         $piece->itunes = $request->itunes ? serialize($request->itunes) : null;
         $piece->key = $request->key;
+        $piece->score_url = $request->score_url;
         $piece->score_editor = $request->score_editor;
         $piece->score_publisher = $request->score_publisher;
         $piece->score_copyright = $request->score_copyright;

@@ -10,7 +10,7 @@ class Piece extends PianoLit
 
     protected $casts = ['tips' => 'array'];
     protected $with = ['composer', 'tags'];
-    protected $appends = ['medium_name', 'recordingsAvailable'];
+    protected $appends = ['medium_name', 'recordingsAvailable', 'is_public_domain'];
     protected $api;
 
     public function __construct($attributes = [])
@@ -62,6 +62,11 @@ class Piece extends PianoLit
     public function hasAudio()
     {
         return $this->audio_path || $this->audio_path_lh || $this->audio_path_rh;
+    }
+
+    public function getIsPublicDomainAttribute()
+    {
+        return $this->score_url ? true : false;
     }
 
     public function getRecordingsAvailableAttribute()

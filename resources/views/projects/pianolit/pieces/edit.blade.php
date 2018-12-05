@@ -158,6 +158,15 @@
               <label class="text-brand"><small>Score publisher</small></label>
               <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{$piece->score_publisher}}">
           </div>
+          <div class="form-group">
+              <label class="text-brand"><small>Score url (for non-public domain only)</small></label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <a class="input-group-text no-underline {{$piece->is_public_domain ? 'text-success' : 'text-muted'}}" href="{{$piece->score_url}}" target="_blank"><i class="fas fa-globe"></i></a>
+                </div>
+                <input type="text" class="form-control" name="score_url" placeholder="Score url" value="{{$piece->score_url}}">
+              </div>
+          </div>
           {{-- Files --}}
           <label class="text-brand"><small>Uploads</small></label>
           <div class="form-row form-group">

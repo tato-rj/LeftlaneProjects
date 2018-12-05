@@ -30,6 +30,7 @@ class CreatePianolitPiecesTable extends Migration
             $table->string('audio_path_lh')->nullable();
             $table->json('itunes')->nullable();
             $table->json('youtube')->nullable();
+            $table->string('score_url')->nullable();
             $table->string('score_path')->nullable();
             $table->string('score_editor')->nullable();
             $table->string('score_publisher')->nullable();

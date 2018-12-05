@@ -136,6 +136,10 @@
             <input type="text" class="form-control" name="score_publisher" placeholder="Score publisher" value="{{ old('score_publisher') }}">
             @include('projects/pianolit/components/lookup')
           </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="score_url" placeholder="Score url (for non-public domain only)" value="{{ old('score_url') }}">
+          </div>
+          <hr class="my-4">
           {{-- Files --}}
           <div class="form-row form-group">
             <div class="col input-group">
