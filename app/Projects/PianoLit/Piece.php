@@ -66,7 +66,7 @@ class Piece extends PianoLit
 
     public function getIsPublicDomainAttribute()
     {
-        return $this->score_url ? true : false;
+        return $this->score_url ? false : true;
     }
 
     public function getRecordingsAvailableAttribute()
