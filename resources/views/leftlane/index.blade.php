@@ -247,11 +247,11 @@
 
 
               <div class="col-6 col-lg-3" data-shuffle="item" data-groups="game,app">
-                <a class="portfolio-1" href="">
-                  <img src="{{asset('leftlane/img/portfolio/gallery/coolflip.jpg')}}" alt="screenshot">
+                <a class="portfolio-1" href="https://itunes.apple.com/us/app/fancy-txt-custom-text/id1178336822">
+                  <img src="{{asset('leftlane/img/portfolio/gallery/fany-txt.jpg')}}" alt="screenshot">
                   <div class="portfolio-detail">
-                    <h5>CoolFLIP</h5>
-                    <p>Game</p>
+                    <h5>FancyTxt</h5>
+                    <p>iOS</p>
                   </div>
                 </a>
               </div>
@@ -291,7 +291,7 @@
 
 
               <div class="col-6 col-lg-3" data-shuffle="item" data-groups="game">
-                <a class="portfolio-1" href="">
+                <a class="portfolio-1" href="https://itunes.apple.com/us/app/shapes-up/id1268467019">
                   <img src="{{asset('leftlane/img/portfolio/gallery/up.jpg')}}" alt="screenshot">
                   <div class="portfolio-detail">
                     <h5>UP</h5>
