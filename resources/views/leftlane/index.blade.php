@@ -91,12 +91,12 @@
             <img class="shadow-6" src="{{asset('leftlane/img/portfolio/floating/farmaciaditarzo.jpg')}}" alt="..." data-aos="fade-up" data-aos-delay="200" data-aos-offset="0">
           </a>
 
-          <a href="#block-4" target="_blank">
+          <a href="https://itunes.apple.com/us/app/shapes-up/id1268467019" target="_blank">
             <img class="shadow-6" src="{{asset('leftlane/img/portfolio/floating/up.jpg')}}" alt="..." data-aos="fade-up" data-aos-delay="1200" data-aos-offset="0">
           </a>
 
-          <a href="#block-13" target="_blank">
-            <img class="shadow-6" src="{{asset('leftlane/img/portfolio/floating/block-6.jpg')}}" alt="..." data-aos="fade-up" data-aos-delay="1000" data-aos-offset="0">
+          <a href="https://itunes.apple.com/us/app/fancy-txt-custom-text/id1178336822" target="_blank">
+            <img class="shadow-6" src="{{asset('leftlane/img/portfolio/floating/fancy-txt.jpg')}}" alt="..." data-aos="fade-up" data-aos-delay="1000" data-aos-offset="0">
           </a>
 
         </div>
@@ -219,7 +219,7 @@
                   <img src="{{asset('leftlane/img/portfolio/gallery/thesciencebreaker.jpg')}}" alt="screenshot">
                   <div class="portfolio-detail">
                     <h5>TheScienceBreaker</h5>
-                    <p>Website</p>
+                    <p>Website/iOS</p>
                   </div>
                 </a>
               </div>
