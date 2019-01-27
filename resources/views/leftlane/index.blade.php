@@ -246,7 +246,7 @@
               </div>
 
 
-              <div class="col-6 col-lg-3" data-shuffle="item" data-groups="game,app">
+              <div class="col-6 col-lg-3" data-shuffle="item" data-groups="app">
                 <a class="portfolio-1" href="https://itunes.apple.com/us/app/fancy-txt-custom-text/id1178336822">
                   <img src="{{asset('leftlane/img/portfolio/gallery/fancy-txt.jpg')}}" alt="screenshot">
                   <div class="portfolio-detail">
