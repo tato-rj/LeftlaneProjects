@@ -21,10 +21,11 @@
           @foreach($topStories as $id => $count)
           <li class="d-flex justify-content-between">
             @if(! \App\Projects\Quickreads\Story::find($id))
-            {{dd($id)}}
-            @endif
+            
+            @else
             <span>{{\App\Projects\Quickreads\Story::find($id)->title}}</span>
             <span>{{$count}}</span>
+            @endif
           </li>
           @endforeach
         @endcomponent
