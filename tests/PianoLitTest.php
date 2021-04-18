@@ -30,6 +30,7 @@ class PianoLitTest extends TestCase
             'creator_id' => $this->admin->id,
             'composer_id' => $this->composer->id
         ]);
+        
         $this->piece->tags()->attach($this->tag);
     }
 

@@ -13,12 +13,12 @@ class StoriesController extends QuickreadsController
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews']]);
+        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore']]);
     }
 
-    public function index()
+    public function explore()
     {
-
+        return 'foo';
     }
 
     public function app()
@@ -29,6 +29,7 @@ class StoriesController extends QuickreadsController
                         ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpeg") AS story_filename, categories.category AS category, categories.sorting_order')
                         ->orderBy('sorting_order')
                         ->get();
+
         return $stories;
     }
 

@@ -55,6 +55,7 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 });
 
 // App Routes
+Route::get('/quickreads/app/explore', 'Projects\Quickreads\StoriesController@explore');
 Route::get('/quickreads/app/stories', 'Projects\Quickreads\StoriesController@app');
 Route::get('/quickreads/app/stories/text', 'Projects\Quickreads\StoriesController@text');
 Route::get('/quickreads/app/stories/{storyTitle}/rating', 'Projects\Quickreads\RatingsController@show');
