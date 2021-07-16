@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\Category;
+use App\Projects\Quickreads\{Category, Story};
 use Illuminate\Http\Request;
 
 class CategoriesController extends QuickreadsController
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['app']]);
+        $this->middleware('auth', ['except' => ['app', 'time', 'show']]);
     }
     
     public function index()
@@ -20,6 +20,22 @@ class CategoriesController extends QuickreadsController
     public function app()
     {
         return Category::all();
+    }
+
+    public function time(Request $request)
+    {
+        return Story::formatted()->whereBetween('time', [(int)$request->min, (int)$request->max])->get()->favoritedBy($request->facebook_id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request)
+    {
+        return Story::formatted()->where('category_id', $request->category_id)->get()->favoritedBy($request->facebook_id);
     }
 
     /**
@@ -50,17 +66,6 @@ class CategoriesController extends QuickreadsController
         ]);
 
         return redirect()->back()->with('success', "$request->category has been successfully added!");
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
     }
 
     /**

@@ -16,9 +16,19 @@ class StoriesController extends QuickreadsController
         $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore']]);
     }
 
-    public function explore()
+    public function explore(Request $request)
     {
-        return 'foo';
+        $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])->favoritedBy($request->facebook_id)]);
+        $latest = collect(['title' => 'Latest stories', 'collection' => Story::formatted()->latest()->take(5)->get()->favoritedBy($request->facebook_id)]);
+        $popular = collect(['title' => 'Most popular', 'collection' => Story::formatted()->orderBy('views', 'desc')->take(8)->get()->favoritedBy($request->facebook_id)]);
+        $under10 = collect(['title' => 'Under 10 minutes', 'collection' => Story::formatted()->where('time', '<=', 10)->take(8)->get()->favoritedBy($request->facebook_id)]);
+        $classics = collect(['title' => 'Classics', 'collection' => Story::formatted()->inRandomOrder()->take(4)->get()->favoritedBy($request->facebook_id)]);
+        $suggestions = collect(['title' => 'Not sure what to read?', 'collection' => Story::formatted()->inRandomOrder()->take(6)->get()->favoritedBy($request->facebook_id)]);
+        // $collection = \Cache::remember('quickreads-explore', days(1), function() {
+        //     return $stories;
+        // });
+
+        return collect([$pick, $latest, $popular, $under10, $classics, $suggestions]);
     }
 
     public function app()

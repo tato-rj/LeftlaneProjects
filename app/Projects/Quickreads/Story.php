@@ -49,4 +49,20 @@ class Story extends Quickreads
 
         return round(array_sum($scores) / count($scores)); 
     }
+
+    public function scopeFormatted($query)
+    {
+        return $query->join('categories', 'stories.category_id', '=', 'categories.id')
+                     ->join('authors', 'stories.author_id', '=', 'authors.id')
+                     ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpeg") AS story_filename, categories.category AS category, categories.sorting_order');
+    }
+
+    public function favoritedBy($facebook_id)
+    {
+        $user = User::where('facebook_id', $facebook_id)->first();
+        
+        return $user ?
+                UserPurchaseRecord::where(['user_id' => $user->id, 'story_id' => $this->id])->exists() :
+                false;
+    }
 }

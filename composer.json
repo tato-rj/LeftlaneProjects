@@ -9,7 +9,6 @@
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "~6.0",
         "laravel/framework": "5.6.*",
-        "laravel/homestead": "^7.9",
         "laravel/scout": "^4.0",
         "laravel/tinker": "^1.0",
         "nicolaslopezj/searchable": "1.*"
@@ -34,8 +33,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        },
-        "files": ["tests/Support/helpers.php"]
+        }
     },
     "extra": {
         "laravel": {

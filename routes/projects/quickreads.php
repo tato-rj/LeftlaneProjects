@@ -58,8 +58,10 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 Route::get('/quickreads/app/explore', 'Projects\Quickreads\StoriesController@explore');
 Route::get('/quickreads/app/stories', 'Projects\Quickreads\StoriesController@app');
 Route::get('/quickreads/app/stories/text', 'Projects\Quickreads\StoriesController@text');
+Route::get('/quickreads/app/stories/time', 'Projects\Quickreads\CategoriesController@time');
 Route::get('/quickreads/app/stories/{storyTitle}/rating', 'Projects\Quickreads\RatingsController@show');
 Route::get('/quickreads/app/categories', 'Projects\Quickreads\CategoriesController@app');
+Route::get('/quickreads/app/categories/show', 'Projects\Quickreads\CategoriesController@show');
 Route::get('/quickreads/app/authors', 'Projects\Quickreads\AuthorsController@app');
 Route::get('/quickreads/app/users', 'Projects\Quickreads\UsersController@app');
 Route::get('/quickreads/app/login/{email}/{password}', 'Projects\Quickreads\UsersController@appLogin');
@@ -69,5 +71,9 @@ Route::post('/quickreads/password/email', 'Auth\ForgotPasswordController@sendRes
 Route::get('/quickreads/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('/quickreads/password/reset', 'Auth\ResetPasswordController@reset');
 
+Route::get('/quickreads/app/records/purchase', 'Projects\Quickreads\UserPurchaseRecordController@show');
+Route::get('/quickreads/app/records/purchase/check', 'Projects\Quickreads\UserPurchaseRecordController@check');
 Route::post('/quickreads/app/records/purchase', 'Projects\Quickreads\UserPurchaseRecordController@store');
+Route::delete('/quickreads/app/records/purchase', 'Projects\Quickreads\UserPurchaseRecordController@delete');
+
 Route::post('/quickreads/app/stories/views', 'Projects\Quickreads\StoriesController@incrementViews');
