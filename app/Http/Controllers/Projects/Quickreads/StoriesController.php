@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\{Story, Author, Category};
+use App\Projects\Quickreads\{Story, User, Author, Category, UserPurchaseRecord};
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Upload;
 use Illuminate\Support\Facades\File;
@@ -13,22 +13,38 @@ class StoriesController extends QuickreadsController
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore']]);
+        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore', 'test']]);
+    }
+
+    public function test()
+    {
+        return Story::withCount('favorites')->find(65);
     }
 
     public function explore(Request $request)
     {
-        $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])->favoritedBy($request->facebook_id)]);
-        $latest = collect(['title' => 'Latest stories', 'collection' => Story::formatted()->latest()->take(5)->get()->favoritedBy($request->facebook_id)]);
-        $popular = collect(['title' => 'Most popular', 'collection' => Story::formatted()->orderBy('views', 'desc')->take(8)->get()->favoritedBy($request->facebook_id)]);
-        $under10 = collect(['title' => 'Under 10 minutes', 'collection' => Story::formatted()->where('time', '<=', 10)->take(8)->get()->favoritedBy($request->facebook_id)]);
-        $classics = collect(['title' => 'Classics', 'collection' => Story::formatted()->inRandomOrder()->take(4)->get()->favoritedBy($request->facebook_id)]);
-        $suggestions = collect(['title' => 'Not sure what to read?', 'collection' => Story::formatted()->inRandomOrder()->take(6)->get()->favoritedBy($request->facebook_id)]);
-        // $collection = \Cache::remember('quickreads-explore', days(1), function() {
-        //     return $stories;
-        // });
+        $collection = \Cache::remember('quickreads-explore-5', 1440, function() {
+            $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])]);
+            $latest = collect(['title' => 'Latest stories', 'collection' => Story::formatted()->latest()->take(5)->get()]);
+            $popular = collect(['title' => 'Most popular', 'collection' => Story::withCount('favorites')->formatted()->orderBy('favorites_count', 'desc')->take(8)->get()]);
+            $under10 = collect(['title' => 'Under 10 minutes', 'collection' => Story::formatted()->where('time', '<=', 10)->take(8)->get()]);
+            $classics = collect(['title' => 'Classics', 'collection' => Story::formatted()->where('is_classic', true)->inRandomOrder()->take(6)->get()]);
+            $suggestions = collect(['title' => 'Not sure what to read?', 'collection' => Story::formatted()->inRandomOrder()->take(6)->get()]);
 
-        return collect([$pick, $latest, $popular, $under10, $classics, $suggestions]);
+            return collect([$pick, $latest, $popular, $under10, $classics, $suggestions]);
+        });
+
+        if ($user = User::where('facebook_id', $request->facebook_id)->first()) {
+            $favorites = UserPurchaseRecord::where('user_id', $user->id)->get();
+
+            foreach ($collection as $item) {
+                foreach($item['collection'] as $story) {
+                    $story->favorited = ! $favorites->where('story_id', $story->id)->isEmpty();
+                }
+            }
+        }
+
+        return $collection;
     }
 
     public function app()
@@ -39,6 +55,14 @@ class StoriesController extends QuickreadsController
                         ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpeg") AS story_filename, categories.category AS category, categories.sorting_order')
                         ->orderBy('sorting_order')
                         ->get();
+
+        if ($user = User::where('facebook_id', request()->facebook_id)->first()) {
+            $favorites = UserPurchaseRecord::where('user_id', $user->id)->get();
+            
+            foreach ($stories as $story) {
+                $story->favorited = $favorites->contains($story->id);
+            }
+        }
 
         return $stories;
     }
@@ -91,7 +115,8 @@ class StoriesController extends QuickreadsController
             'author_id' => $request->author_id,
             'category_id' => $request->category_id,
             'time' => $request->time,
-            'cost' => $request->cost
+            'cost' => $request->cost,
+            'is_classic' => $request->is_classic ? 1 : 0
         ]);
 
         $this->saveFile($request);
@@ -141,6 +166,7 @@ class StoriesController extends QuickreadsController
         $authors = Author::orderBy('name')->get();
         $categories = Category::orderBy('category')->get();
         $stories = Story::orderBy('title')->get();
+        return $story;
         return view('projects/quickreads/stories/edit', compact(['stories', 'story', 'authors', 'categories']));
     }
 
@@ -173,7 +199,8 @@ class StoriesController extends QuickreadsController
             'author_id' => $request->author_id,
             'category_id' => $request->category_id,
             'time' => $request->time,
-            'cost' => $request->cost
+            'cost' => $request->cost,
+            'is_classic' => $request->is_classic ? 1 : 0
         ]);
 
         $this->saveFile($request);

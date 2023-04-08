@@ -10,6 +10,7 @@ class Story extends Quickreads
 	protected $guarded = [];
     protected $with = ['creator'];
     protected $withCount = ['ratings', 'comments'];
+    protected $casts = ['is_classic' => 'boolean'];
 	
     public function getRouteKeyName()
     {
@@ -40,6 +41,11 @@ class Story extends Quickreads
     public function ratings()
     {
         return $this->hasMany(Rating::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(UserPurchaseRecord::class, 'story_id');
     }
 
     public function averageRating()

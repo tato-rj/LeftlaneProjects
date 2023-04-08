@@ -54,7 +54,13 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	});
 });
 
+Route::get('/quickreads/cache', function() {
+	dd(\Cache::has(request('key')));
+});
+
 // App Routes
+Route::get('/quickreads/app/test', 'Projects\Quickreads\StoriesController@test');
+
 Route::get('/quickreads/app/explore', 'Projects\Quickreads\StoriesController@explore');
 Route::get('/quickreads/app/stories', 'Projects\Quickreads\StoriesController@app');
 Route::get('/quickreads/app/stories/text', 'Projects\Quickreads\StoriesController@text');

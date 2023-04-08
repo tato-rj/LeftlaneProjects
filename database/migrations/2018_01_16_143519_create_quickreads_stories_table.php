@@ -23,6 +23,7 @@ class CreateQuickreadsStoriesTable extends Migration
             $table->unsignedInteger('category_id');
             $table->string('time');
             $table->string('cost');
+            $table->boolean('is_classic');
             $table->integer('views')->default(0);
             $table->timestamps();
         });

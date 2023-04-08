@@ -58,11 +58,11 @@ class UsersController extends QuickreadsController
     public function register(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'email' => 'unique:quickreads.users'
+            'email' => 'email|unique:quickreads.users'
         ]);
 
         if ($validator->fails()) { 
-            return response()->json($validator->messages(), 403);
+            return response()->json($validator->messages()->first(), 403);
         }
 
         $user = User::create([

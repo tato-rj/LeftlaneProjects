@@ -94,6 +94,12 @@
               </select>              
             </div>
           </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_classic" id="is_classic" {{$story->is_classic ? 'checked' : null}}>
+            <label class="form-check-label" for="is_classic">
+              Is this a classic?
+            </label>
+          </div>
         </div>
         <div class="col-6">
           <div id="upload-box" class="card">
