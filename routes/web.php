@@ -16,7 +16,7 @@ Auth::routes();
 Route::post('/{guard}/logout', 'Auth\LoginController@logoutFrom')->name('logoutFrom');
 
 Route::get('/', function () {
-	return phpversion();
+	// return phpversion();
 	// \Artisan::call('cache:clear');
     return view('leftlane/index');
 });
