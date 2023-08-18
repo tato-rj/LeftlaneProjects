@@ -166,7 +166,7 @@ class StoriesController extends QuickreadsController
         $authors = Author::orderBy('name')->get();
         $categories = Category::orderBy('category')->get();
         $stories = Story::orderBy('title')->get();
-        return $story;
+
         return view('projects/quickreads/stories/edit', compact(['stories', 'story', 'authors', 'categories']));
     }
 
