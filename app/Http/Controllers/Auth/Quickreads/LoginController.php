@@ -38,7 +38,7 @@ class LoginController extends Controller
 		];
 
 		if (\Auth::guard('quickreads-admin')->attempt($credentials, $request->remember)) {
-			return redirect()->intended('/office');
+			return redirect()->intended('/quickreads');
 		}
 
 		return $this->sendFailedLoginResponse($request);
