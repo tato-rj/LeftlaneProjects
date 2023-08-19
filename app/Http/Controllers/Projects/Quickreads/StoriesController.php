@@ -23,7 +23,7 @@ class StoriesController extends QuickreadsController
 
     public function explore(Request $request)
     {
-        $collection = \Cache::remember('quickreads-explore-5', 1440, function() {
+        $collection = \Cache::remember('quickreads-explore-6', 1440, function() {
             $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])]);
             $latest = collect(['title' => 'Latest stories', 'collection' => Story::formatted()->latest()->take(5)->get()]);
             $popular = collect(['title' => 'Most popular', 'collection' => Story::withCount('favorites')->formatted()->orderBy('favorites_count', 'desc')->take(8)->get()]);
