@@ -35,7 +35,7 @@ class CategoriesController extends QuickreadsController
      */
     public function show(Request $request)
     {
-        return Story::formatted()->where('category_id', $request->category_id)->get()->favoritedBy($request->facebook_id);
+        return Story::formatted()->where('category_id', $request->category_id)->get();//->favoritedBy($request->facebook_id);
     }
 
     /**
