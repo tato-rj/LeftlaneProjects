@@ -24,7 +24,7 @@ class CategoriesController extends QuickreadsController
 
     public function time(Request $request)
     {
-        return Story::formatted()->whereBetween('time', [(int)$request->min, (int)$request->max])->get()->favoritedBy($request->facebook_id);
+        return Story::formatted()->whereBetween('time', [(int)$request->min, (int)$request->max])->get();//->favoritedBy($request->facebook_id);
     }
 
     /**
