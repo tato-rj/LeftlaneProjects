@@ -22,4 +22,3 @@ Route::get('/', function () {
 });
 
 require base_path('routes/projects/quickreads.php');
-require base_path('routes/projects/pianolit.php');

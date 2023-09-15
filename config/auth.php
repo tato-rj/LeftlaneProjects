@@ -41,11 +41,6 @@ return [
             'provider' => 'quickreads-admins',
         ],
 
-        'pianolit-admin' => [
-            'driver' => 'session',
-            'provider' => 'pianolit-admins',
-        ],
-
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -80,11 +75,6 @@ return [
             'model' => App\Projects\Quickreads\QuickreadsAdmin::class,
         ],
 
-        'pianolit-admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Projects\PianoLit\Admin::class,
-        ],
-
         'users' => [
             'driver' => 'database',
             'table' => 'users',
@@ -109,12 +99,6 @@ return [
     'passwords' => [
         'quickreads-admins' => [
             'provider' => 'quickreads-admins',
-            'table' => 'password_resets',
-            'expire' => 60,
-        ],
-
-        'pianolit-admins' => [
-            'provider' => 'pianolit-admins',
             'table' => 'password_resets',
             'expire' => 60,
         ],

@@ -73,10 +73,6 @@ class Handler extends ExceptionHandler
             case 'quickreads-admin':
                 $login = 'quickreads.admin.login';
                 break;
-
-            case 'pianolit-admin':
-                $login = 'pianolit.admin.login';
-                break;
             
             default:
                 $login = 'login';

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'pianolit',
+    'default' => 'quickreads',
 
     /*
     |--------------------------------------------------------------------------
@@ -39,6 +39,21 @@ return [
             'prefix' => '',
         ],
 
+        'leftlaneapps' => [
+            'driver' => env('DB_CONNECTION', 'mysql'),
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'unix_socket' => env('DB_SOCKET'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'quickreads' => [
             'driver' => env('DB_CONNECTION_QUICKREADS', 'mysql'),
             'host' => env('DB_HOST_QUICKREADS'),
@@ -49,21 +64,6 @@ return [
             'unix_socket' => env('DB_SOCKET'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-        ],
-
-        'pianolit' => [
-            'driver' => env('DB_CONNECTION_PIANOLIT', 'mysql'),
-            'host' => env('DB_HOST_PIANOLIT'),
-            'port' => env('DB_PORT_PIANOLIT'),
-            'database' => env('DB_DATABASE_PIANOLIT'),
-            'username' => env('DB_USERNAME_PIANOLIT'),
-            'password' => env('DB_PASSWORD_PIANOLIT'),
-            'unix_socket' => env('DB_SOCKET'),
-            'charset' => 'utf8',
-            'collation' => 'utf8_general_ci',
             'prefix' => '',
             'strict' => false,
             'engine' => null,
