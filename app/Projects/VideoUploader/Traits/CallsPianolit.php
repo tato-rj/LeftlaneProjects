@@ -18,6 +18,7 @@ trait CallsPianolit
 
     public function sendVideoDeletedNotification()
     {
+        dd($this->notification_url);
         return Http::delete($this->notification_url, ['video' => $this->toArray()]);
     }
 }
