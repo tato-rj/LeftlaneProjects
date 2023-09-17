@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'quickreads',
+    'default' => env('DB_CONNECTION', 'leftlaneapps'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,7 +40,7 @@ return [
         ],
 
         'leftlaneapps' => [
-            'driver' => env('DB_CONNECTION', 'mysql'),
+            'driver' => 'mysql',
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
             'database' => env('DB_DATABASE'),
@@ -55,12 +55,27 @@ return [
         ],
 
         'quickreads' => [
-            'driver' => env('DB_CONNECTION_QUICKREADS', 'mysql'),
+            'driver' => 'mysql',
             'host' => env('DB_HOST_QUICKREADS'),
             'port' => env('DB_PORT_QUICKREADS'),
             'database' => env('DB_DATABASE_QUICKREADS'),
             'username' => env('DB_USERNAME_QUICKREADS'),
             'password' => env('DB_PASSWORD_QUICKREADS'),
+            'unix_socket' => env('DB_SOCKET'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
+        'videouploader' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_VIDEOUPLOADER'),
+            'port' => env('DB_PORT_VIDEOUPLOADER'),
+            'database' => env('DB_DATABASE_VIDEOUPLOADER'),
+            'username' => env('DB_USERNAME_VIDEOUPLOADER'),
+            'password' => env('DB_PASSWORD_VIDEOUPLOADER'),
             'unix_socket' => env('DB_SOCKET'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

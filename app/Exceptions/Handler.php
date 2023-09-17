@@ -73,6 +73,10 @@ class Handler extends ExceptionHandler
             case 'quickreads-admin':
                 $login = 'quickreads.admin.login';
                 break;
+
+            case 'videouploader-admin':
+                $login = 'videouploader.login';
+                break;
             
             default:
                 $login = 'login';

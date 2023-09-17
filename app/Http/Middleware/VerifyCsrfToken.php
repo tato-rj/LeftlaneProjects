@@ -12,7 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        'piano-lit/api/*',
+        'videouploader/upload',
+        'videouploader/delete',
         'quickreads/password/email',
         'quickreads/password/reset',
         'quickreads/app/records/purchase',

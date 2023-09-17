@@ -1,0 +1,1 @@
+<i class="fa-{{$fa_type ?? 'solid'}} fa-{{$icon}} me-{{$mr ?? 2}} ms-{{$ml ?? null}}"></i>

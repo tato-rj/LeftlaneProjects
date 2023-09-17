@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_DRIVER', 'sync'),
+    'default' => env('QUEUE_CONNECTION', 'sync'),
 
     /*
     |--------------------------------------------------------------------------
@@ -60,9 +60,10 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
-            'queue' => 'default',
-            'retry_after' => 90,
+            'queue' => env('REDIS_QUEUE', 'default'),
+            'retry_after' => 9000,
             'block_for' => null,
+            'after_commit' => false,
         ],
 
     ],
