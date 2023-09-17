@@ -37,6 +37,13 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except(['logout', 'logoutFrom']);
     }
+
+    public function logout(Request $request)
+    {
+        \Auth::guard('videouploader-admin')->logout();
+
+        return redirect('/');
+    }
     
     /**
      * Log the user out of the application.
@@ -46,7 +53,7 @@ class LoginController extends Controller
      */
     public function logoutFrom($guard, Request $request)
     {
-        \Auth::logout();
+        \Auth::guard($guard)->logout();
 
         return redirect('/');
     }
