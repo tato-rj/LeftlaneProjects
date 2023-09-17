@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
     "content-hash": "4b2d087246204a4b0d1ae67004566cf2",
-=======
-    "content-hash": "29ffae61b13cf85f00dfc14dcef5d840",
->>>>>>> origin/master
     "packages": [
         {
             "name": "brick/math",
@@ -532,7 +528,6 @@
             "time": "2023-08-08T05:53:35+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "firebase/php-jwt",
             "version": "v6.8.1",
             "source": {
@@ -685,17 +680,6 @@
             },
             "dist": {
                 "type": "zip",
-=======
-            "name": "fruitcake/php-cors",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fruitcake/php-cors.git",
-                "reference": "58571acbaa5f9f462c9c77e911700ac66f446d4e"
-            },
-            "dist": {
-                "type": "zip",
->>>>>>> origin/master
                 "url": "https://api.github.com/repos/fruitcake/php-cors/zipball/58571acbaa5f9f462c9c77e911700ac66f446d4e",
                 "reference": "58571acbaa5f9f462c9c77e911700ac66f446d4e",
                 "shasum": ""
@@ -758,7 +742,6 @@
             "time": "2022-02-20T15:07:15+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "google/auth",
             "version": "v1.30.0",
             "source": {
@@ -938,8 +921,6 @@
             "time": "2023-09-15T20:50:36+00:00"
         },
         {
-=======
->>>>>>> origin/master
             "name": "graham-campbell/result-type",
             "version": "v1.1.1",
             "source": {
@@ -1661,7 +1642,6 @@
             "time": "2023-01-09T14:48:11+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "laravel/horizon",
             "version": "v5.20.1",
             "source": {
@@ -1815,17 +1795,6 @@
             },
             "dist": {
                 "type": "zip",
-=======
-            "name": "laravel/serializable-closure",
-            "version": "v1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "e5a3057a5591e1cfe8183034b0203921abe2c902"
-            },
-            "dist": {
-                "type": "zip",
->>>>>>> origin/master
                 "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/e5a3057a5591e1cfe8183034b0203921abe2c902",
                 "reference": "e5a3057a5591e1cfe8183034b0203921abe2c902",
                 "shasum": ""
@@ -2285,7 +2254,6 @@
             "time": "2023-09-07T19:22:17+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "league/flysystem-google-cloud-storage",
             "version": "3.16.0",
             "source": {
@@ -2345,8 +2313,6 @@
             "time": "2023-08-30T10:23:18+00:00"
         },
         {
-=======
->>>>>>> origin/master
             "name": "league/flysystem-local",
             "version": "3.16.0",
             "source": {
@@ -2954,7 +2920,6 @@
                     "url": "https://github.com/nunomaduro",
                     "type": "github"
                 },
-<<<<<<< HEAD
                 {
                     "url": "https://github.com/xiCO2k",
                     "type": "github"
@@ -3128,14 +3093,6 @@
                 "source": "https://github.com/PHP-FFMpeg/PHP-FFMpeg/tree/v1.1.0"
             },
             "time": "2022-12-09T13:57:05+00:00"
-=======
-                {
-                    "url": "https://github.com/xiCO2k",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-02-08T01:06:31+00:00"
->>>>>>> origin/master
         },
         {
             "name": "phpoption/phpoption",
@@ -3213,7 +3170,6 @@
             "time": "2023-02-25T19:38:58+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "pion/laravel-chunk-upload",
             "version": "v1.5.2",
             "source": {
@@ -3289,17 +3245,6 @@
             },
             "dist": {
                 "type": "zip",
-=======
-            "name": "predis/predis",
-            "version": "v2.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/predis/predis.git",
-                "reference": "b1d3255ed9ad4d7254f9f9bba386c99f4bb983d1"
-            },
-            "dist": {
-                "type": "zip",
->>>>>>> origin/master
                 "url": "https://api.github.com/repos/predis/predis/zipball/b1d3255ed9ad4d7254f9f9bba386c99f4bb983d1",
                 "reference": "b1d3255ed9ad4d7254f9f9bba386c99f4bb983d1",
                 "shasum": ""
@@ -3350,7 +3295,6 @@
                 }
             ],
             "time": "2023-09-13T16:42:03+00:00"
-<<<<<<< HEAD
         },
         {
             "name": "psr/cache",
@@ -3400,8 +3344,6 @@
                 "source": "https://github.com/php-fig/cache/tree/3.0.0"
             },
             "time": "2021-02-03T23:26:27+00:00"
-=======
->>>>>>> origin/master
         },
         {
             "name": "psr/clock",
@@ -4116,7 +4058,6 @@
                 }
             ],
             "time": "2023-04-15T23:01:58+00:00"
-<<<<<<< HEAD
         },
         {
             "name": "rize/uri-template",
@@ -4421,26 +4362,10 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/1c0a181c9ee221afe4fa55b2d13fc63c5ae14348",
                 "reference": "1c0a181c9ee221afe4fa55b2d13fc63c5ae14348",
-=======
-        },
-        {
-            "name": "symfony/console",
-            "version": "v6.0.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/console.git",
-                "reference": "c3ebc83d031b71c39da318ca8b7a07ecc67507ed"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c3ebc83d031b71c39da318ca8b7a07ecc67507ed",
-                "reference": "c3ebc83d031b71c39da318ca8b7a07ecc67507ed",
->>>>>>> origin/master
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0.2",
-<<<<<<< HEAD
                 "psr/cache": "^3.0"
             },
             "suggest": {
@@ -4520,8 +4445,6 @@
             },
             "require": {
                 "php": ">=8.0.2",
-=======
->>>>>>> origin/master
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/service-contracts": "^1.1|^2|^3",
                 "symfony/string": "^5.4|^6.0"
@@ -6754,7 +6677,6 @@
                 }
             ],
             "time": "2023-01-20T17:44:14+00:00"
-<<<<<<< HEAD
         },
         {
             "name": "symfony/var-exporter",
@@ -6827,8 +6749,6 @@
                 }
             ],
             "time": "2023-01-13T08:34:10+00:00"
-=======
->>>>>>> origin/master
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -9452,7 +9372,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0.2"
+        "php": "^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
