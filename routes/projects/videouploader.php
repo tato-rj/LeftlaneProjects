@@ -13,7 +13,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
 		Route::get('php', function() {
-			return phpversion();
+			return phpinfo();
 		});
 
 		Route::prefix('tokens')->name('tokens.')->group(function() {
