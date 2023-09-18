@@ -12,6 +12,10 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 	Route::middleware('auth:videouploader-admin')->namespace('Projects\VideoUploader')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
+		Route::get('php', function() {
+			return phpversion();
+		});
+
 		Route::prefix('tokens')->name('tokens.')->group(function() {
 
 			Route::get('', 'ApiTokensController@index')->name('index');
