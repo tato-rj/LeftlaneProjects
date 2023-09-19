@@ -149,7 +149,7 @@ function nextLoadingText(percentage) {
         $loadingText.text(array.pop());
         canChangeSentence = false;
     } else {
-        if (moment().diff(startTime, 'seconds') % 10 === 0) {
+        if (moment().diff(startTime, 'seconds') % 5 === 0) {
             $loadingText.text(array[index]);
         }
     }
