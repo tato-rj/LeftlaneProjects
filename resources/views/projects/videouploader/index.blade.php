@@ -61,8 +61,8 @@ let resumable = new Resumable({
         _token:'{{ csrf_token() }}',
         secret:'{{auth()->user()->tokens()->exists() ? auth()->user()->tokens->first()->name : null}}',
         origin: 'local',
-        user_id: 1,
-        piece_id: 1,
+        user_id: Math.floor(Math.random() * 100) + 1,
+        piece_id: Math.floor(Math.random() * 100) + 1,
         email: 'test@email.com'
     },
     fileType: ['mp4', 'MOV'],
@@ -86,17 +86,18 @@ $confirmButton.on('click', function() {
 
 resumable.on('fileAdded', function (file) {
     showProgress();
+    startTime = moment();
     $confirmModal.modal('show');
 });
 
 resumable.on('fileProgress', function (file) {
-    console.log(file);
-    updateProgress(Math.floor(file.progress() * 100));
+    let percentage = Math.floor(file.progress() * 100);
+
+    updateProgress(percentage);
+    nextLoadingText(percentage);
 });
 
 resumable.on('fileSuccess', function (file, response) {
-    console.log(file);
-    console.log(response);
     setTimeout(function() {
         $progressBar.removeClass('progress-bar-striped progress-bar-animated').addClass('bg-success').text('DONE!');
 
@@ -116,20 +117,64 @@ $confirmModal.on('hidden.bs.modal', function() {
 });
 </script>
 <script type="text/javascript">
-let progress = $('.progress');
+let $progress = $('.progress');
+let $loadingText = $('#loading-text');
+
 function showProgress() {
-    progress.find('.progress-bar').css('width', '0%');
-    progress.find('.progress-bar').html('0%');
-    progress.find('.progress-bar').removeClass('bg-success');
-    progress.show();
+    $progress.find('.progress-bar').css('width', '0%');
+    $progress.find('.progress-bar').html('0%');
+    $progress.find('.progress-bar').removeClass('bg-success');
+    $progress.show();
 }
 function updateProgress(value) {
-    progress.find('.progress-bar').css('width', `${value}%`);
-    progress.find('.progress-bar').html(`${value}%`);
+    $progress.find('.progress-bar').css('width', `${value}%`);
+    $progress.find('.progress-bar').html(`${value}%`);
 }
 
 function hideProgress() {
-    progress.hide();
+    $progress.hide();
+}
+
+let startTime;
+let canChangeSentence = true;
+
+function nextLoadingText(percentage) {
+    if (! canChangeSentence)
+        return null;
+
+    let array = $loadingText.data('sentences');
+    let index = Math.floor(percentage/Math.floor(100 / array.length));
+
+    if (percentage > 90) {
+        $loadingText.text(array.pop());
+        canChangeSentence = false;
+    } else {
+        if (moment().diff(startTime, 'seconds') % 10 === 0) {
+            $loadingText.text(array[index]);
+        }
+    }
+    // if (lastChange) {
+    //     $loadingText.text(array[index]);
+
+    //     canChange = false;
+    // }
+
+    // setTimeout(function() {
+    //     canChange = true;
+    // }, 500);
+
+    // let sentence = array[0];
+
+    // if (array.length > 1) {
+    //     sentence = array.slice(0, 1)[0];
+    //     array.shift();
+    // }
+
+    // $loadingText.text(sentence);
+}
+
+function isEven(number) {
+  return number % 2 === 0;
 }
 </script>
 @endauth
