@@ -10,6 +10,7 @@
   z-index: 10000;
   width: 100%;
   height: 100vh;
+  transition: .2s;
 }
 </style>
 @endpush
@@ -99,7 +100,7 @@ resumable.on('fileProgress', function (file) {
 
 resumable.on('fileSuccess', function (file, response) {
     setTimeout(function() {
-        $progressBar.removeClass('progress-bar-striped progress-bar-animated').addClass('bg-success').text('DONE!');
+        completeProgress();
 
         setTimeout(function() {
             location.reload();
@@ -126,6 +127,7 @@ function showProgress() {
     $progress.find('.progress-bar').removeClass('bg-success');
     $progress.show();
 }
+
 function updateProgress(value) {
     $progress.find('.progress-bar').css('width', `${value}%`);
     $progress.find('.progress-bar').html(`${value}%`);
@@ -147,34 +149,27 @@ function nextLoadingText(percentage) {
 
     if (percentage > 90) {
         $loadingText.text(array.pop());
+
         canChangeSentence = false;
     } else {
         if (moment().diff(startTime, 'seconds') % 4 === 0) {
             $loadingText.text(array[index]);
         }
     }
-    // if (lastChange) {
-    //     $loadingText.text(array[index]);
-
-    //     canChange = false;
-    // }
-
-    // setTimeout(function() {
-    //     canChange = true;
-    // }, 500);
-
-    // let sentence = array[0];
-
-    // if (array.length > 1) {
-    //     sentence = array.slice(0, 1)[0];
-    //     array.shift();
-    // }
-
-    // $loadingText.text(sentence);
 }
 
-function isEven(number) {
-  return number % 2 === 0;
+function completeProgress() {
+    $progressBar.removeClass('progress-bar-striped progress-bar-animated')
+                .addClass('bg-success')
+                .text('DONE!');
+
+    setTimeout(function() {
+        $uploadOverlay.children().fadeOut(function() {
+            $(this).empty();
+        });
+        $uploadOverlay.addClass('bg-success').html('<div style="display:none" class="w-100 h-100 text-white"><div class="d-flex justify-content-center align-items-center w-100 h-100" style="font-size: 6rem;"><i class="fa-solid fa-check"></i></div></div>');
+        $uploadOverlay.children().fadeIn();
+    }, 500);
 }
 </script>
 @endauth

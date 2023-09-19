@@ -1,4 +1,4 @@
-<div style="display: none" id="upload-overlay" class="screen-lock-overlay">
+<div style="display: none;" id="upload-overlay" class="screen-lock-overlay">
     <div class="h-100 text-white d-flex text-center justify-content-center align-items-center">
         <div>
             <div class="progress mb-3" style="height: 25px">
