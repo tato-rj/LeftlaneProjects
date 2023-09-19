@@ -161,9 +161,11 @@ function nextLoadingText(percentage) {
 function completeProgress() {
     $progressBar.removeClass('progress-bar-striped progress-bar-animated')
                 .addClass('bg-success')
-                .text('DONE!')
+                .html('<i class="fa-solid fa-check fa-lg"></i>')
                 .parent()
                 .addClass('animate__rubberBand');
+
+    $loadingText.text('Done!');
 }
 </script>
 @endauth
