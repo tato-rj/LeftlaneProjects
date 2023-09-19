@@ -161,15 +161,9 @@ function nextLoadingText(percentage) {
 function completeProgress() {
     $progressBar.removeClass('progress-bar-striped progress-bar-animated')
                 .addClass('bg-success')
-                .text('DONE!');
-
-    setTimeout(function() {
-        $uploadOverlay.children().fadeOut(function() {
-            $(this).empty();
-        });
-        $uploadOverlay.addClass('bg-success').html('<div style="display:none" class="w-100 h-100 text-white"><div class="d-flex justify-content-center align-items-center w-100 h-100" style="font-size: 6rem;"><i class="fa-solid fa-check"></i></div></div>');
-        $uploadOverlay.children().fadeIn();
-    }, 500);
+                .text('DONE!')
+                .parent()
+                .addClass('animate__rubberBand');
 }
 </script>
 @endauth
