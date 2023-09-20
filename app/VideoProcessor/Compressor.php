@@ -9,7 +9,7 @@ class Compressor
 		$dimensions = (new Dimensions($processor))->get();
 
 		$processor->rawFile()
-				  ->resize($dimensions->width, $dimensions->height)
+				  // ->resize($dimensions->width, $dimensions->height)
 				  ->export()
 				  ->toDisk('gcs')
 				  ->inFormat((new Format)->getLowQuality())
