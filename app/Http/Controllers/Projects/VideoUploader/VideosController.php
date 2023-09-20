@@ -30,6 +30,8 @@ class VideosController extends Controller
             }
         }
 
+        \Log::debug('File received');
+
         $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
 
         if (! $receiver->isUploaded()) {
