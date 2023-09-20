@@ -40,6 +40,7 @@ class VideosController extends Controller
 
         if ($fileReceived->isFinished()) {
             \Log::debug('File completed');
+            
             $file = $fileReceived->getFile();
 
             ProcessVideo::dispatch(
