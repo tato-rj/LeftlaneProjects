@@ -30,8 +30,6 @@ class VideosController extends Controller
             }
         }
 
-        \Log::debug('File received');
-
         $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
 
         if (! $receiver->isUploaded()) {
@@ -41,6 +39,7 @@ class VideosController extends Controller
         $fileReceived = $receiver->receive();
 
         if ($fileReceived->isFinished()) {
+            \Log::debug('File completed');
             $file = $fileReceived->getFile();
 
             ProcessVideo::dispatch(
