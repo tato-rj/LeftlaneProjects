@@ -79,6 +79,18 @@ class Video extends Model
         }
     }
 
+    public function getOrientationAttribute()
+    {
+        $dimensions = $this->dimensions();
+
+        return $dimensions[0] > $dimensions[1] ? 'landscape' : 'portrait';
+    }
+
+    public function dimensions()
+    {
+        return explode('x', $this->compressed_dimensions);
+    }
+
     public function isRemote()
     {
         return in_array($this->origin, ['webapp', 'ios']);

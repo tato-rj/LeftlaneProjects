@@ -13,6 +13,11 @@ use App\VideoProcessor\VideoProcessor;
 
 class VideosController extends Controller
 {
+    public function json(Video $video)
+    {
+        return $video;    
+    }
+
     public function upload(Request $request)
     {
         $validator = Validator::make($request->all(), [

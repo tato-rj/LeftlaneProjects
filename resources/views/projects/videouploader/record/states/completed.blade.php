@@ -20,7 +20,7 @@
             <label class="fw-bold">ORIGINAL DIMENSIONS</label>
             <div>{{$video->original_dimensions}}</div>
             <label class="fw-bold">COMPRESSED DIMENSIONS</label>
-            <div>{{$video->compressed_dimensions}}</div>
+            <div>{{$video->compressed_dimensions}} ({{$video->orientation}})</div>
             <label class="fw-bold">ORIGINAL SIZE</label>
             <div>{{$video->original_size_mb}}</div>
             <label class="fw-bold">COMPRESSED SIZE</label>
@@ -28,6 +28,8 @@
         </div>
 
         <div class="d-flex">
+          <a href="{{route('videouploader.json', $video)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Json</a>
+
           <a href="{{$video->video_url}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Video</a>
 
           <a href="{{$video->thumb_url}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Thumbnail</a>

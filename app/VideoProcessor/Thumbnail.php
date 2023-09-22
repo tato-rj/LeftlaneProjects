@@ -6,8 +6,11 @@ class Thumbnail
 {
 	public function create(VideoProcessor $processor)
 	{
+		$file = $processor->rawFile();
+		$duration = $file->getDurationInSeconds() / 2;
+
         $processor->rawFile()
-        		  ->getFrameFromSeconds(50)
+        		  ->getFrameFromSeconds((int) $duration)
         		  ->export()
         		  ->toDisk('gcs')
         		  ->save(
