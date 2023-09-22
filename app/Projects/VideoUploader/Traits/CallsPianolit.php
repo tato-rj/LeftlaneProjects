@@ -8,6 +8,9 @@ trait CallsPianolit
 {
     public function sendJobProcessedNotification()
     {
+        if (! $this->isRemote())
+            return null;
+
         $response = Http::post($this->notification_url, ['video' => $this->toArray()]);
 
         if ($response->successful())
@@ -18,6 +21,9 @@ trait CallsPianolit
 
     public function sendVideoDeletedNotification()
     {
+        if (! $this->isRemote())
+            return null;
+
         return Http::delete($this->notification_url, ['video' => $this->toArray()]);
     }
 }

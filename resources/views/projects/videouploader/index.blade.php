@@ -66,7 +66,7 @@ let resumable = new Resumable({
         piece_id: Math.floor(Math.random() * 100) + 1,
         email: 'test@email.com'
     },
-    fileType: ['mp4', 'MOV'],
+    fileType: ['mp4', 'mov', 'MOV'],
     maxFileSize: 500000000,
     headers: {
         'Accept' : 'application/json'

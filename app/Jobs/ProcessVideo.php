@@ -36,7 +36,7 @@ class ProcessVideo implements ShouldQueue
     public function handle()
     {
         $this->video->finish(
-            (new VideoProcessor($this->video))->withThumbnail()->run()
+            (new VideoProcessor)->uploaded($this->video)->withThumbnail()->run()
         );
     }
 }

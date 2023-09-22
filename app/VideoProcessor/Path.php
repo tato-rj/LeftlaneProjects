@@ -6,6 +6,7 @@ class Path
 {
 	protected $ext = 'mp4';
 	protected $namespace = 'performances';
+	protected $rename = false;
 
 	public function __construct(VideoProcessor $processor)
 	{
@@ -24,8 +25,18 @@ class Path
 		return $this->namespace . '/test@email.com/' . $this->newFilename($this->processor->filename);
 	}
 
+	public function rename()
+	{
+		$this->rename = true;
+
+		return $this;
+	}
+
 	function newFilename($filename) {
 	    $info = pathinfo($filename);
+
+	    if ($this->rename)
+	    	return str_shuffle($info['filename']) . '.' . $this->ext;
 
 	    return $info['filename'] . '.' . $this->ext;
 	}

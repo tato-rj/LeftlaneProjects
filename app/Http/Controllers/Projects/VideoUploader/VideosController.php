@@ -9,6 +9,7 @@ use App\Projects\VideoUploader\Video;
 use Illuminate\Support\Facades\Validator;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use App\VideoProcessor\VideoProcessor;
 
 class VideosController extends Controller
 {
@@ -56,6 +57,15 @@ class VideosController extends Controller
             'done' => $fileReceived->handler()->getPercentageDone(),
             'status' => true
         ];
+    }
+
+    public function orientation(Request $request)
+    {
+        $video = Video::where(['user_id' => $request->user_id, 'piece_id' => $request->piece_id])->firstOrFail();
+
+        (new VideoProcessor)->gcs($video)->orientation()->rotate();
+
+        return back()->with('success', 'The video has been rotated');
     }
 
     public function destroy(Request $request)

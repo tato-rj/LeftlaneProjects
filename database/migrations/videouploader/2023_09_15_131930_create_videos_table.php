@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('mimeType')->nullable();
             $table->unsignedInteger('original_size')->nullable();
             $table->unsignedInteger('compressed_size')->nullable();
+            $table->string('original_dimensions')->nullable();
+            $table->string('compressed_dimensions')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('notification_received_at')->nullable();
             $table->timestamps();

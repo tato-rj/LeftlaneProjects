@@ -16,7 +16,7 @@
   </div>
 </div>
 
-{{-- <form method="POST" action="{{route('upload')}}" enctype="multipart/form-data">
+{{-- <form method="POST" action="{{route('videouploader.upload')}}" enctype="multipart/form-data">
     @csrf
 
     <input type="hidden" name="secret" value="{{auth()->user()->tokens()->exists() ? auth()->user()->tokens->first()->name : null}}">

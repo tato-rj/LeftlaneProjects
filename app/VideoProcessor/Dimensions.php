@@ -4,7 +4,8 @@ namespace App\VideoProcessor;
 
 class Dimensions
 {
-	protected $fixedHeight = 360;
+	protected $fixedWidth = 640;
+	public $width, $height;
 
 	public function __construct(VideoProcessor $processor)
 	{
@@ -16,8 +17,18 @@ class Dimensions
 		$originalH = $this->processor->originalDimensions->getHeight();
 		$originalW = $this->processor->originalDimensions->getWidth();
 
-		$this->width =  (int) round($this->fixedHeight / ($originalH/$originalW));
-		$this->height = $this->fixedHeight;
+		if ($originalW > $this->fixedWidth) {
+			$this->width =  $this->fixedWidth;
+			$this->height = (int) ($this->width * ($originalH / $originalW));
+		} else {
+			$this->width = $originalW;
+			$this->height = $originalH;
+		}
+
+		$this->processor->video->update([
+			'compressed_dimensions' => $this->width . 'x' . $this->height,
+			'original_dimensions' => $originalW . 'x' . $originalH
+		]);
 
 		return $this;
 	}

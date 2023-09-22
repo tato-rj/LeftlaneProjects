@@ -7,17 +7,32 @@ use App\Projects\VideoUploader\Video;
 class VideoProcessor
 {
 	protected $raw_file;
-	public $temp_path, $filename, $withThumbnail, $originalDimensions;
+	public $temp_path, $filename, $withThumbnail, $originalDimensions, $compressedDimensions;
 
-	public function __construct(Video $video)
+	public function __construct()
 	{
 		ini_set('max_execution_time', 9000);
+		$this->withThumbnail = false;
+	}
+
+	public function uploaded(Video $video)
+	{
 		$this->video = $video;
 		$this->filename = basename($video->temp_path);
-		$this->withThumbnail = false;
 		$this->raw_file = \FFMpeg::fromDisk('public')->open($this->video->temp_path);
 		
 		$this->getOriginalDimensions();
+
+		return $this;
+	}
+
+	public function gcs(Video $video)
+	{
+		$this->video = $video;
+		$this->filename = basename($this->video->video_path);
+		$this->raw_file = \FFMpeg::fromDisk('gcs')->open($this->video->video_path);
+
+		return $this;
 	}
 
 	public function rawFile()
@@ -30,6 +45,11 @@ class VideoProcessor
 		$copy = $this->raw_file;
 
 		$this->originalDimensions = $copy->getVideoStream()->getDimensions();
+	}
+
+	public function orientation()
+	{
+		return new Orientation($this);
 	}
 
 	public function path()

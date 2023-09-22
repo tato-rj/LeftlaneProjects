@@ -6,7 +6,7 @@ use FFMpeg\Format\Video\X264;
 
 class Format
 {
-	protected $quality = 1500;
+	protected $quality = 250;
 
 	public function getLowQuality()
 	{
