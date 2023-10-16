@@ -116,7 +116,7 @@ class Video extends Model
             'piece_id' => $request['piece_id'],
             'user_id' => $request['user_id'],
             'user_email' => $request['email'],
-            'temp_path' => \Storage::disk('public')->put('temporary', $file),
+            'temp_path' => 'storage/'.\Storage::disk('public')->put('temporary', $file),
             'original_size' => $file->getSize()
         ]);
     }
