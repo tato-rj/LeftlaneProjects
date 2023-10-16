@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class ClearTemporaryUploads extends Command
 {
@@ -27,8 +28,7 @@ class ClearTemporaryUploads extends Command
      */
     public function handle()
     {
-        \Storage::disk('public')->deleteDirectory('temporary');
-        \Storage::disk('public')->makeDirectory('temporary');
+        (new Filesystem)->cleanDirectory('storage/app/public/temporary');
 
         $this->info('Temporary uploads directory deleted');
     }
