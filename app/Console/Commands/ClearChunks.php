@@ -27,7 +27,7 @@ class ClearChunks extends Command
      */
     public function handle()
     {
-        \Storage::deleteDirectory('chunks');
+        \Storage::disk('public')->deleteDirectory('chunks');
         \Storage::disk('public')->makeDirectory('chunks');
 
         $this->info('Chunks directory deleted');
