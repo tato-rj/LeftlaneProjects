@@ -14,8 +14,6 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 	Route::middleware('auth:videouploader-admin')->namespace('Projects\VideoUploader')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
-		Route::get('{video}', 'VideosController@json')->name('json');
-
 		Route::prefix('tokens')->name('tokens.')->group(function() {
 
 			Route::get('', 'ApiTokensController@index')->name('index');
@@ -25,6 +23,8 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 			Route::delete('revoke', 'ApiTokensController@revoke')->name('revoke');
 
 		});
+
+		Route::get('{video}', 'VideosController@json')->name('json');
 
 		Route::prefix('webhook')->name('webhook.')->group(function() {
 
