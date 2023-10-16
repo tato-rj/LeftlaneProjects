@@ -15,7 +15,7 @@ class ChangePermissions extends Command
         $path = public_path($folder); // Adjust the path as needed
 
         if (is_dir($path)) {
-            chmod($path, 0777);
+            chmod($path, 777);
             $this->info("Permissions of the $folder folder have been changed to 777.");
         } else {
             $this->error("The folder $folder does not exist.");
