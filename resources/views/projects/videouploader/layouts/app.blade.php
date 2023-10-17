@@ -15,6 +15,10 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
         
         <style type="text/css">
+            .border-x-0 {
+                border-left: 0;
+                border-right: 0;
+            }
             .btn-raw {
                 background: none;
                 border: none;

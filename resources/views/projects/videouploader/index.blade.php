@@ -157,5 +157,8 @@ function completeProgress() {
     $loadingText.text('Done!');
 }
 </script>
+
+<script type="text/javascript">
+</script>
 @endauth
 @endpush

@@ -122,6 +122,17 @@ class Video extends Model
         ]);
     }
 
+    public function scopeFilter($query, $filter)
+    {
+        if ($filter == 'remote')
+            return $query->whereIn('origin', ['webapp', 'ios']);
+
+        if ($filter == 'local')
+            return $query->where('origin', 'local');
+
+        return $query;
+    }
+
     public function completed()
     {
         return (bool) $this->completed_at;
