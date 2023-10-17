@@ -5,6 +5,14 @@ function dateToDatabase($date)
 	return \Carbon\Carbon::parse($date)->format('Y-m-d');
 }
 
+function storage($path)
+{
+	if ($path)
+		return asset(\Storage::url($path));
+
+	return null;
+}
+
 function minutes($count)
 {
 	return 60 * $count;

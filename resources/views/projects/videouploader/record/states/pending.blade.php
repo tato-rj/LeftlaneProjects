@@ -19,7 +19,7 @@
         </div>
 
         <div class="d-flex">
-          <a href="{{asset($video->temp_path)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Original Video</a>
+          <a href="{{storage($video->temp_path)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Original Video</a>
           
           @include('projects.videouploader.record.delete')
         </div>
