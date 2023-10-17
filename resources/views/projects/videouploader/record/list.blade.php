@@ -17,7 +17,7 @@
             </form>
         </div>
     </div>
-    <div class="accordion shadow-lg" id="records-container">
+    <div class="accordion shadow-lg mb-3" id="records-container">
     @foreach($videos as $video)
         @if($video->completed())
         @include('projects.videouploader.record.states.completed')
