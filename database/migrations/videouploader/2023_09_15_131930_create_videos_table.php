@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('video_path')->nullable();
             $table->string('thumb_path')->nullable();
             $table->string('mimeType')->nullable();
+            $table->string('notes')->nullable();
             $table->unsignedInteger('original_size')->nullable();
             $table->unsignedInteger('compressed_size')->nullable();
             $table->string('original_dimensions')->nullable();

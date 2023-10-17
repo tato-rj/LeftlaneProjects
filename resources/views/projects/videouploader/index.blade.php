@@ -80,6 +80,7 @@ resumable.assignBrowse($uploadButton[0]);
 $confirmButton.on('click', function() {
     if (resumable.files.length) {
         $(this).prop('disabled', true);
+        resumable.opts.query.notes = $('input[name="notes"]').val();
         resumable.upload();
         $uploadOverlay.show();
     }

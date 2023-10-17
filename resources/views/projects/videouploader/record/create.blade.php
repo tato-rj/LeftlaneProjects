@@ -10,6 +10,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <input type="text" name="notes" class="form-control mb-3" placeholder="Notes">
         <button type="submit" id="confirm-button" class="btn btn-primary">Upload video</button>
       </div>
     </div>
