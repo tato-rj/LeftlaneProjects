@@ -24,9 +24,9 @@
         <a href="{{config('filesystems.disks.gcs.bucketUrl')}}" target="_blank">See GCS bucket</a>
         |
         <a href="/horizon" target="_blank">Horizon dashboard</a>
+        |
+        @include('projects.videouploader.record.create')
     </div>
-
-    @include('projects.videouploader.record.create')
 </div>
 
 @include('projects.videouploader.record.list')

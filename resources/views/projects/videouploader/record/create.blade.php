@@ -1,6 +1,4 @@
-<button type="button" id="choose-video" class="btn btn-primary">
-  Test upload
-</button>
+<a type="button" id="choose-video" class="">Test upload</a>
 
 <div class="modal fade" id="confirm-modal">
   <div class="modal-dialog">
