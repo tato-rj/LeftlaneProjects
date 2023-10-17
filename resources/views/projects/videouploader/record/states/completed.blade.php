@@ -34,8 +34,6 @@
 
           <a href="{{$video->thumb_url}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Thumbnail</a>
 
-          @include('projects.videouploader.record.orientation')
-
           @if($video->isRemote())
           <form method="POST" action="{{route('videouploader.webhook.resend', $video)}}" class="me-2">
             @csrf
@@ -43,6 +41,7 @@
           </form>
           @endif
 
+          @include('projects.videouploader.record.edit')
           @include('projects.videouploader.record.delete')
         </div>
       </div>

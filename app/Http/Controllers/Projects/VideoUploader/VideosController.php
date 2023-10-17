@@ -64,6 +64,15 @@ class VideosController extends Controller
         ];
     }
 
+    public function update(Request $request, Video $video)
+    {
+        $video->update([
+            'notes' => $request->notes
+        ]);
+
+        return back()->with('success', 'The video has been updated');
+    }
+
     public function orientation(Request $request)
     {
         $video = Video::where(['user_id' => $request->user_id, 'piece_id' => $request->piece_id])->firstOrFail();

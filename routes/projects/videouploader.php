@@ -14,6 +14,10 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 	Route::middleware('auth:videouploader-admin')->namespace('Projects\VideoUploader')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
+		Route::prefix('videos')->name('videos.')->group(function() {
+			Route::patch('{video}', 'VideosController@update')->name('update');
+		});
+
 		Route::prefix('tokens')->name('tokens.')->group(function() {
 
 			Route::get('', 'ApiTokensController@index')->name('index');
