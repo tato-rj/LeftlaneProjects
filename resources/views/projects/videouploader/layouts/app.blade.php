@@ -48,8 +48,8 @@
 
         @stack('header')
     </head>
-    <body class="py-4">
-        <div class="container mb-4">
+    <body class="bg-light">
+        <div class="container mb-4 pt-4">
             <div class="d-flex justify-content-between align-items-center">
                 <a class="link-none" href="{{route('videouploader.home')}}">
                     <div class="d-flex align-items-baseline">
