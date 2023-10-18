@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('compressed_dimensions')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('failed_at')->nullable();
+            $table->timestamp('abandoned_at')->nullable();
             $table->timestamp('notification_received_at')->nullable();
             $table->timestamps();
         });

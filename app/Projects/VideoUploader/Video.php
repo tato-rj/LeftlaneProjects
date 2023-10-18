@@ -14,7 +14,12 @@ class Video extends Model
 
     protected $connection = 'videouploader';
     protected $guarded = [];
-    protected $dates = ['completed_at', 'notification_received_at', 'failed_at'];
+    protected $dates = [
+        'completed_at', 
+        'abandoned_at', 
+        'notification_received_at', 
+        'failed_at'
+    ];
     protected $appends = ['video_url', 'thumb_url'];
 
     public function getNotificationUrlAttribute()
@@ -114,6 +119,11 @@ class Video extends Model
         $this->update(['failed_at' => now()]);
     }
 
+    public function markAsAbandoned()
+    {
+        $this->update(['abandoned_at' => now()]);
+    }
+
     public function markAsPending()
     {
         $this->update([
@@ -173,6 +183,11 @@ class Video extends Model
     public function pending()
     {
         return ! $this->completed() && ! $this->failed();
+    }
+
+    public function abandoned()
+    {
+        return (bool) $this->abandoned_at;
     }
 
     public function finish(VideoProcessor $processor)
