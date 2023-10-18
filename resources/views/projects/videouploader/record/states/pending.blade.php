@@ -1,9 +1,9 @@
 <div class="accordion-item">
     <div class="accordion-header {{$video->isRemote() ? 'alert-warning' : null}}">
-      <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-warning' : 'text-warning'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
+      <div class="accordion-button collapsed {{$video->isRemote() ? 'alert-warning' : 'text-warning'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
         @fa(['icon' => 'spinner fa-spin-pulse'])
         @include('projects.videouploader.record.states.header')
-    </button>
+    </div>
     </div>
     <div id="record-{{$video->id}}" class="accordion-collapse collapse" data-bs-parent="#records-container">
       <div class="accordion-body bg-light">
