@@ -23,6 +23,7 @@
     ])
 
     <div class="accordion shadow-lg my-3" id="records-container">
+        <label>Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}}</label>
     @foreach($videos as $video)
         @if($video->isCompleted())
         @include('projects.videouploader.record.states.completed')
