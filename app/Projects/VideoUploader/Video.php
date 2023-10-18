@@ -220,12 +220,12 @@ class Video extends Model
 
     public function isPending()
     {
-        return ! $this->isCompleted() && ! $this->isFailed();
+        return ! $this->isCompleted() && ! $this->isFailed() && ! $this->isAbandoned();
     }
 
     public function scopePending($query)
     {
-        return $query->whereNull(['failed_at', 'completed_at']);
+        return $query->whereNull(['failed_at', 'completed_at', 'abandoned_at']);
     }
 
     public function isAbandoned()
