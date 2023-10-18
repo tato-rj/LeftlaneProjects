@@ -55,6 +55,7 @@ let resumable = new Resumable({
         email: 'test@email.com'
     },
     fileType: ['mp4', 'mov', 'MOV'],
+    maxFiles: 1,
     maxFileSize: 500000000,
     headers: {
         'Accept' : 'application/json'
