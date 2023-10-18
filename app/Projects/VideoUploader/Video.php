@@ -114,6 +114,14 @@ class Video extends Model
         $this->update(['failed_at' => now()]);
     }
 
+    public function markAsPending()
+    {
+        $this->update([
+            'failed_at' => null,
+            'completed_at' => null
+        ]);
+    }
+
     public function belongsToPayload($payload)
     {
         $data = json_decode($payload);
@@ -160,6 +168,11 @@ class Video extends Model
     public function failed()
     {
         return (bool) $this->failed_at;
+    }
+
+    public function pending()
+    {
+        return ! $this->completed() && ! $this->failed();
     }
 
     public function finish(VideoProcessor $processor)
