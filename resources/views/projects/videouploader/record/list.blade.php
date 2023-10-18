@@ -1,6 +1,25 @@
 
 <div class="container">
-    @include('projects.videouploader.record.filters')
+    @filters([
+        'name' => 'filter',
+        'include' => ['state'],
+        'options' => [
+            'Remote' => 'remote',
+            'Test' => 'local'
+        ]
+    ])
+
+    @filters([
+        'name' => 'state',
+        'include' => ['filter'],
+        'options' => [
+            'All' => '',
+            'Pending' => 'pending',
+            'Completed' => 'completed',
+            'Failed' => 'failed',
+            'Abandoned' => 'abandoned'
+        ]
+    ])
 
     <div class="accordion shadow-lg my-3" id="records-container">
     @foreach($videos as $video)
