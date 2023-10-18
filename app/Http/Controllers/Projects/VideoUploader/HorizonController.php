@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laravel\Horizon\Contracts\JobRepository;
 use App\Projects\VideoUploader\Video;
+use App\Jobs\ProcessVideo;
 
 class HorizonController extends Controller
 {
@@ -47,6 +48,8 @@ class HorizonController extends Controller
 
     public function retry(Video $video)
     {
-        return $video;
+        ProcessVideo::dispatch($video);
+
+        return back()->with('success', 'The video is back in the queue');
     }
 }
