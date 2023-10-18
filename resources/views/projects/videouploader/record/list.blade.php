@@ -23,7 +23,9 @@
     ])
 
     @if($videos->isEmpty())
-    <div class="text-muted">@fa(['icon' => 'box-open'])</div>
+    <div class="d-flex justify-content-center pt-5" style="
+    font-size: 8rem;
+    opacity: .1;">@fa(['icon' => 'box-open'])</div>
     @else
     <div class="small mb-2 text-muted">Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}}</div>
     @endif
