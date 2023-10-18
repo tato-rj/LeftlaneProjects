@@ -22,7 +22,7 @@
         ]
     ])
 
-    <div class="small mb-2">Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}}</div>
+    <div class="small">Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}}</div>
 
     <div class="accordion shadow-lg my-3" id="records-container">
     @foreach($videos as $video)
