@@ -12,38 +12,42 @@ class HorizonController extends Controller
 {
     public function status(Video $video)
     {
-        if (! $video->failed()) {
-            $records = app(JobRepository::class)->getFailed();
-    
-            foreach ($records as $record) {
-                if ($video->belongsToPayload($records->first()->payload)) {
-                    $video->markAsFailed();
 
-                    return back()->with('success', 'This video failed');
-                }
+        $records = app(JobRepository::class)->getFailed();
+
+        foreach ($records as $record) {
+            if ($video->belongsToPayload($records->first()->payload)) {
+                $video->markAsFailed();
+
+                return back()->with('success', 'This video failed');
             }
-
-            $video->update(['failed_at' => null]);
         }
 
-        if ($video->pending()) {
-            $records = app(JobRepository::class)->getPending();
-    
-            foreach ($records as $record) {
-                if ($video->belongsToPayload($records->first()->payload)) {
-                    $video->markAsPending();
+        $video->update(['failed_at' => null]);
 
-                    return back()->with('success', 'This video is pending');
-                }
+        $records = app(JobRepository::class)->getPending();
+
+        foreach ($records as $record) {
+            if ($video->belongsToPayload($records->first()->payload)) {
+                $video->markAsPending();
+
+                return back()->with('success', 'This video is pending');
             }
-
-            $video->markAsAbandoned();
         }
 
-        if ($video->abandoned())
-            return back()->with('success', 'The video has was abandoned and could not be processed');
+        $records = app(JobRepository::class)->getCompleted();
 
-        return back()->with('success', 'The status of this video has not changed');
+        foreach ($records as $record) {
+            if ($video->belongsToPayload($records->first()->payload)) {
+                $video->markAsCompleted();
+
+                return back()->with('success', 'This video has successfully finished');
+            }
+        }
+
+        $video->markAsAbandoned();
+
+        return back()->with('success', 'The video has was abandoned and could not be processed');
     }
 
     public function retry(Video $video)

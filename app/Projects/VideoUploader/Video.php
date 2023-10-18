@@ -141,6 +141,15 @@ class Video extends Model
         ]);
     }
 
+    public function markAsCompleted()
+    {
+        $this->update([
+            'abandoned_at' => null,
+            'failed_at' => null,
+            'completed_at' => now()
+        ]);
+    }
+
     public function belongsToPayload($payload)
     {
         $data = json_decode($payload);
@@ -201,12 +210,13 @@ class Video extends Model
 
     public function finish(VideoProcessor $processor)
     {
-        return $this->update([
+        $this->update([
             'video_path' => $processor->path()->video(),
             'thumb_path' => $processor->path()->thumbnail(),
             'compressed_size' => \Storage::disk('gcs')->size($processor->path()->video()),
-            'mimeType' => \Storage::disk('gcs')->mimeType($processor->path()->video()),
-            'completed_at' => now()
+            'mimeType' => \Storage::disk('gcs')->mimeType($processor->path()->video())
         ]);        
+
+        return $this->markAsCompleted();
     }
 }
