@@ -20,6 +20,8 @@
 
         <div class="d-flex">
           <a href="{{storage($video->temp_path)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Original Video</a>
+
+          <a href="{{route('videouploader.videos.status', $video)}}" class="btn btn-outline-primary btn-sm me-2">Status</a>
           
           @include('projects.videouploader.record.edit')
           @include('projects.videouploader.record.delete')

@@ -10,12 +10,19 @@ use Illuminate\Support\Facades\Validator;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use App\VideoProcessor\VideoProcessor;
+use Illuminate\Support\Facades\Redis;
 
 class VideosController extends Controller
 {
     public function json(Video $video)
     {
         return $video;    
+    }
+
+    public function status(Video $video)
+    {
+        // return Redis::connection('horizon')->zrange('leftlane_horizon:recent_jobs', 0, -1);
+        return Redis::connection("horizon")->keys("*");
     }
 
     public function upload(Request $request)
