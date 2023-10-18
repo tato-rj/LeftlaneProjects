@@ -189,8 +189,8 @@ class Video extends Model
 
     public function scopeFilters($query, $request)
     {
-        if ($filter = $request->filter)
-            $query->$filter();
+        if ($origin = $request->origin)
+            $query->$origin();
 
         if ($state = $request->state)
             $query->$state();

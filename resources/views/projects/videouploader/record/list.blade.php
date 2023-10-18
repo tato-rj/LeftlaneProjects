@@ -1,7 +1,7 @@
 
 <div class="container">
     @filters([
-        'name' => 'filter',
+        'name' => 'origin',
         'include' => ['state'],
         'options' => [
             'All' => '',
