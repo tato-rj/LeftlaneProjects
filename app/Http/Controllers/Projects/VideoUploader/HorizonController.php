@@ -44,4 +44,9 @@ class HorizonController extends Controller
 
         return back()->with('success', 'The status of this video has not changed');
     }
+
+    public function retry(Video $video)
+    {
+        return $video;
+    }
 }
