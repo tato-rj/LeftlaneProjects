@@ -30,7 +30,7 @@ class HorizonController extends Controller
         foreach ($records as $record) {
             if ($video->belongsToPayload($records->first()->payload)) {
                 $video->markAsPending();
-
+dd('here');
                 return back()->with('success', 'This video is pending');
             }
         }
