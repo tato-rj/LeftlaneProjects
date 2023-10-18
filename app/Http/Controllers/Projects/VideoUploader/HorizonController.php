@@ -11,7 +11,7 @@ class HorizonController extends Controller
 {
     public function status(Video $video)
     {
-        if (! $video->failed_at) {
+        if (! $video->failed()) {
             $records = app(JobRepository::class)->getFailed();
     
             foreach ($records as $record) {

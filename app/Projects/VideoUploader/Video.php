@@ -157,6 +157,11 @@ class Video extends Model
         return (bool) $this->completed_at;
     }
 
+    public function failed()
+    {
+        return (bool) $this->failed_at;
+    }
+
     public function finish(VideoProcessor $processor)
     {
         return $this->update([

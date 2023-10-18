@@ -21,6 +21,8 @@
     @foreach($videos as $video)
         @if($video->completed())
         @include('projects.videouploader.record.states.completed')
+        @elseif($video->failed())
+        @include('projects.videouploader.record.states.failed')
         @else
         @include('projects.videouploader.record.states.pending')
         @endif
