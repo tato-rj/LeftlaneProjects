@@ -116,17 +116,26 @@ class Video extends Model
 
     public function markAsFailed()
     {
-        $this->update(['failed_at' => now()]);
+        $this->update([
+            'completed_at' => null,
+            'abandoned_at' => null,
+            'failed_at' => now()
+        ]);
     }
 
     public function markAsAbandoned()
     {
-        $this->update(['abandoned_at' => now()]);
+        $this->update([
+            'completed_at' => null,
+            'failed_at' => null,
+            'abandoned_at' => now()
+        ]);
     }
 
     public function markAsPending()
     {
         $this->update([
+            'abandoned_at' => null,
             'failed_at' => null,
             'completed_at' => null
         ]);
