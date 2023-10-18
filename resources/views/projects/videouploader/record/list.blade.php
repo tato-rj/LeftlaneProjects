@@ -22,7 +22,11 @@
         ]
     ])
 
+    @if($videos->isEmpty())
+    <div class="small mb-2">Nothing to show</div>
+    @else
     <div class="small mb-2">Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}}</div>
+    @endif
 
     <div class="accordion shadow-lg mb-3" id="records-container">
     @foreach($videos as $video)
