@@ -15,7 +15,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
 		Route::prefix('videos')->name('videos.')->group(function() {
-			Route::get('{video}/status', 'VideosController@status')->name('status');
+			Route::get('{video}/status', 'HorizonController@status')->name('status');
 
 			Route::patch('{video}', 'VideosController@update')->name('update');
 		});
