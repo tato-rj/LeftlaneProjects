@@ -23,6 +23,8 @@
         @include('projects.videouploader.record.states.completed')
         @elseif($video->failed())
         @include('projects.videouploader.record.states.failed')
+        @elseif($video->abandoned())
+        @include('projects.videouploader.record.states.abandoned')
         @else
         @include('projects.videouploader.record.states.pending')
         @endif
