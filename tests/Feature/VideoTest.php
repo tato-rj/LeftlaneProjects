@@ -43,7 +43,7 @@ class VideoTest extends TestCase
 
         array_shift($this->videoRequest);
 
-        $this->post(route('upload'), $this->videoRequest);
+        $this->post(route('videouploader.upload'), $this->videoRequest);
     }
 
     /** @test */
@@ -51,7 +51,7 @@ class VideoTest extends TestCase
     {
         array_pop($this->videoRequest);
 
-        $this->postJson(route('upload'), $this->videoRequest)->assertJson([
+        $this->postJson(route('videouploader.upload'), $this->videoRequest)->assertJson([
             'piece_id' => ['The piece id field is required.']
         ]);
     }
