@@ -48,7 +48,7 @@ class HorizonController extends Controller
 
     public function retry(Video $video)
     {
-        // ProcessVideo::dispatch($video);
+        ProcessVideo::dispatch($video);
 
         $video->markAsPending();
 
