@@ -59,7 +59,7 @@ class Video extends Model
 
     public function getProcessingTimeAttribute()
     {
-        if ($this->completed())
+        if ($this->isCompleted())
             return gmdate('i:s', $this->completed_at->diffInSeconds($this->created_at));
     }
 
@@ -94,6 +94,16 @@ class Video extends Model
     public function dimensions()
     {
         return explode('x', $this->compressed_dimensions);
+    }
+
+    public function scopeRemote($query)
+    {
+        return $query->whereIn('origin', ['webapp', 'ios']);
+    }
+
+    public function scopeLocal($query)
+    {
+        return $query->where('origin', 'local');
     }
 
     public function isRemote()
@@ -177,35 +187,55 @@ class Video extends Model
         ]);
     }
 
-    public function scopeFilter($query, $filter)
+    public function scopeFilters($query, $request)
     {
-        if ($filter == 'remote')
-            return $query->whereIn('origin', ['webapp', 'ios']);
+        if ($filter = $request->filter)
+            $query->$filter();
 
-        if ($filter == 'local')
-            return $query->where('origin', 'local');
+        if ($state = $request->state)
+            $query->$state();
 
         return $query;
     }
 
-    public function completed()
+    public function isCompleted()
     {
         return (bool) $this->completed_at;
     }
 
-    public function failed()
+    public function scopeCompleted($query)
+    {
+        return $query->whereNotNull('completed_at');
+    }
+
+    public function isFailed()
     {
         return (bool) $this->failed_at;
     }
 
-    public function pending()
+    public function scopeFailed($query)
     {
-        return ! $this->completed() && ! $this->failed();
+        return $query->whereNotNull('failed_at');
     }
 
-    public function abandoned()
+    public function isPending()
+    {
+        return ! $this->isCompleted() && ! $this->isFailed();
+    }
+
+    public function scopePending($query)
+    {
+        return $query->whereNull(['failed_at', 'completed_at']);
+    }
+
+    public function isAbandoned()
     {
         return (bool) $this->abandoned_at;
+    }
+
+    public function scopeAbandoned($query)
+    {
+        return $query->whereNotNull('abandoned_at');
     }
 
     public function finish(VideoProcessor $processor)

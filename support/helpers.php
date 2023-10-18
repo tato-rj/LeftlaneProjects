@@ -5,6 +5,16 @@ function dateToDatabase($date)
 	return \Carbon\Carbon::parse($date)->format('Y-m-d');
 }
 
+function currentUrlExcept($params)
+{
+	return route(request()->route()->getName(), request()->except($params));
+}
+
+function currentUrlWithOnly($params)
+{
+	return route(request()->route()->getName(), request()->only($param));
+}
+
 function storage($path)
 {
 	if ($path)

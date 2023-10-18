@@ -19,6 +19,9 @@
                 border-left: 0;
                 border-right: 0;
             }
+            .border-s-0 {
+                border-left: 0;
+            }
             .btn-raw {
                 background: none;
                 border: none;

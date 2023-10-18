@@ -17,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrapFive();
+
+        \Blade::include('components.filters.row', 'filters');
         \Blade::include('components.fontawesome', 'fa');
         
         Blade::if('manager', function () {
