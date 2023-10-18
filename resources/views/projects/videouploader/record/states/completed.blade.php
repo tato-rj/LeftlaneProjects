@@ -6,7 +6,7 @@
       </button>
     </div>
     <div id="record-{{$video->id}}" class="accordion-collapse collapse" data-bs-parent="#records-container">
-      <div class="accordion-body">
+      <div class="accordion-body bg-light">
         <div class="text-muted small mb-2">
             @if($video->isRemote())
               <label class="fw-bold">NOTIFICATION STATUS</label>
