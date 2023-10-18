@@ -17,6 +17,8 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 		Route::prefix('videos')->name('videos.')->group(function() {
 			Route::get('{video}/status', 'HorizonController@status')->name('status');
 
+			Route::post('{video}/retry', 'HorizonController@retry')->name('retry');
+
 			Route::patch('{video}', 'VideosController@update')->name('update');
 		});
 
