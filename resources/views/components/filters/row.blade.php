@@ -8,7 +8,9 @@
             @endif
 
             @foreach($include as $param)
+            @if(request()->has($param))
             <input type="hidden" name="{{$param}}" value="{{request($param)}}">
+            @endif
             @endforeach
 
             <button type="submit" 
