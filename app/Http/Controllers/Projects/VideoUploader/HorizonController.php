@@ -16,7 +16,7 @@ class HorizonController extends Controller
         $failed = app(JobRepository::class)->getFailed();
 
         foreach ($failed as $record) {
-            if ($video->belongsToPayload($failed->first()->payload)) {
+            if ($video->belongsToPayload($record->payload)) {
                 $video->markAsFailed();
 
                 return back()->with('success', 'This video failed');
@@ -26,9 +26,9 @@ class HorizonController extends Controller
         $video->update(['failed_at' => null]);
 
         $pending = app(JobRepository::class)->getPending();
-return $video->belongsToPayload($pending[1]->payload);
+
         foreach ($pending as $record) {
-            if ($video->belongsToPayload($pending->first()->payload)) {
+            if ($video->belongsToPayload($record->payload)) {
                 $video->markAsPending();
 
                 return back()->with('success', 'This video is pending');
@@ -38,7 +38,7 @@ return $video->belongsToPayload($pending[1]->payload);
         $completed = app(JobRepository::class)->getCompleted();
 
         foreach ($completed as $record) {
-            if ($video->belongsToPayload($completed->first()->payload)) {
+            if ($video->belongsToPayload($record->payload)) {
                 $video->markAsCompleted();
 
                 return back()->with('success', 'This video has successfully finished');
