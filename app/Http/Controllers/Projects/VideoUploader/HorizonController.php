@@ -45,7 +45,7 @@ class HorizonController extends Controller
 
         $video->markAsAbandoned();
 
-        return back()->with('success', 'The video has was abandoned and could not be processed');
+        return back()->with('success', 'The video was abandoned and could not be processed');
     }
 
     public function retry(Video $video)
