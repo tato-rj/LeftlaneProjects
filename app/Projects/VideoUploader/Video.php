@@ -14,7 +14,7 @@ class Video extends Model
 
     protected $connection = 'videouploader';
     protected $guarded = [];
-    protected $dates = ['completed_at', 'notification_received_at'];
+    protected $dates = ['completed_at', 'notification_received_at', 'failed_at'];
     protected $appends = ['video_url', 'thumb_url'];
 
     public function getNotificationUrlAttribute()
@@ -107,6 +107,25 @@ class Video extends Model
             abort(404, 'This job was not for a Video');
 
         return $query->find($id);
+    }
+
+    public function markAsFailed()
+    {
+        $this->update(['failed_at' => now()]);
+    }
+
+    public function belongsToPayload($payload)
+    {
+        $data = json_decode($payload);
+
+        if (! property_exists($data, 'tags'))
+            return false;
+
+        $pieces = explode(':', $data->tags[0]);
+
+        $id = $pieces[1];
+
+        return $this->id == $id;
     }
 
     public function scopeTemporary($query, $file, array $request)
