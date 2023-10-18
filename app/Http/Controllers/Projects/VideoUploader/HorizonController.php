@@ -26,7 +26,7 @@ class HorizonController extends Controller
         $video->update(['failed_at' => null]);
 
         $records = app(JobRepository::class)->getPending();
-
+return $records;
         foreach ($records as $record) {
             if ($video->belongsToPayload($records->first()->payload)) {
                 $video->markAsPending();
