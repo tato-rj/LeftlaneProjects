@@ -32,9 +32,13 @@ class VideoServiceProvider extends ServiceProvider
                     $event->job->payload()['tags'][0]
                 );
 
-                \Log::debug('Sending notification back to PianoLIT for video ID: '.$video->id);
+                if ($video->isRemote()) {
+                    \Log::debug('Sending notification back to PianoLIT for video ID: '.$video->id);
 
-                $video->sendJobProcessedNotification();
+                    $video->sendJobProcessedNotification();   
+                } else {
+                    \Log::debug('The video ID: '.$video->id.' has finished processing');
+                }
             } catch (Exception $e) {
                 bugsnag();
             }
