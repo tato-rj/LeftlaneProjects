@@ -4,6 +4,7 @@
         'name' => 'filter',
         'include' => ['state'],
         'options' => [
+            'All' => '',
             'Remote' => 'remote',
             'Test' => 'local'
         ]
