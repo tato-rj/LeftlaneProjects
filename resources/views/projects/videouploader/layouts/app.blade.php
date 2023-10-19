@@ -8,6 +8,8 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <link rel="icon" href="{{asset('images/projects/videouploader/favicon.png')}}">
+
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -59,9 +61,9 @@
         <div class="container mb-3 pt-4">
             <div class="d-flex justify-content-between align-items-center">
                 <a class="link-none" href="{{route('videouploader.home')}}">
-                    <div class="d-flex align-items-baseline">
-                        <h1 class="border-bottom border-5 d-inline me-2">File Manager</h1>
-                        <h3 class="text-muted">for PianoLIT</h3>
+                    <div class="d-flex align-items-center">
+                        <img src="{{asset('images/projects/videouploader/logo.svg')}}" style="width: 36px; margin-bottom: 9px;" class="me-2">
+                        <h2 class="">Video Uploader <span class="text-muted h3">for PianoLIT</span></h2>
                     </div>
                 </a>
 
