@@ -53,7 +53,14 @@ class HorizonController extends Controller
             ProcessVideo::dispatch($video);
 
         if ($video->isFailed()) {
-            return app(JobRepository::class)->getFailed();
+            $failed = app(JobRepository::class)->getFailed();
+
+            foreach ($failed as $record) {
+                if ($video->belongsToPayload($record->payload)) {
+                    dd($record);
+                }
+            }
+
         }
 
         // $video->markAsPending();
