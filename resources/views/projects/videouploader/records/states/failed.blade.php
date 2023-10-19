@@ -1,8 +1,8 @@
 <div class="accordion-item">
-    <div class="accordion-header {{$video->isRemote() ? 'alert-light text-muted' : null}}">
-      <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-light text-muted' : 'text-muted'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
-        @fa(['icon' => 'skull-crossbones'])
-        @include('projects.videouploader.record.states.header')
+    <div class="accordion-header {{$video->isRemote() ? 'alert-danger' : null}}">
+      <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-danger' : 'text-danger'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
+        @fa(['icon' => 'times'])
+        @include('projects.videouploader.records.states.header')
     </button>
     </div>
     <div id="record-{{$video->id}}" class="accordion-collapse collapse" data-bs-parent="#records-container">
@@ -19,9 +19,9 @@
         </div>
 
         <div class="d-flex flex-wrap">
-          @include('projects.videouploader.record.actions.video')
-          @include('projects.videouploader.record.actions.edit')
-          @include('projects.videouploader.record.actions.delete')
+          @include('projects.videouploader.records.actions.video')
+          @include('projects.videouploader.records.actions.edit')
+          @include('projects.videouploader.records.actions.delete')
         </div>
       </div>
     </div>

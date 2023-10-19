@@ -41,13 +41,13 @@
         <div class="accordion shadow-lg mb-3" id="records-container">
         @foreach($videos as $video)
             @if($video->isCompleted())
-            @include('projects.videouploader.record.states.completed')
+            @include('projects.videouploader.records.states.completed')
             @elseif($video->isFailed())
-            @include('projects.videouploader.record.states.failed')
+            @include('projects.videouploader.records.states.failed')
             @elseif($video->isAbandoned())
-            @include('projects.videouploader.record.states.abandoned')
+            @include('projects.videouploader.records.states.abandoned')
             @else
-            @include('projects.videouploader.record.states.pending')
+            @include('projects.videouploader.records.states.pending')
             @endif
         @endforeach
         </div>

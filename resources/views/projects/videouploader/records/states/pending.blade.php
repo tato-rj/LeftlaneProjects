@@ -2,7 +2,7 @@
     <div class="accordion-header {{$video->isRemote() ? 'alert-warning' : null}}">
       <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-warning' : 'text-warning'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
         @fa(['icon' => 'spinner fa-spin-pulse'])
-        @include('projects.videouploader.record.states.header')
+        @include('projects.videouploader.records.states.header')
     </button>
     </div>
     <div id="record-{{$video->id}}" class="accordion-collapse collapse" data-bs-parent="#records-container">
@@ -19,10 +19,10 @@
         </div>
 
         <div class="d-flex flex-wrap">
-          @include('projects.videouploader.record.actions.video')
-          @include('projects.videouploader.record.actions.status')
-          @include('projects.videouploader.record.actions.edit')
-          @include('projects.videouploader.record.actions.delete')
+          @include('projects.videouploader.records.actions.video')
+          @include('projects.videouploader.records.actions.status')
+          @include('projects.videouploader.records.actions.edit')
+          @include('projects.videouploader.records.actions.delete')
         </div>
       </div>
     </div>

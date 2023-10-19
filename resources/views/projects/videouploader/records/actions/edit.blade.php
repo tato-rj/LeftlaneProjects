@@ -2,5 +2,5 @@
   <button type="button" data-bs-toggle="modal" data-bs-target="#edit-video-{{$video->id}}" class="w-100 btn btn-warning btn-sm">
     @fa(['icon' => 'edit'])Edit
   </button>
-  @include('projects.videouploader.record.edit.modal')
+  @include('projects.videouploader.records.edit.modal')
 </div>

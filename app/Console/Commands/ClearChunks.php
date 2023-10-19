@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 
 class ClearChunks extends Command
 {
@@ -28,7 +27,14 @@ class ClearChunks extends Command
      */
     public function handle()
     {
-        (new Filesystem)->cleanDirectory('storage/app/public/chunks');
+        $files = \Storage::disk('public')->files('chunks');
+
+        foreach ($files as $file) {
+            $time = \Storage::disk('public')->lastModified($file);
+
+            if (now()->gt(carbon($time)->addHours(2)))
+                \Storage::disk('public')->delete($file);
+        }
 
         $this->info('Chunks directory deleted');
     }

@@ -18,9 +18,9 @@
 @section('content')
 @auth
 
-@include('projects.videouploader.record.list')
+@include('projects.videouploader.records.list')
 
-@include('projects.videouploader.record.overlay')
+@include('projects.videouploader.records.overlay')
 @endauth
 @endsection
 

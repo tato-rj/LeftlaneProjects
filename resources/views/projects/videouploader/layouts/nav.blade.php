@@ -25,7 +25,7 @@
         </li>
 
         <li class="nav-item">
-          @include('projects.videouploader.record.create')
+          @include('projects.videouploader.records.create')
         </li>
 
         <li class="nav-item">
