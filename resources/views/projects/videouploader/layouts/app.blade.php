@@ -17,6 +17,9 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
         
         <style type="text/css">
+            .modal-body {
+                padding-top: 0 !important;
+            }
             .border-x-0 {
                 border-left: 0;
                 border-right: 0;
