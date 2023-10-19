@@ -12,7 +12,6 @@ class HorizonController extends Controller
 {
     public function status(Video $video)
     {
-
         $pending = app(JobRepository::class)->getPending();
 
         foreach ($pending as $record) {
@@ -50,7 +49,12 @@ class HorizonController extends Controller
 
     public function retry(Video $video)
     {
-        ProcessVideo::dispatch($video);
+        if ($video->isAbandoned())
+            ProcessVideo::dispatch($video);
+
+        if ($video->isFailed()) {
+            dd('here');
+        }
 
         $video->markAsPending();
 
