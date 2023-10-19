@@ -1,6 +1,6 @@
 <div class="accordion-item">
-    <div class="accordion-header {{$video->isRemote() ? 'alert-light' : null}}">
-      <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-light' : 'text-muted'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
+    <div class="accordion-header {{$video->isRemote() ? 'alert-light text-muted' : null}}">
+      <button class="accordion-button collapsed {{$video->isRemote() ? 'alert-light text-muted' : 'text-muted'}}" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
         @fa(['icon' => 'skull-crossbones'])
         @include('projects.videouploader.record.states.header')
     </button>
