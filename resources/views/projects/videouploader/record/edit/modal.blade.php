@@ -10,7 +10,8 @@
             @method('PATCH')
             @csrf
 
-            <input class="form-control mb-3" type="text" name="notes" placeholder="Notes" value="{{$video->notes}}">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control mb-3" rows="3" maxlength="200">{{$video->notes}}</textarea>
             <button type="submit" class="btn btn-primary">Save changes</button>
         </form>
 
