@@ -18,19 +18,15 @@
             <button type="submit" class="btn btn-primary">Save changes</button>
         </form>
 
-        @if($video->isCompleted())
         <div class="mt-3 pt-3" style="border-top: 4px dotted lightgrey;">
-          <form action="{{route('videouploader.orientation')}}" method="POST">
-              @csrf
-              <input type="hidden" name="secret" value="{{auth()->user()->tokens()->exists() ? auth()->user()->tokens->first()->name : null}}">
-              <input type="hidden" name="user_id" value="{{$video->user_id}}">
-              <input type="hidden" name="piece_id" value="{{$video->piece_id}}">
-
-              <button type="submit" class="btn btn-warning btn-sm w-100">Fix orientation</button>
-          </form>
+          @if($video->isCompleted())
+            @include('projects.videouploader.record.actions.orientation')
+          @elseif($video->isPending())
+            @include('projects.videouploader.record.actions.status')
+          @elseif($video->isAbandoned() || $video->isFailed())
+            @include('projects.videouploader.record.actions.retry')
+          @endif
         </div>
-        @endif
-
       </div>
     </div>
   </div>
