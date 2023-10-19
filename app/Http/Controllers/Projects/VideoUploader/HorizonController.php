@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Projects\VideoUploader;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laravel\Horizon\Contracts\JobRepository;
+use Laravel\Horizon\Jobs\RetryFailedJob;
 use App\Projects\VideoUploader\Video;
 use App\Jobs\ProcessVideo;
 
@@ -49,22 +50,28 @@ class HorizonController extends Controller
 
     public function retry(Video $video)
     {
-        if ($video->isAbandoned())
+        if ($video->isAbandoned()) {
             ProcessVideo::dispatch($video);
+
+            $video->markAsPending();
+
+            return back()->with('success', 'The video is back in the queue');
+        }
 
         if ($video->isFailed()) {
             $failed = app(JobRepository::class)->getFailed();
 
             foreach ($failed as $record) {
                 if ($video->belongsToPayload($record->payload)) {
-                    return $record->id;
+                    dispatch(new RetryFailedJob($record->id));
+
+                    $video->markAsPending();
+                    
+                    return back()->with('success', 'The video is back in the queue');
                 }
             }
-
         }
 
-        // $video->markAsPending();
-
-        // return back()->with('success', 'The video is back in the queue');
+        return back()->with('error', 'This video was neither abandoned or failed');
     }
 }
