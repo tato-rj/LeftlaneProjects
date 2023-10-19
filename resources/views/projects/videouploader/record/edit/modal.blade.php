@@ -1,7 +1,3 @@
-<button type="button" data-bs-toggle="modal" data-bs-target="#edit-video-{{$video->id}}" class="btn btn-warning btn-sm me-2">
-  @fa(['icon' => 'edit'])Edit
-</button>
-
 <div class="modal fade" id="edit-video-{{$video->id}}">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -20,11 +16,11 @@
 
         <div class="mt-3 pt-3" style="border-top: 4px dotted lightgrey;">
           @if($video->isCompleted())
-            @include('projects.videouploader.record.actions.orientation')
+            @include('projects.videouploader.record.edit.orientation')
           @elseif($video->isPending())
             <div class="text-warning text-center small fst-italic">@fa(['icon' => 'hourglass-half'])Waiting for {{$video->created_at->longAbsoluteDiffForHumans()}}</div>
           @elseif($video->isAbandoned() || $video->isFailed())
-            @include('projects.videouploader.record.actions.retry')
+            @include('projects.videouploader.record.edit.retry')
           @endif
         </div>
       </div>

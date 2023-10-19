@@ -61,10 +61,7 @@
         <div class="container mb-3 pt-4">
             <div class="d-flex justify-content-between align-items-center">
                 <a class="link-none" href="{{route('videouploader.home')}}">
-                    <div class="d-flex align-items-center">
-                        <img src="{{asset('images/projects/videouploader/logo.svg')}}" style="width: 36px; margin-bottom: 9px;" class="me-2">
-                        <h2 class="">Video Uploader <span class="text-muted h3">for PianoLIT</span></h2>
-                    </div>
+                    <img src="{{asset('images/projects/videouploader/logo.svg')}}" style="width: 54px;">
                 </a>
 
                 @include('projects.videouploader.layouts.nav')

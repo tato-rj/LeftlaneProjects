@@ -18,11 +18,11 @@
             <div>{{$video->original_size_mb}}</div>
         </div>
 
-        <div class="d-flex">
-          <a href="{{storage($video->temp_path)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Original Video</a>
-          <a href="{{route('videouploader.videos.status', $video)}}" class="btn btn-warning btn-sm me-2">Check status</a>
-          @include('projects.videouploader.record.edit')
-          @include('projects.videouploader.record.delete')
+        <div class="d-flex flex-wrap">
+          @include('projects.videouploader.record.actions.video')
+          @include('projects.videouploader.record.actions.status')
+          @include('projects.videouploader.record.actions.edit')
+          @include('projects.videouploader.record.actions.delete')
         </div>
       </div>
     </div>

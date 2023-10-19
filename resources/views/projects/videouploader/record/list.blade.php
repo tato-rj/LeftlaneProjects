@@ -1,15 +1,15 @@
 
 <div class="container">
-    <div class="d-flex justify-content-between align-items-end mb-3">
+    <div class="d-flex justify-content-between align-items-end mb-2 flex-wrap">
         
-        <div class="small mb-0 text-muted">
+        <div class="small mb-0 text-muted mb-1">
             @if(! $videos->isEmpty())
             Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of 
             @endif
             {{$videos->total()}} uploads
         </div>
 
-        <div>
+        <div class="mb-1">
             @filters([
                 'format' => 'dropdown',
                 'name' => 'origin',

@@ -27,22 +27,13 @@
             <div>{{$video->compressed_size_mb}} ({{$video->size_decrease_percentage}})</div>
         </div>
 
-        <div class="d-flex">
-          <a href="{{route('videouploader.json', $video)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Json</a>
-
-          <a href="{{$video->video_url}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Video</a>
-
-          <a href="{{$video->thumb_url}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Thumbnail</a>
-
-          @if($video->isRemote())
-          <form method="POST" action="{{route('videouploader.webhook.resend', $video)}}" class="me-2">
-            @csrf
-            <button type="submit" class="btn btn-warning btn-sm">RESEND WEBHOOK</button>
-          </form>
-          @endif
-
-          @include('projects.videouploader.record.edit')
-          @include('projects.videouploader.record.delete')
+        <div class="d-flex flex-wrap">
+          @include('projects.videouploader.record.actions.json')
+          @include('projects.videouploader.record.actions.video')
+          @include('projects.videouploader.record.actions.thumbnail')
+          @include('projects.videouploader.record.actions.webhook')
+          @include('projects.videouploader.record.actions.edit')
+          @include('projects.videouploader.record.actions.delete')
         </div>
       </div>
     </div>

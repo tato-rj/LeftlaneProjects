@@ -18,10 +18,6 @@
 @section('content')
 @auth
 
-<div class="container mb-4">
-    @include('projects.videouploader.record.create')
-</div>
-
 @include('projects.videouploader.record.list')
 
 @include('projects.videouploader.record.overlay')

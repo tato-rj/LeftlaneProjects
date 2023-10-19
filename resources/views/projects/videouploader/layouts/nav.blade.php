@@ -25,6 +25,10 @@
         </li>
 
         <li class="nav-item">
+          @include('projects.videouploader.record.create')
+        </li>
+
+        <li class="nav-item">
           @auth
           <a class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" href="">
               <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
