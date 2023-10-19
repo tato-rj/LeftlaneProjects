@@ -4,9 +4,8 @@
         
         <div class="small mb-0 text-muted mb-1">
             @if(! $videos->isEmpty())
-            Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of 
+            Showing {{$videos->firstItem()}} - {{$videos->lastItem()}} of {{$videos->total()}} uploads
             @endif
-            {{$videos->total()}} uploads
         </div>
 
         <div class="mb-1">
