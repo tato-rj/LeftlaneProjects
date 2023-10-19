@@ -37,7 +37,7 @@
     </div>
 
     @if($videos->isEmpty())
-        <div class="d-flex justify-content-center pt-5" style="font-size: 5rem; opacity: .08;">@fa(['icon' => 'box-open'])</div>
+        <div class="d-flex justify-content-center" style="font-size: 5rem; opacity: .08; padding-top: 8rem;">@fa(['icon' => 'box-open'])</div>
     @else
         <div class="accordion shadow-lg mb-3" id="records-container">
         @foreach($videos as $video)
