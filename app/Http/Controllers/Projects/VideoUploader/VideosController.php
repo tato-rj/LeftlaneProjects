@@ -25,8 +25,7 @@ class VideosController extends Controller
             'email' => 'required|email',
             'user_id' => 'required|integer',
             'piece_id' => 'required|integer',
-            'origin' => 'required|string',
-            'notes' => 'string'
+            'origin' => 'required|string'
         ]);
 
         if ($validator->fails()) {
