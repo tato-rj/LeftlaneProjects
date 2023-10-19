@@ -22,7 +22,6 @@
           @if($video->isCompleted())
             @include('projects.videouploader.record.actions.orientation')
           @elseif($video->isPending())
-            @include('projects.videouploader.record.actions.orientation')
             @include('projects.videouploader.record.actions.status')
           @elseif($video->isAbandoned() || $video->isFailed())
             @include('projects.videouploader.record.actions.retry')
