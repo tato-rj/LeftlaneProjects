@@ -22,7 +22,7 @@
           @if($video->isCompleted())
             @include('projects.videouploader.record.actions.orientation')
           @elseif($video->isPending())
-            <div class="text-muted text-center">Pending since {{$video->created_at->diffForHumans()}}</div>
+            <div class="text-muted text-center small fst-italic">Waiting for {{$video->created_at->diffForHumans(CarbonInterface::DIFF_ABSOLUTE)}}</div>
           @elseif($video->isAbandoned() || $video->isFailed())
             @include('projects.videouploader.record.actions.retry')
           @endif
