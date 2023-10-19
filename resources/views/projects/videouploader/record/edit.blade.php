@@ -18,7 +18,7 @@
             <button type="submit" class="btn btn-primary">Save changes</button>
         </form>
 
-        @if($video->completed())
+        @if($video->isCompleted())
         <div class="mt-3 pt-3" style="border-top: 4px dotted lightgrey;">
           <form action="{{route('videouploader.orientation')}}" method="POST">
               @csrf
