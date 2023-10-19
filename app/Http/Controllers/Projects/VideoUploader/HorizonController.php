@@ -57,7 +57,7 @@ class HorizonController extends Controller
 
             foreach ($failed as $record) {
                 if ($video->belongsToPayload($record->payload)) {
-                    dd($record);
+                    return $record->id;
                 }
             }
 
