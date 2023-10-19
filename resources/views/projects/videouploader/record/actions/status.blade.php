@@ -1,1 +1,0 @@
-<a href="{{route('videouploader.videos.status', $video)}}" class="btn btn-warning btn-sm w-100">Check status</a>
