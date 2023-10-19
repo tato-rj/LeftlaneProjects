@@ -53,11 +53,11 @@ class HorizonController extends Controller
             ProcessVideo::dispatch($video);
 
         if ($video->isFailed()) {
-            dd('here');
+            return app(JobRepository::class)->getFailed();
         }
 
-        $video->markAsPending();
+        // $video->markAsPending();
 
-        return back()->with('success', 'The video is back in the queue');
+        // return back()->with('success', 'The video is back in the queue');
     }
 }
