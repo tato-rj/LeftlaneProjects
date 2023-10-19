@@ -67,17 +67,7 @@
                     </div>
                 </a>
 
-                <div>
-                    @auth
-                    <a class="nav-link bg-outline-secondary rounded-pill px-4 py-1 mb-3" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" href="">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>Logout
-                    </a>
-                    @else
-                    <a href="{{route('login')}}">Login</a>
-                    @endauth
-                </div>
+                @include('projects.videouploader.layouts.nav')
             </div>
         </div>
 

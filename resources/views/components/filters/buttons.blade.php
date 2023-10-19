@@ -1,4 +1,4 @@
-<div class="mb-2 d-flex justify-content-end">
+<div class="d-flex justify-content-end">
     <div class="btn-group">
         @foreach($options as $label => $value)
         @php($selected = request($name) == $value)
