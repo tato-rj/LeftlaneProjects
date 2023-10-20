@@ -32,6 +32,7 @@
           @include('projects.videouploader.records.actions.video')
           @include('projects.videouploader.records.actions.thumbnail')
           @include('projects.videouploader.records.actions.webhook')
+          @include('projects.videouploader.records.actions.rotate')
           @include('projects.videouploader.records.actions.edit')
           @include('projects.videouploader.records.actions.delete')
         </div>
