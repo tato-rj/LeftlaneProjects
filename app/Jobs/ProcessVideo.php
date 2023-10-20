@@ -39,11 +39,4 @@ class ProcessVideo implements ShouldQueue
             (new VideoProcessor)->uploaded($this->video)->withThumbnail()->run()
         );
     }
-
-    public function onQueue($queue)
-    {
-        $this->queue = 'process_video';
-
-        return $this;
-    }
 }

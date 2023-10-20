@@ -50,7 +50,7 @@ class VideosController extends Controller
 
             ProcessVideo::dispatch(
                 Video::temporary($file, $request->toArray())
-            );
+            )->onQueue('process_video');
 
             unlink($file->getPathname());
 
@@ -74,7 +74,7 @@ class VideosController extends Controller
 
     public function rotate(Video $video)
     {
-        RotateVideo::dispatch($video);
+        RotateVideo::dispatch($video)->onQueue('rotate_video');
 
         return back()->with('success', 'The video is being rotated');
     }

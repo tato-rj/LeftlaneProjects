@@ -37,12 +37,4 @@ class RotateVideo implements ShouldQueue
     {
         (new VideoProcessor)->gcs($this->video)->orientation()->rotate();
     }
-
-
-    public function onQueue($queue)
-    {
-        $this->queue = 'rotate_video';
-
-        return $this;
-    }
 }
