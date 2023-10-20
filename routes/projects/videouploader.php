@@ -12,6 +12,12 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 	Route::middleware('auth:videouploader-admin')->namespace('Projects\VideoUploader')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
 
+		Route::prefix('system')->name('system.')->group(function() {
+			Route::get('', 'SystemController@index')->name('index');
+
+			Route::delete('', 'SystemController@destroy')->name('delete');
+		});
+
 		Route::prefix('videos')->name('videos.')->group(function() {
 			Route::get('{video}/status', 'HorizonController@status')->name('status');
 

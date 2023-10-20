@@ -24,6 +24,10 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link" href="{{route('videouploader.system.index')}}">System status</a>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link" href="{{route('videouploader.tokens.index')}}">Api tokens</a>
         </li>
 

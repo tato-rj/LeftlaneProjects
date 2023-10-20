@@ -1,3 +1,5 @@
+@php($sentences = ['Tuning the piano', 'Arranging rows of comfy seats', 'Adjusting the bench', 'Warming up fingers', 'Greeting the eager audience', 'Dimming the lights', 'Wrapping up'])
+
 <div style="display: none" id="upload-overlay" class="screen-lock-overlay">
     <div class="h-100 text-white d-flex text-center justify-content-center align-items-center">
         <div class="px-4">

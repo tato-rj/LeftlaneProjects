@@ -1,5 +1,10 @@
 <?php
 
+function bytesToMb($bytes)
+{
+	return number_format($bytes / 1000000, 2) . ' mb';
+}
+
 function dateToDatabase($date)
 {
 	return \Carbon\Carbon::parse($date)->format('Y-m-d');

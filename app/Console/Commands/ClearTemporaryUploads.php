@@ -12,7 +12,7 @@ class ClearTemporaryUploads extends Command
      *
      * @var string
      */
-    protected $signature = 'uploads:clear';
+    protected $signature = 'temporary:clear';
 
     /**
      * The console command description.
@@ -28,8 +28,15 @@ class ClearTemporaryUploads extends Command
      */
     public function handle()
     {
-        (new Filesystem)->cleanDirectory('storage/app/public/temporary');
+        $files = \Storage::disk('public')->files('temporary');
 
-        $this->info('Temporary uploads directory deleted');
+        foreach ($files as $file) {
+            $time = \Storage::disk('public')->lastModified($file);
+
+            if (now()->gt(carbon($time)->addHours(2)))
+                \Storage::disk('public')->delete($file);
+        }
+
+        $this->info('Temporary directory deleted');
     }
 }

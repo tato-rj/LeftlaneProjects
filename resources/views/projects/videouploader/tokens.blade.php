@@ -1,7 +1,6 @@
 @extends('projects.videouploader.layouts.app')
 
 @section('content')
-@auth
 <div class="container mb-4">
     <form method="POST" action="{{route('videouploader.tokens.store')}}">
         @csrf
@@ -33,7 +32,6 @@
         @endforeach
     
 </div>
-@endauth
 @endsection
 
 @push('scripts')
