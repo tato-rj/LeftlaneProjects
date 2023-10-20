@@ -5,6 +5,6 @@
 	    <input type="hidden" name="user_id" value="{{$video->user_id}}">
 	    <input type="hidden" name="piece_id" value="{{$video->piece_id}}">
 
-	    <button type="submit" class="btn btn-outline-secondary btn-sm w-100">Rotate</button>
+	    <button type="submit" class="btn btn-outline-secondary btn-sm w-100">@fa(['icon' => 'retweet'])Rotate</button>
 	</form>
 </div>
