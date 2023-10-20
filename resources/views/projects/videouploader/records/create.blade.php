@@ -9,7 +9,7 @@
       </div>
       <div class="modal-body">
         <label class="form-label">Notes</label>
-        <textarea name="notes" class="form-control mb-3" rows="3" maxlength="200"></textarea>
+        <textarea placeholder="Any relevant info on this upload..." name="notes" class="form-control mb-3" rows="3" maxlength="200"></textarea>
         <button type="submit" id="confirm-button" class="btn btn-primary">Upload video</button>
       </div>
     </div>
