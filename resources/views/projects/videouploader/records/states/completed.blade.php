@@ -13,7 +13,7 @@
                 <label class="fw-bold me-1">NOTIFICATION STATUS</label>
                 <form method="POST" action="{{route('videouploader.webhook.resend', $video)}}">
                   @csrf
-                  <button type="submit" class="btn-link btn btn-sm p-0">@fa(['icon' => 'envelope-open'])resend</button>
+                  <button type="submit" class="btn-link btn btn-sm p-0">resend</button>
                 </form>
               </div>
               <div class="{{$video->notification_received_at ? 'text-success' : 'text-danger'}}">{{$video->notification_received_at ? 'Last sent on '.$video->notification_received_at->toFormattedDateString() : 'Not received yet'}}</div>
