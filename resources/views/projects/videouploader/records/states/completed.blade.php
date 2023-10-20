@@ -9,7 +9,13 @@
       <div class="accordion-body bg-light">
         <div class="text-muted small mb-2">
             @if($video->isRemote())
-              <label class="fw-bold">NOTIFICATION STATUS</label>
+              <label class="fw-bold">
+                NOTIFICATION STATUS
+                <form method="POST" action="{{route('videouploader.webhook.resend', $video)}}">
+                  @csrf
+                  <button type="submit" class="badge btn-warning rounded-pill w-100">resend</button>
+                </form>
+              </label>
               <div class="{{$video->notification_received_at ? 'text-success' : 'text-danger'}}">{{$video->notification_received_at ? 'Last sent on '.$video->notification_received_at->toFormattedDateString() : 'Not received yet'}}</div>
             @endif
 
