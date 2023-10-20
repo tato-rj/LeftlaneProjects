@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Projects\VideoUploader;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Jobs\ProcessVideo;
+use App\Jobs\{ProcessVideo, RotateVideo};
 use App\Projects\VideoUploader\Video;
 use Illuminate\Support\Facades\Validator;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
-use App\VideoProcessor\VideoProcessor;
 
 class VideosController extends Controller
 {
@@ -75,9 +74,9 @@ class VideosController extends Controller
 
     public function rotate(Video $video)
     {
-        (new VideoProcessor)->gcs($video)->orientation()->rotate();
+        RotateVideo::dispatch($video);
 
-        return back()->with('success', 'The video has been rotated');
+        return back()->with('success', 'The video is being rotated');
     }
 
     public function destroy(Request $request)
