@@ -17,7 +17,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 
 			Route::post('{video}/retry', 'HorizonController@retry')->name('retry');
 
-			Route::patch('{video}/rotate', 'Projects\VideoUploader\VideosController@rotate')->name('rotate');
+			Route::patch('{video}/rotate', 'VideosController@rotate')->name('rotate');
 
 			Route::patch('{video}', 'VideosController@update')->name('update');
 		});
