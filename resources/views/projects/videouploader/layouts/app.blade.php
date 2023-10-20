@@ -96,6 +96,7 @@
         
         <script type="text/javascript">
         $('form[method="POST]').on('submit', function() {
+            console.log('here');
             $(this).find('button[type="submit"]').prop('disabled', true);
         });
         </script>
