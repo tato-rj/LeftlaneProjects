@@ -50,7 +50,7 @@ class VideosController extends Controller
 
             ProcessVideo::dispatch(
                 Video::temporary($file, $request->toArray())
-            )->onQueue('test');
+            );
 
             unlink($file->getPathname());
 
