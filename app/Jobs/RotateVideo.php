@@ -15,6 +15,7 @@ class RotateVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $queue = 'video_rotating';
     public $timeout = 9000;
     public $video;
 

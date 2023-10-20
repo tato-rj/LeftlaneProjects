@@ -15,6 +15,7 @@ class ProcessVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $queue = 'video_processing';
     public $timeout = 9000;
     public $video;
 
