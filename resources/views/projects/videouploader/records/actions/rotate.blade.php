@@ -1,5 +1,5 @@
 <div class="col-12 col-sm-auto m-1">
-	<form action="{{route('videouploader.orientation')}}" method="POST">
+	<form action="{{route('videouploader.rotate')}}" method="POST">
 	    @csrf
 	    <input type="hidden" name="secret" value="{{auth()->user()->tokens()->exists() ? auth()->user()->tokens->first()->name : null}}">
 	    <input type="hidden" name="user_id" value="{{$video->user_id}}">

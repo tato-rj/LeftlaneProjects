@@ -73,7 +73,7 @@ class VideosController extends Controller
         return back()->with('success', 'The video has been updated');
     }
 
-    public function orientation(Request $request)
+    public function rotate(Request $request)
     {
         $video = Video::where(['user_id' => $request->user_id, 'piece_id' => $request->piece_id])->firstOrFail();
 

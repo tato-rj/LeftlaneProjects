@@ -7,7 +7,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 
 	Route::middleware('api.token')->post('upload', 'Projects\VideoUploader\VideosController@upload')->name('upload');
 
-	Route::middleware('api.token')->post('orientation', 'Projects\VideoUploader\VideosController@orientation')->name('orientation');
+	Route::middleware('api.token')->post('rotate', 'Projects\VideoUploader\VideosController@rotate')->name('rotate');
 
 	Route::middleware('api.token')->delete('delete', 'Projects\VideoUploader\VideosController@destroy')->name('delete');
 
