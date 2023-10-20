@@ -20,7 +20,7 @@
 
         <div class="d-flex flex-wrap">
           @include('projects.videouploader.records.actions.video')
-          @include('projects.videouploader.records.actions.status')
+          @include('projects.videouploader.records.actions.retry')
           @include('projects.videouploader.records.actions.edit')
           @include('projects.videouploader.records.actions.delete')
         </div>
