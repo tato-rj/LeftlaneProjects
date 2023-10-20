@@ -13,7 +13,7 @@ class SystemController extends Controller
         $chunks = (new SystemFiles)->chunks();
         $temporary = (new SystemFiles)->temporary();
 
-        return view('projects.videoUploader.system.index', compact(['chunks', 'temporary']));
+        return view('projects.videouploader.system.index', compact(['chunks', 'temporary']));
     }
 
     public function destroy(Request $request)
