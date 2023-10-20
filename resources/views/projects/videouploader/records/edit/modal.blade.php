@@ -20,8 +20,6 @@
             @include('projects.videouploader.records.edit.orientation')
           @elseif($video->isPending())
             <div class="text-warning text-center small fst-italic">@fa(['icon' => 'hourglass-half'])Waiting for {{$video->created_at->longAbsoluteDiffForHumans()}}</div>
-          @elseif($video->isAbandoned() || $video->isFailed())
-            @include('projects.videouploader.records.edit.retry')
           @endif
         </div>
       </div>
