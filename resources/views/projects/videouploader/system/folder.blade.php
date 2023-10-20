@@ -26,9 +26,9 @@
 			  <tbody>
 			  	@foreach($folder->files() as $file)
 			    <tr>
-			      <td>@fa(['icon' => 'file text-danger']){{$file['name']}}</td>
-			      <td>{{bytesToMb($file['size'])}}</td>
-			      <td>{{$file['last_modified']->toDayDateTimeString()}}</td>
+			      <td class="text-nowrap">@fa(['icon' => 'file text-danger']){{$file['name']}}</td>
+			      <td class="text-nowrap">{{bytesToMb($file['size'])}}</td>
+			      <td class="text-nowrap">{{$file['last_modified']->toDayDateTimeString()}}</td>
 			    </tr>
 			    @endforeach
 			  </tbody>
