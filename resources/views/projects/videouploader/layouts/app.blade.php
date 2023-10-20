@@ -94,6 +94,11 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
         
+        <script type="text/javascript">
+        $('form[method="POST]').on('submit', function() {
+            $(this).find('button[type="submit"]').prop('disabled', true);
+        });
+        </script>
         @stack('scripts')
     </body>
 
