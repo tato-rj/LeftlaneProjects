@@ -15,7 +15,6 @@ class RotateVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue = 'video_rotating';
     public $timeout = 9000;
     public $video;
 
@@ -37,5 +36,13 @@ class RotateVideo implements ShouldQueue
     public function handle()
     {
         (new VideoProcessor)->gcs($this->video)->orientation()->rotate();
+    }
+
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'rotate_video';
+
+        return $this;
     }
 }

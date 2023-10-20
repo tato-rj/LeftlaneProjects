@@ -15,7 +15,6 @@ class ProcessVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $queue = 'video_processing';
     public $timeout = 9000;
     public $video;
 
@@ -39,5 +38,12 @@ class ProcessVideo implements ShouldQueue
         $this->video->finish(
             (new VideoProcessor)->uploaded($this->video)->withThumbnail()->run()
         );
+    }
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'process_video';
+
+        return $this;
     }
 }
