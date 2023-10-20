@@ -20,6 +20,6 @@ class SystemController extends Controller
     {
         $response = \Artisan::call($request->command);
 
-        return back()->with('success', 'Old files have been removed asdsa ds aa sas dsa d addsasdads sd asdsa');
+        return back()->with('success', 'Old files have been removed');
     }
 }
