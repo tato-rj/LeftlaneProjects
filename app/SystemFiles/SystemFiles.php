@@ -76,14 +76,14 @@ class SystemFiles
 	public function getJunk($collection)
 	{
 		return $collection->filter(function($file) {
-			return $file['last_modified']->lt(now()->addHours(2));
+			return $file['last_modified']->lt(now()->subHours(2));
 		});
 	}
 
 	public function getFiles($collection)
 	{
 		return $collection->filter(function($file) {
-			return $file['last_modified']->gt(now()->addHours(2));
+			return $file['last_modified']->gt(now()->subHours(2));
 		});
 	}
 }
