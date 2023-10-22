@@ -17,12 +17,12 @@ class Path
 	{
 		$path = str_replace(pathinfo($this->processor->filename, PATHINFO_EXTENSION), 'jpg', $this->processor->filename);
 
-		return $this->namespace . '/test@email.com/' . $path;
+		return $this->namespace . '/'.$this->processor->video->user_email.'/' . $path;
 	}
 
 	public function video()
 	{
-		return $this->namespace . '/test@email.com/' . $this->newFilename($this->processor->filename);
+		return $this->namespace . '/'.$this->processor->video->user_email.'/' . $this->newFilename($this->processor->filename);
 	}
 
 	public function rename()
