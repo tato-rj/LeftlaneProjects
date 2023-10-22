@@ -24,7 +24,7 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="{{route('videouploader.system.index')}}">System status</a>
+          <a class="nav-link" href="{{route('videouploader.system.index')}}">System files</a>
         </li>
 
         <li class="nav-item">

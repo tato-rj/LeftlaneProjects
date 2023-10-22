@@ -4,7 +4,7 @@ namespace App\SystemFiles;
 
 class SystemFiles
 {
-	protected $files, $command;
+	protected $files, $junk, $command;
 
 	public function __construct()
 	{
@@ -13,7 +13,12 @@ class SystemFiles
 
 	public function chunks()
 	{
-		$this->files = $this->makeCollection('chunks');
+		$collection = $this->makeCollection('chunks');
+
+		$this->files = $this->getFiles($collection);
+
+		$this->junk = $this->getJunk($collection);
+
 		$this->command = 'chunks:clear';
 
 		return $this;
@@ -21,10 +26,20 @@ class SystemFiles
 
 	public function temporary()
 	{
-		$this->files = $this->makeCollection('temporary');
+		$collection = $this->makeCollection('temporary');
+		
+		$this->files = $this->getFiles($collection);
+
+		$this->junk = $this->getJunk($collection);
+
 		$this->command = 'temporary:clear';
 
 		return $this;
+	}
+
+	public function isEmpty()
+	{
+		return $this->files()->isEmpty() && $this->junk()->isEmpty();
 	}
 
 	public function command()
@@ -35,6 +50,11 @@ class SystemFiles
 	public function files()
 	{
 		return $this->files;
+	}
+
+	public function junk()
+	{
+		return $this->junk;
 	}
 
 	public function makeCollection($folder)
@@ -51,5 +71,19 @@ class SystemFiles
 		}
 
 		return $collection;
+	}
+
+	public function getJunk($collection)
+	{
+		return $collection->filter(function($file) {
+			return $file['last_modified']->lt(now()->addHours(2));
+		});
+	}
+
+	public function getFiles($collection)
+	{
+		return $collection->filter(function($file) {
+			return $file['last_modified']->gt(now()->addHours(2));
+		});
 	}
 }
