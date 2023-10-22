@@ -8,7 +8,7 @@
 		@include('projects.videouploader.system.header')
 
 			@unless($folder->junk()->isEmpty() || $folder->files()->isEmpty())
-			<div style="max-height: 300px; overflow-y: scroll;">
+			<div class="mt-2" style="max-height: 300px; overflow-y: scroll;">
 				<table class="table table-responsive table-striped table-sm">
 				  <thead>
 				    <tr>
