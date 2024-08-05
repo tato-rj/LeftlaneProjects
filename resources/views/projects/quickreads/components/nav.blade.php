@@ -41,7 +41,7 @@
         </ul>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#authors">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" href="#authors">
           <i class="fa fa-fw fa-vcard"></i>
           <span class="nav-link-text">Authors</span>
         </a>
