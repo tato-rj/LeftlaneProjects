@@ -1,4 +1,7 @@
 window._ = require('lodash');
+
+window.Popper = require('@popperjs/core').default;
+
 import moment from 'moment';
 
 try {
