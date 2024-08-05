@@ -1,7 +1,7 @@
 require('./bootstrap');
 
-// $.ajaxSetup({
-//     headers: {
-//         'X-CSRF-TOKEN': app.csrfToken
-//     }
-// });
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': app.csrfToken
+    }
+});

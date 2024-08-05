@@ -3018,12 +3018,11 @@ function withinMaxClamp(min, value, max) {
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/assets/js/bootstrap.js");
-
-// $.ajaxSetup({
-//     headers: {
-//         'X-CSRF-TOKEN': app.csrfToken
-//     }
-// });
+$.ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': app.csrfToken
+  }
+});
 
 /***/ }),
 
@@ -35475,19 +35474,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/assets/sass/pianolit.scss":
-/*!*********************************************!*\
-  !*** ./resources/assets/sass/pianolit.scss ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "./node_modules/moment/locale/af.js":
 /*!******************************************!*\
   !*** ./node_modules/moment/locale/af.js ***!
@@ -57213,7 +57199,6 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/js/app": 0,
-/******/ 			"css/pianolit": 0,
 /******/ 			"css/quickreads": 0
 /******/ 		};
 /******/ 		
@@ -57264,9 +57249,8 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/pianolit","css/quickreads"], () => (__webpack_require__("./resources/assets/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/pianolit","css/quickreads"], () => (__webpack_require__("./resources/assets/sass/quickreads.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/pianolit","css/quickreads"], () => (__webpack_require__("./resources/assets/sass/pianolit.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/quickreads"], () => (__webpack_require__("./resources/assets/js/app.js")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/quickreads"], () => (__webpack_require__("./resources/assets/sass/quickreads.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
