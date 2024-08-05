@@ -24,7 +24,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#stories">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" href="#stories">
           <i class="fa fa-fw fa-book" aria-hidden="true"></i>
           <span class="nav-link-text">Stories</span>
         </a>
