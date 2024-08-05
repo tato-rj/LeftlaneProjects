@@ -6,7 +6,7 @@
       <p class="m-0 text-muted">joined on {{$user->created_at->toFormattedDateString()}}</p>
     </div>
 
-    <div id="user-{{$user->id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+    <div id="user-{{$user->id}}" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
       <div class="card-body">
         <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-4 col-12 mb-2">
