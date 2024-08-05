@@ -16,6 +16,8 @@
     @include('projects/quickreads/users/show')
 
   @endforeach
+
+  {{ $users->links() }}
 </div>
 
   </div>

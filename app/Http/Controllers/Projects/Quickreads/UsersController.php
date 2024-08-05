@@ -15,7 +15,7 @@ class UsersController extends QuickreadsController
     public function index()
     {
         $users = User::latest()->paginate(20);
-return $users;
+
         return view('projects/quickreads/users/index', compact('users'));
     }
     
