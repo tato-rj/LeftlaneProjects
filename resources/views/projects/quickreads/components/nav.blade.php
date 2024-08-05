@@ -58,7 +58,7 @@
         </ul>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collaps collapsed" data-toggle="collapse" href="#categories">
+        <a class="nav-link nav-link-collaps collapsed" data-bs-toggle="collapse" href="#categories">
           <i class="fa fa-fw fa-list"></i>
           <span class="nav-link-text">Categories</span>
         </a>
