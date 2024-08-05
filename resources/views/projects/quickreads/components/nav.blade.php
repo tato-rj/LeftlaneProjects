@@ -24,7 +24,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" href="#stories">
+        <a class="nav-link nav-link-collaps collapsed" data-bs-toggle="collapse" href="#stories">
           <i class="fa fa-fw fa-book" aria-hidden="true"></i>
           <span class="nav-link-text">Stories</span>
         </a>
@@ -41,8 +41,8 @@
         </ul>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" href="#authors">
-          <i class="fa fa-fw fa-vcard"></i>
+        <a class="nav-link nav-link-collaps collapsed" data-bs-toggle="collapse" href="#authors">
+          <i class="fa fa-fw fa-address-card"></i>
           <span class="nav-link-text">Authors</span>
         </a>
         <ul class="sidenav-second-level collapse" id="authors">
@@ -58,7 +58,7 @@
         </ul>
       </li>
       <li class="nav-item">
-        <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#categories">
+        <a class="nav-link nav-link-collaps collapsed" data-toggle="collapse" href="#categories">
           <i class="fa fa-fw fa-list"></i>
           <span class="nav-link-text">Categories</span>
         </a>
