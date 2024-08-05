@@ -20,7 +20,7 @@ class Upload {
     public function name($name)
     {
         $ext = $this->file->extension();
-        $this->filename = "$name.$ext";
+        $this->filename = "$name.jpeg";
         return $this;
     }
 
