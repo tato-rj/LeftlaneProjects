@@ -17,7 +17,7 @@
             </div>
             <div>
               <p class="m-0" style="color: #2093a5"><small>Country</small></p>
-              <p class="m-0">{{locale_get_display_region($user->locale)}}</p>
+              {{-- <p class="m-0">{{locale_get_display_region($user->locale)}}</p> --}}
             </div>
             <div>
               <p class="m-0" style="color: #2093a5"><small>Gender</small></p>
