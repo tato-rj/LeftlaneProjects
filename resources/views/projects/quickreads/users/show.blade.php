@@ -10,7 +10,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-lg-3 col-md-4 col-sm-4 col-12 mb-2">
-            <img class="rounded mb-2" style="width: 80px" src="{{$user->profilePicture}}">
+            {{-- <img class="rounded mb-2" style="width: 80px" src="{{$user->profilePicture}}"> --}}
             <div>
               <p class="m-0" style="color: #2093a5"><small>Email</small></p>
               <p class="m-0">{{$user->email}}</p>
