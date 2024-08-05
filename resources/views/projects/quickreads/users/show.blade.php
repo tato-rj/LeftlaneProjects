@@ -1,5 +1,5 @@
   <div class="card">
-    <div class="card-header cursor-pointer bg-white d-flex justify-content-between align-items-center" id="headingOne" data-toggle="collapse" data-target="#user-{{$user->id}}" aria-expanded="true" aria-controls="user-{{$user->id}}">
+    <div class="card-header cursor-pointer bg-white d-flex justify-content-between align-items-center" id="headingOne" data-bs-toggle="collapse" data-bs-target="#user-{{$user->id}}" aria-expanded="true" aria-controls="user-{{$user->id}}">
       <p class="mb-0">
           <strong>{{$user->fullName}}</strong><span class="ml-2 badge badge-light text-muted">{{$user->stories()->count()}} {{ str_plural('story', $user->stories()->count()) }}</span>
       </p>
