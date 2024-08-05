@@ -52,7 +52,7 @@ class StoriesController extends QuickreadsController
         $stories = DB::connection('quickreads')->table('stories')
                         ->join('categories', 'stories.category_id', '=', 'categories.id')
                         ->join('authors', 'stories.author_id', '=', 'authors.id')
-                        ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpg") AS story_filename, categories.category AS category, categories.sorting_order')
+                        ->selectRaw('CAST(stories.id as CHAR(100)) as id, authors.name AS author, CONCAT("(",authors.born_in," - ",authors.died_in,")") AS dates, authors.life AS life, stories.title AS title, stories.summary AS summary, stories.time AS time, stories.cost AS cost, CONCAT("https://leftlaneapps.com/storage/stories/",stories.slug,"/",stories.slug,".jpeg") AS story_filename, categories.category AS category, categories.sorting_order')
                         ->orderBy('sorting_order')
                         ->get();
 
