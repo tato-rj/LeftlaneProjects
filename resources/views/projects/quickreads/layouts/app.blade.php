@@ -27,7 +27,7 @@
     @include('projects/quickreads/components/alerts/error')
   @endif
 
-  <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
+  <script type="text/javascript" src="{{mix('js/app.js')}}"></script>
 
   <script type="text/javascript" src="{{asset('js/vendor/jquery.easing.min.js')}}"></script>
   <script type="text/javascript" src="{{asset('js/vendor/Chart.min.js')}}"></script>

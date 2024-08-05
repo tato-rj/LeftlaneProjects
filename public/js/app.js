@@ -3018,11 +3018,6 @@ function withinMaxClamp(min, value, max) {
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 __webpack_require__(/*! ./bootstrap */ "./resources/assets/js/bootstrap.js");
-$.ajaxSetup({
-  headers: {
-    'X-CSRF-TOKEN': app.csrfToken
-  }
-});
 
 /***/ }),
 
