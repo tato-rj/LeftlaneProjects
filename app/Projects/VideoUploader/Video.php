@@ -42,7 +42,7 @@ class Video extends Model
 
     public function getOriginalSizeGbAttribute()
     {
-        return round($this->original_size_mb / 1024, 1);
+        return round($this->original_size_mb / 1024, 2);
     }
 
     public function getOriginalSizeMbAttribute()
