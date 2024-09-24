@@ -7,7 +7,7 @@
     </div>
     <div id="record-{{$video->id}}" class="accordion-collapse collapse" data-bs-parent="#records-container">
       <div class="accordion-body bg-light">
-        <div class="text-muted small mb-2">
+{{--         <div class="text-muted small mb-2">
             @if($video->isRemote())
               <div class="d-flex align-items-end">
                 <label class="fw-bold me-1">NOTIFICATION STATUS</label>
@@ -31,13 +31,13 @@
             <div>{{$video->original_size_mb}}</div>
             <label class="fw-bold">COMPRESSED SIZE</label>
             <div>{{$video->compressed_size_mb}} ({{$video->size_decrease_percentage}})</div>
-        </div>
+        </div> --}}
 
         <div class="d-flex flex-wrap">
           @include('projects.videouploader.records.actions.json')
           @include('projects.videouploader.records.actions.video')
-          @include('projects.videouploader.records.actions.thumbnail')
-          @include('projects.videouploader.records.actions.rotate')
+          {{-- @include('projects.videouploader.records.actions.thumbnail') --}}
+          {{-- @include('projects.videouploader.records.actions.rotate') --}}
           @include('projects.videouploader.records.actions.edit')
           @include('projects.videouploader.records.actions.delete')
         </div>

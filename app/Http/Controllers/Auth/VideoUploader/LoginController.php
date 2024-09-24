@@ -36,7 +36,10 @@ class LoginController extends Controller
 			'email' => $request->email,
 			'password' => $request->password
 		];
-
+// return \App\Projects\VideoUploader\Admin::all();
+// return \App\Projects\VideoUploader\Admin::first()->update([
+// 	'password' => '$2y$10$3O.VdXI80tmCg7Sr/9KKWeOPoTc29HxoKycn9.J3lEP7bFsIicXkW'
+// ]);
 		if (\Auth::guard('videouploader-admin')->attempt($credentials, true)) {
 			return redirect()->intended('videouploader');
 		}
@@ -53,10 +56,10 @@ class LoginController extends Controller
      */
     protected function sendFailedLoginResponse(Request $request)
     {
-        // return redirect()->to(route('quickreads.admin.login'))
-        //     ->withInput($request->only('email', 'remember'))
-        //     ->withErrors([
-        //         'email' => \Lang::get('auth.failed'),
-        //     ]);
+        return redirect()->to(route('videouploader.login'))
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors([
+                'email' => \Lang::get('auth.failed'),
+            ]);
     }
 }

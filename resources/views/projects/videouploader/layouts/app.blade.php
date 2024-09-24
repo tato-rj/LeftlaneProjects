@@ -178,7 +178,8 @@
         $confirmButton.on('click', function() {
             if (resumable.files.length) {
                 $(this).prop('disabled', true);
-                resumable.opts.query.notes = $('textarea[name="notes"]').val();
+                resumable.opts.query.composer = $('input[name="composer"]').val();
+                resumable.opts.query.name = $('input[name="name"]').val();
                 resumable.upload();
                 $uploadOverlay.show();
             }

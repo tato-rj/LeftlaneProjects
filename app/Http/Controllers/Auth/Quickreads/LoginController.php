@@ -36,7 +36,7 @@ class LoginController extends Controller
 			'email' => $request->email,
 			'password' => $request->password
 		];
-
+		
 		if (\Auth::guard('quickreads-admin')->attempt($credentials, $request->remember)) {
 			return redirect()->intended('/quickreads');
 		}

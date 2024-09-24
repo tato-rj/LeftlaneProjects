@@ -30,7 +30,8 @@ class Video extends Model
     public function getVideoUrlAttribute()
     {
         if ($this->video_path)
-            return \Storage::disk('gcs')->url($this->video_path);
+            return storage($this->video_path);
+            // return \Storage::disk('gcs')->url($this->video_path);
     }
 
     public function getThumbUrlAttribute()
@@ -86,6 +87,7 @@ class Video extends Model
 
     public function getOrientationAttribute()
     {
+        return 'landscape';
         $dimensions = $this->dimensions();
 
         return $dimensions[0] > $dimensions[1] ? 'landscape' : 'portrait';

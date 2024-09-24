@@ -8,7 +8,7 @@
             @endif
         </div>
 
-        <div class="mb-1">
+{{--         <div class="mb-1">
             @filters([
                 'format' => 'dropdown',
                 'name' => 'origin',
@@ -32,7 +32,7 @@
                     'Abandoned' => 'abandoned'
                 ]
             ])
-        </div>
+        </div> --}}
     </div>
 
     @if($videos->isEmpty())

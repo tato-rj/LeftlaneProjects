@@ -9,7 +9,7 @@
     <div class="offcanvas-body">
       <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 
-        <li class="nav-item">
+{{--         <li class="nav-item">
           <a class="nav-link" href="/horizon" target="_blank">@fa(['icon' => 'external-link-alt fa-sm'])Horizon dashboard</a>
         </li>
 
@@ -18,7 +18,7 @@
         </li>
 
         <hr class="dropdown-divider">
-
+ --}}
         <li class="nav-item">
           <a class="nav-link" href="{{route('videouploader.home')}}">Dashboard</a>
         </li>
@@ -31,9 +31,9 @@
           <a class="nav-link" href="{{route('videouploader.tokens.index')}}">Api tokens</a>
         </li>
 
-        <li class="nav-item">
+{{--         <li class="nav-item">
           @include('projects.videouploader.records.create')
-        </li>
+        </li> --}}
 
         <li class="nav-item">
           @auth

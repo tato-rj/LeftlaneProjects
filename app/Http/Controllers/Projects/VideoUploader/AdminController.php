@@ -11,7 +11,7 @@ class AdminController extends Controller
 	public function index(Request $request)
 	{
         $videos = Video::latest()->filters($request)->paginate(6);
-
+// return $videos->first();
         return view('projects.videouploader.index', compact(['videos']));
     }
 }

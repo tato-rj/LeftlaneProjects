@@ -5,6 +5,7 @@
 
 @section('content')
 
+@include('projects.videouploader.records.create')
 @include('projects.videouploader.records.list')
 
 @endsection

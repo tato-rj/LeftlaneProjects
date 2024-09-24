@@ -22,6 +22,8 @@ class VideosController extends Controller
         $validator = Validator::make($request->all(), [
             'file' => 'required',
             'email' => 'required|email',
+            'name' => 'required',
+            'composer' => 'required',
             'user_id' => 'required|integer',
             'piece_id' => 'required|integer',
             'origin' => 'required|string'
@@ -48,9 +50,25 @@ class VideosController extends Controller
             
             $file = $fileReceived->getFile();
 
-            ProcessVideo::dispatch(
-                Video::temporary($file, $request->toArray())
-            );
+            $filename = $request->name . '.' . 'mp4';
+
+            $path = \Storage::disk('public')->putFileAs(str_slug($request->composer), $file, $filename);
+
+            $video = Video::create([
+                // 'origin' => $request->origin,
+                'piece_id' => $request->piece_id,
+                // 'user_id' => $request->user_id,
+                // 'user_email' => $request->email,
+                'notes' => $request->notes,
+                // 'temp_path' => $path,
+                'video_path' => $path,
+                'original_size' => $file->getSize(),
+            ]);
+
+            $video->markAsCompleted();
+            // ProcessVideo::dispatch(
+            //     Video::temporary($file, $request->toArray())
+            // );
 
             unlink($file->getPathname());
 
@@ -65,9 +83,7 @@ class VideosController extends Controller
 
     public function update(Request $request, Video $video)
     {
-        $video->update([
-            'notes' => $request->notes
-        ]);
+        $video->update(['video_path' => $request->video_path]);
 
         return back()->with('success', 'The video has been updated');
     }
