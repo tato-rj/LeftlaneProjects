@@ -40,9 +40,14 @@ class Video extends Model
             return \Storage::disk('gcs')->url($this->thumb_path);
     }
 
+    public function getOriginalSizeGbAttribute()
+    {
+        return round($this->original_size_mb / 1024, 1);
+    }
+
     public function getOriginalSizeMbAttribute()
     {
-        return round($this->original_size / 1000000, 1) . 'mb';
+        return round($this->original_size / 1000000, 1);
     }
 
     public function getCompressedSizeMbAttribute()

@@ -1,5 +1,5 @@
 <div class="container">
-    <div>These videos are taking up {{$videos->sum('original_size') / 1024}}GB</div>
+    <div>These videos are taking up {{$videos->sum('original_size_mb')}}GB</div>
     <div class="d-flex justify-content-between align-items-end mb-2 flex-wrap">
         
         <div class="small mb-0 text-muted mb-1">
