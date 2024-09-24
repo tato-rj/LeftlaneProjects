@@ -1,5 +1,5 @@
-
 <div class="container">
+    <div>{{$videos->sum('original_size')}}</div>
     <div class="d-flex justify-content-between align-items-end mb-2 flex-wrap">
         
         <div class="small mb-0 text-muted mb-1">
