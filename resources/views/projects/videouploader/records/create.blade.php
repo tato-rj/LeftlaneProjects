@@ -1,4 +1,4 @@
-<div class="text-center">
+<div class="text-center mb-3">
 <a class="btn btn-primary" type="button" id="choose-video">Upload video</a>
 </div>
 
