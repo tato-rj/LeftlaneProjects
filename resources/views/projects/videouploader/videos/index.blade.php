@@ -7,6 +7,8 @@
 
 @include('projects.videouploader.videos.create')
 
+@searchbar
+
 <div id="videos-container">
 	@include('projects.videouploader.videos.results')
 </div>

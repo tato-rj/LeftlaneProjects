@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
         \Blade::include('components.filters.layout', 'filters');
         \Blade::include('components.fontawesome', 'fa');
         \Blade::include('components.table.layout', 'table');
+        \Blade::include('components.table.searchbar');
         \Blade::aliasComponent('components.core.form', 'form');
         \Blade::include('components.core.forms.input');
         \Blade::include('components.core.forms.toggle');
