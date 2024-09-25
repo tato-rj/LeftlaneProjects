@@ -60,8 +60,8 @@ class Video extends Model
 
     public function getThumbUrlAttribute()
     {
-        if ($this->thumb_path)
-            return \Storage::disk('gcs')->url($this->thumb_path);
+        // if ($this->thumb_path)
+        //     return \Storage::disk('gcs')->url($this->thumb_path);
     }
 
     public function getOriginalSizeMbAttribute()

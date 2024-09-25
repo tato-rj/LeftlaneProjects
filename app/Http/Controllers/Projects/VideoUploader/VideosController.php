@@ -97,16 +97,15 @@ class VideosController extends Controller
 
     public function destroy(Request $request, Video $video)
     {
-        return $video;
         // $video = Video::where(['user_id' => $request->user_id, 'piece_id' => $request->piece_id])->firstOrFail();
 
         // $video->sendVideoDeletedNotification();
 
         // if ($video->temp_path && \Storage::disk('public')->exists($video->temp_path))
         //     \Storage::disk('public')->delete($video->temp_path);
-
-        // if ($video->video_path && \Storage::disk('gcs')->exists($video->video_path))
-        //     \Storage::disk('gcs')->delete($video->video_path);
+dd(\Storage::disk('public')->exists($video->video_path));
+        // if ($video->video_path && \Storage::disk('public')->exists($video->video_path))
+            // \Storage::disk('public')->delete($video->video_path);
 
         // if ($video->thumb_path && \Storage::disk('gcs')->exists($video->thumb_path))
         //     \Storage::disk('gcs')->delete($video->thumb_path);
