@@ -7,7 +7,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 
 	Route::middleware('api.token')->post('upload', 'Projects\VideoUploader\VideosController@upload')->name('upload');
 
-	Route::middleware('api.token')->delete('delete', 'Projects\VideoUploader\VideosController@destroy')->name('delete');
+	// Route::middleware('api.token')->delete('delete', 'Projects\VideoUploader\VideosController@destroy')->name('delete');
 
 	Route::middleware('auth:videouploader-admin')->namespace('Projects\VideoUploader')->group(function() {
 		Route::get('', 'AdminController@index')->name('home');
