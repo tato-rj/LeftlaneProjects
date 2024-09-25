@@ -1,4 +1,4 @@
-<div class="text-nowrap">
+<div class="text-nowrap d-flex justify-content-end align-items-center">
 	{{ $slot ?? null }}
 
 	@isset($edit)
