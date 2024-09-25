@@ -1,1 +1,1 @@
-<a href="{{$video->video_url}}" target="_blank" class="btn btn-outline-primary btn-sm w-100">Video</a>
+<a href="{{$video->video_url}}" target="_blank" class="btn btn-outline-primary btn-sm mr-2">Video</a>
