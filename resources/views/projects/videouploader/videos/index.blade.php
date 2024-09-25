@@ -26,7 +26,7 @@ $('input#table-search').on('keyup', function() {
     let input = $(this).val();
     debounceTimer = setTimeout(function() {
         let url = updateUrl('input', input);
-
+        log(input);
         // axios.get(url)
         //     .then(function(response) {
         //         $('#results-container').html(response.data);
