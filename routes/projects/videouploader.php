@@ -26,6 +26,8 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 			Route::patch('{video}/rotate', 'VideosController@rotate')->name('rotate');
 
 			Route::patch('{video}', 'VideosController@update')->name('update');
+
+			Route::delete('{video}', 'VideosController@destroy')->name('destroy');
 		});
 
 		Route::prefix('tokens')->name('tokens.')->group(function() {
