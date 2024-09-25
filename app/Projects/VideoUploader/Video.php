@@ -34,6 +34,30 @@ class Video extends Model
             // return \Storage::disk('gcs')->url($this->video_path);
     }
 
+    public function composer()
+    {
+        if (! $this->video_path)
+            return null;
+
+        $part = explode('/', $this->video_path)[0];
+
+        $unslugged = ucwords(str_replace('-', ' ', $part));
+
+        return $unslugged;
+    }
+
+    public function filename()
+    {
+        if (! $this->video_path)
+            return null;
+
+        $part = explode('/', $this->video_path)[1];
+
+        $filenameWithoutExtension = pathinfo($part, PATHINFO_FILENAME);
+
+        return $filenameWithoutExtension;
+    }
+
     public function getThumbUrlAttribute()
     {
         if ($this->thumb_path)

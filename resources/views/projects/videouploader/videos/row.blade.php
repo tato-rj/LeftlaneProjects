@@ -1,11 +1,11 @@
 @php($video = $row)
 @switch((new \App\Table\Table)->getFieldname($field))
   @case('name')
-    {{$video->name}}
+    {{$video->filename()}}
     @break
 
   @case('composer')
-    {{$video->composer}}
+    {{$video->composer()}}
     @break
 
   @case('actions')
