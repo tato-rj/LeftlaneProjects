@@ -21,8 +21,8 @@
         <link rel="icon" type="image/png" sizes="32x32" href="{{asset('favicon/videouploader/favicon-32x32.png')}}">
         <link rel="icon" type="image/png" sizes="96x96" href="{{asset('favicon/videouploader/favicon-96x96.png')}}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{asset('favicon/videouploader/favicon-16x16.png')}}">
-        <link rel="manifest" href="{{asset('favicon/videouploader/manifest.json">
-                                ')}}        <meta name="msapplication-TileColor" content="#ffffff">
+        <link rel="manifest" href="{{asset('favicon/videouploader/manifest.json')}}">       
+        <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="{{asset('favicon/videouploader/ms-icon-144x144.png')}}">
         <meta name="theme-color" content="#ffffff">
 
@@ -133,6 +133,7 @@
 
         @include('projects.videouploader.records.overlay')
         
+        <script src="{{ mix('js/app.js') }}"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
