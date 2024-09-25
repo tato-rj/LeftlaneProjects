@@ -10,7 +10,12 @@ class AdminController extends Controller
 {
 	public function index(Request $request)
 	{
-        $videos = Video::latest()->filters($request)->paginate(12);
+                if ($request->sort_by == 'composer') {
+                        $videos = Video::orderBy('video_path')->filters($request)->paginate(12);
+                } else {
+                        $videos = Video::latest()->filters($request)->paginate(12);
+                }
+        
 // return $videos->first();
         return view('projects.videouploader.videos.index', compact(['videos']));
     }
