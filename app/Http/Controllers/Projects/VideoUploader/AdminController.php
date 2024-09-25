@@ -10,6 +10,11 @@ class AdminController extends Controller
 {
 	public function index(Request $request)
 	{
+                if ($request->wantsJson())
+                    return view('projects.videouploader.videos.results', [
+                        'results' => Video::latest()->where('video_path', 'LIKE', '%'.strtolower($request->input).'%')->paginate(12)
+                    ]);
+
                 if ($request->sort_by == 'composer') {
                         $videos = Video::orderBy('video_path')->filters($request)->paginate(12);
                 } else {

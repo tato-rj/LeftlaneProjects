@@ -9,7 +9,7 @@
 
 @searchbar
 
-<div id="videos-container">
+<div id="results-container">
 	<div class="container mb-4">Total of <strong>{{bytesToGb(\App\Projects\VideoUploader\Video::sum('original_size'))}}</strong></div>
 	@include('projects.videouploader.videos.results')
 </div>
@@ -26,23 +26,21 @@ $('input#table-search').on('keyup', function() {
     let input = $(this).val();
     debounceTimer = setTimeout(function() {
         let url = updateUrl('input', input);
-        console.log(input);
-        // axios.get(url)
-        //     .then(function(response) {
-        //         $('#results-container').html(response.data);
-
-        //         if (input.length > 1)
-        //             $('.highlight-match').mark(input);
-        //     })
-        //     .catch(function(error) {
-        //         log(error);
-        //     });
+        axios.get(url)
+            .then(function(response) {
+                $('#results-container').html(response.data);
+            })
+            .catch(function(error) {
+                log(error);
+            });
     }, 300);
 });
 
 function updateUrl(key, value) {
     var url = new URL(window.location.href);
+
     url.searchParams.set(key, value);
+    
     return url;
 }
 </script>
