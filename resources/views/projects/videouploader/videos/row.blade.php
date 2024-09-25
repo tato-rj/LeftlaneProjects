@@ -10,7 +10,7 @@
 
   @case('actions')
       @component('components.table.actions', [
-        'edit' => ['modal' => 'projects.videouploader.videos.edit']
+        'edit' => ['modal' => 'edit-video-' . $video->id]
       ])
       @include('projects.videouploader.videos.edit')
 
