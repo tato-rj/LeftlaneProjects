@@ -15018,7 +15018,7 @@ textarea.form-control-lg {
   display: table-cell !important;
 }
 
-.d-flex {
+.d-flex, .d-apart, .d-center {
   display: flex !important;
 }
 
@@ -15440,11 +15440,11 @@ textarea.form-control-lg {
   justify-content: flex-end !important;
 }
 
-.justify-content-center {
+.justify-content-center, .d-center {
   justify-content: center !important;
 }
 
-.justify-content-between {
+.justify-content-between, .d-apart {
   justify-content: space-between !important;
 }
 
@@ -15464,7 +15464,7 @@ textarea.form-control-lg {
   align-items: flex-end !important;
 }
 
-.align-items-center {
+.align-items-center, .d-apart, .d-center {
   align-items: center !important;
 }
 
@@ -19700,6 +19700,31 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.grid-sizer,
+.grid-item {
+  width: 20%;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.hover-show {
+  display: none;
+}
+
+.hover-show:hover {
+  display: block !important;
+}
+
+.hover-hide {
+  display: block;
+}
+
+.hover-hide:hover {
+  display: none !important;
+}
+
 .elipsis {
   width: 100%;
   white-space: nowrap;
