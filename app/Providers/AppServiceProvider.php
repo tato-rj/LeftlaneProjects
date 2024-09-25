@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
 
         \Blade::include('components.filters.layout', 'filters');
         \Blade::include('components.fontawesome', 'fa');
+        \Blade::include('components.table.layout', 'table');
         
         Blade::if('manager', function () {
             return auth()->guard('pianolit-admin')->user()->role == 'manager';
