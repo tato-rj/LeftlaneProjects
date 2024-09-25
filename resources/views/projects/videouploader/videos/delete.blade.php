@@ -12,7 +12,7 @@
       <div class="modal-body">
         <p class="m-0">Are you sure?</p>
         <p class="text-danger">This action cannot be undone</p>
-        <form action="{{route('videouploader.delete', $video)}}" method="POST">
+        <form action="{{route('videouploader.videos.delete', $video)}}" method="POST">
             @csrf
             @method('DELETE')
             <input type="hidden" name="secret" value="{{auth()->user()->tokens()->exists() ? auth()->user()->tokens->first()->name : null}}">
