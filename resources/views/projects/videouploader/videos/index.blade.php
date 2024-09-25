@@ -7,7 +7,7 @@
 
 @include('projects.videouploader.videos.create')
 
-<div id="videos-container">
+<div id="videos-container" class="text-left">
 	@include('projects.videouploader.videos.results')
 </div>
 

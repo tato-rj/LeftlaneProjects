@@ -1,6 +1,10 @@
 @table([
 	'rows' => $videos,
 	'columns' => [
+		'created_at*' => [
+			'label' => 'Date',
+			'width' => '1%'
+		], 
 		'name*' => [
 			'label' => 'Name',
 			'width' => 'auto'
