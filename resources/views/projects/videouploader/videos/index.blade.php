@@ -31,7 +31,7 @@ $('input#table-search').on('keyup', function() {
                 $('#results-container').html(response.data);
             })
             .catch(function(error) {
-                log(error);
+                console.log(error);
             });
     }, 300);
 });
