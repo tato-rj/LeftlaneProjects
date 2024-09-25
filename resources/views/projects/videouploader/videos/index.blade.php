@@ -10,6 +10,7 @@
 @searchbar
 
 <div id="videos-container">
+	<div>Total of <strong>{{bytesToGb(\App\Projects\VideoUploader\Video::sum('original_size'))}}</strong></div>
 	@include('projects.videouploader.videos.results')
 </div>
 
