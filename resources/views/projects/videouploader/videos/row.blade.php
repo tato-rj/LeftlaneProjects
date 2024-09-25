@@ -1,9 +1,5 @@
 @php($video = $row)
 @switch((new \App\Table\Table)->getFieldname($field))
-  @case('created_at')
-    {{$video->created_at->toFormattedDateString()}}
-    @break
-
   @case('name')
     {{$video->filename()}}
     @break
