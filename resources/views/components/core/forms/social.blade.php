@@ -1,0 +1,1 @@
+<a href="{{route('socialite', $service)}}" class="btn btn-{{$service}} w-100 mb-2">@fa(['icon' => $service, 'fa_type' => 'b'])@lang('views/auth.social') {{strtoupper($service)}}</a>

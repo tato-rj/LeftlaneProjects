@@ -21,6 +21,18 @@ class AppServiceProvider extends ServiceProvider
         \Blade::include('components.filters.layout', 'filters');
         \Blade::include('components.fontawesome', 'fa');
         \Blade::include('components.table.layout', 'table');
+        \Blade::aliasComponent('components.core.form', 'form');
+        \Blade::include('components.core.forms.input');
+        \Blade::include('components.core.forms.toggle');
+        \Blade::include('components.core.forms.textarea');
+        \Blade::aliasComponent('components.core.forms.select');
+        \Blade::aliasComponent('components.core.forms.checkbox');
+        \Blade::include('components.core.forms.radio');
+        \Blade::include('components.core.forms.option');
+        \Blade::include('components.core.forms.submit');
+        \Blade::include('components.core.forms.label');
+        \Blade::include('components.core.forms.feedback');
+        \Blade::include('components.core.forms.password');
         
         Blade::if('manager', function () {
             return auth()->guard('pianolit-admin')->user()->role == 'manager';

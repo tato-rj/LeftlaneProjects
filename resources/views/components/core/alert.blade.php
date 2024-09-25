@@ -1,0 +1,1 @@
+@include(isset($type) ? 'components.core.alerts.'.$type : 'components.core.alerts.regular')
