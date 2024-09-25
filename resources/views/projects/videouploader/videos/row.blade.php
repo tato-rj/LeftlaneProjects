@@ -14,7 +14,7 @@
 
   @case('actions')
       @component('components.table.actions', [
-        'edit' => ['modal' => '#edit-video-' . $video->id]
+        'edit' => ['modal' => '#edit-video-' . $video->id],
         'delete' => ['modal' => '#delete-video-' . $video->id]
       ])
       @include('projects.videouploader.videos.delete')
