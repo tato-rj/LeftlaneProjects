@@ -83,7 +83,6 @@ class VideosController extends Controller
 
     public function update(Request $request, Video $video)
     {
-        return $request->video_path;
         $video->update(['video_path' => $request->video_path]);
 
         return back()->with('success', 'The video has been updated');
