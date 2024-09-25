@@ -17,6 +17,7 @@
         'edit' => ['modal' => '#edit-video-' . $video->id]
       ])
       @include('projects.videouploader.videos.edit')
+      @include('projects.videouploader.videos.preview')
 
       @endcomponent
       @break
