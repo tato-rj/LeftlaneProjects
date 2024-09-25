@@ -7,7 +7,7 @@
 		], 
 		'name*' => [
 			'label' => 'Name',
-			'width' => '1%'
+			'width' => 'auto'
 		],
 		'composer*' => [
 			'label' => 'Composer',
