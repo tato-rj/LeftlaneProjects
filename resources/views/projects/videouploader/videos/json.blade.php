@@ -1,0 +1,1 @@
+<a href="{{route('videouploader.json', $video)}}" target="_blank" class="btn btn-outline-primary btn-sm me-2">Json</a>
