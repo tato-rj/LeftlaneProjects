@@ -5,6 +5,23 @@ function hasPagination($collection)
 	return $collection instanceof \Illuminate\Pagination\LengthAwarePaginator;
 }
 
+function fa($icon, $color = null, $classes = null) {
+	return '<i title="" name="" class="fas 
+		   fa-'.$icon.' 
+		   text-'.$color.' 
+		   fa- 
+		   '.$classes.'
+		   t-2
+		   " style=" "></i>';
+}
+
+function formMethod($method) {
+	if (in_array(strtolower($method), ['delete', 'patch']))
+		return 'POST';
+
+	return $method;
+}
+
 function bytesToMb($bytes)
 {
 	return number_format($bytes / 1000000, 2) . ' mb';
