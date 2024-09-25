@@ -5,6 +5,11 @@ function hasPagination($collection)
 	return $collection instanceof \Illuminate\Pagination\LengthAwarePaginator;
 }
 
+function iftrue($var, $echo)
+{
+	return $var && $var === true ? $echo : null;
+}
+
 function fa($icon, $color = null, $classes = null) {
 	return '<i title="" name="" class="fas 
 		   fa-'.$icon.' 
