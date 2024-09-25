@@ -1,6 +1,6 @@
 <div class="accordion-item">
-    <div class="accordion-header alert-success">
-      <button class="accordion-button collapsed alert-success" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed text-success" type="button" data-bs-toggle="collapse" data-bs-target="#record-{{$video->id}}">
         @fa(['icon' => 'check'])
         @include('projects.videouploader.records.states.header')
       </button>
