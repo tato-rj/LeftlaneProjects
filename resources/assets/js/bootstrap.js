@@ -1,4 +1,5 @@
 window._ = require('lodash');
+window.axios = require('axios').default;
 
 // window.Popper = require('@popperjs/core').default;
 
