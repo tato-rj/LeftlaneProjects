@@ -97,7 +97,7 @@ class VideosController extends Controller
 
     public function destroy(Request $request, Video $video)
     {
-        return $video
+        return $video;
         // $video = Video::where(['user_id' => $request->user_id, 'piece_id' => $request->piece_id])->firstOrFail();
 
         // $video->sendVideoDeletedNotification();
@@ -113,6 +113,6 @@ class VideosController extends Controller
 
         // $video->delete();
 
-        return $request->wantsJson() ? response(200) : back();
+        // return $request->wantsJson() ? response(200) : back();
     }
 }
