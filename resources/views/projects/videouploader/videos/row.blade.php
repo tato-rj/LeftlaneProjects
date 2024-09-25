@@ -14,13 +14,12 @@
 
   @case('actions')
       @component('components.table.actions', [
-        'edit' => ['modal' => '#edit-video-' . $video->id],
-        'delete' => ['modal' => '#delete-video-' . $video->id]
+        'edit' => ['modal' => '#edit-video-' . $video->id]
       ])
-      @include('projects.videouploader.videos.delete')
       @include('projects.videouploader.videos.edit')
       @include('projects.videouploader.videos.json')
       @include('projects.videouploader.videos.preview')
+      @include('projects.videouploader.videos.delete')
 
       @endcomponent
       @break

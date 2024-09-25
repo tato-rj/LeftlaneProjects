@@ -1,3 +1,7 @@
+<button type="button" data-bs-toggle="modal" data-bs-target="#delete-video-{{$video->id}}" class="me-2 btn btn-danger btn-sm">
+  @fa(['icon' => 'trash-alt'])Delete
+</button>
+
 <div class="modal fade" id="delete-video-{{$video->id}}">
   <div class="modal-dialog">
     <div class="modal-content">
