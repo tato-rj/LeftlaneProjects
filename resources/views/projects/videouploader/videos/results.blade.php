@@ -1,33 +1,21 @@
 @table([
-	'rows' => $users,
+	'rows' => $videos,
 	'columns' => [
 		'created_at*' => [
 			'label' => 'Date',
 			'width' => '1%'
 		], 
-		'first_name*' => [
+		'name*' => [
 			'label' => 'Name',
 			'width' => 'auto'
 		],
-		'email*' => [
-			'label' => 'Email',
+		'composer*' => [
+			'label' => 'Composer',
 			'width' => 'auto'
-		],
-		'instruments*' => [
-			'label' => 'Instrument(s)',
-			'width' => 'auto'
-		],
-		'role*' => [
-			'label' => 'Admin role',
-			'width' => '1%'
-		],
-		'status*' => [
-			'label' => 'Membership status',
-			'width' => '1%'
 		],
 		'actions' => [
 			'label' => '',
 			'width' => '1%'
 		]],
-	'view' => 'users.row'
+	'view' => 'projects.videouploader.videos.row'
 ])

@@ -5,8 +5,11 @@
 
 @section('content')
 
-@include('projects.videouploader.records.create')
-@include('projects.videouploader.records.list')
+@include('projects.videouploader.videos.create')
+
+<div id="videos-container">
+	@include('projects.videouploader.videos.results')
+</div>
 
 @endsection
 
