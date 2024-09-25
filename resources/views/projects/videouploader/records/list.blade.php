@@ -1,5 +1,5 @@
 <div class="container">
-    <div>Total of <strong>{{$videos->sum('original_size_gb')}}GB</strong></div>
+    <div>Total of <strong>{{bytesToGb($videos->sum('original_size'))}}GB</strong></div>
     <div class="d-flex justify-content-between align-items-end mb-2 flex-wrap">
         
         <div class="small mb-0 text-muted mb-1">

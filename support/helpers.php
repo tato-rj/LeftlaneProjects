@@ -5,6 +5,12 @@ function bytesToMb($bytes)
 	return number_format($bytes / 1000000, 2) . ' mb';
 }
 
+function bytesToGb($bytes)
+{
+    $gb = $bytes / (1024 * 1024 * 1024);
+    return number_format($gb, 2) . ' GB';
+}
+
 function dateToDatabase($date)
 {
 	return \Carbon\Carbon::parse($date)->format('Y-m-d');
