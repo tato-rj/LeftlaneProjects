@@ -3,6 +3,6 @@
 		<div class="h-100" style="
 			width: 10%;
 			background: lightgreen;
-		"></div>
+		">10%</div>
 	</div>
 </div>
