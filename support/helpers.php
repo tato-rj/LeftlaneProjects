@@ -5,6 +5,13 @@ function hasPagination($collection)
 	return $collection instanceof \Illuminate\Pagination\LengthAwarePaginator;
 }
 
+function percentage($a, $b) {
+    if ($b == 0) {
+        return 0; // To avoid division by zero
+    }
+    return ($a / $b) * 100;
+}
+
 function iftrue($var, $echo)
 {
 	return $var && $var === true ? $echo : null;
