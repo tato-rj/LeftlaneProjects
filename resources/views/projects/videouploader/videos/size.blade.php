@@ -9,7 +9,8 @@
 @php($color = 'lightyellow')
 @endif
 
-<div class="container mb-4">
+<div class="container mb-4 d-flex align-items-center">
+	<div class="me-2">Total storage 25GB</div>
 	<div class="w-100 bg-light border" style="height: 20px">
 		<div class="h-100 d-flex align-items-center justify-content-end pe-2 small" style="
 			width: {{$percentage}}%;
