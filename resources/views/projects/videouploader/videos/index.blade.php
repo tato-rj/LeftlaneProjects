@@ -9,8 +9,9 @@
 
 @searchbar
 
+@include('projects.videouploader.videos.size')
 <div id="results-container">
-	<div class="container mb-4">Total of <strong>{{bytesToGb(\App\Projects\VideoUploader\Video::sum('original_size'))}}</strong></div>
+	{{-- <div class="container mb-4">Total of <strong>{{bytesToGb(\App\Projects\VideoUploader\Video::sum('original_size'))}}</strong></div> --}}
 	@include('projects.videouploader.videos.results')
 </div>
 
