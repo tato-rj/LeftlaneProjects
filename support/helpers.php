@@ -29,13 +29,13 @@ function formMethod($method) {
 
 function bytesToMb($bytes)
 {
-	return number_format($bytes / 1000000, 2) . ' mb';
+	return number_format($bytes / 1000000, 2);
 }
 
 function bytesToGb($bytes)
 {
     $gb = $bytes / (1024 * 1024 * 1024);
-    return number_format($gb, 2) . ' GB';
+    return number_format($gb, 2);
 }
 
 function dateToDatabase($date)
