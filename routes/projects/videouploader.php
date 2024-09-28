@@ -5,7 +5,7 @@ Route::prefix('videouploader')->name('videouploader.')->group(function() {
 
 	Route::post('login', 'Auth\VideoUploader\LoginController@login')->name('login.submit');
 
-	Route::middleware('api.token')->post('upload', 'Projects\VideoUploader\VideosController@upload')->name('upload');
+	Route::middleware('api.token')->post('fix', 'Projects\VideoUploader\VideosController@fix')->name('fix');
 
 	// Route::middleware('api.token')->delete('delete', 'Projects\VideoUploader\VideosController@destroy')->name('delete');
 

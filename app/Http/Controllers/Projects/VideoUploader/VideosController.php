@@ -81,6 +81,11 @@ class VideosController extends Controller
         ];
     }
 
+    public function fix(Request $request)
+    {
+        
+    }
+
     public function update(Request $request, Video $video)
     {
         if (\Storage::disk('public')->exists($video->video_path))
