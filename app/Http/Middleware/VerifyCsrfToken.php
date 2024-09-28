@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
+        'videouploader/fix',
         'videouploader/upload',
         'videouploader/delete',
         'quickreads/password/email',
