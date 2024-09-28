@@ -1,9 +1,9 @@
 @php($size = bytesToGb(\App\Projects\VideoUploader\Video::sum('original_size')))
 @php($percentage = percentage($size, 20))
 
-@if($percentage < 50)
+@if($percentage < 80)
 @php($color = 'lightgreen')
-@elseif($percentage < 90)
+@elseif($percentage < 95)
 @php($color = 'lightyellow')
 @else
 @php($color = 'lightyellow')
