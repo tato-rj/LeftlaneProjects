@@ -83,11 +83,16 @@ class VideosController extends Controller
 
     public function fix(Request $request)
     {
-        $video = Video::where('video_path', $request->video_path);
+        $video = Video::where('video_path', $request->old_path)->first();
 
-        if (! $video->exists())
+        if ($video->isEmpty())
             abort(404);
-        // return $video;
+
+        \Storage::disk('public')->move($video->video_path, $request->new_path);
+
+        $video->update(['video_path' => $request->new_path]);
+
+        return response(200);
     }
 
     public function update(Request $request, Video $video)
