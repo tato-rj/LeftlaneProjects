@@ -16,8 +16,7 @@ class AcceptApiRequests
      */
     public function handle(Request $request, Closure $next)
     {
-        abort(404);
-        if (! \DB::connection('videouploader')->table('personal_access_tokens')->where('name', $request->secret)->exists())
+        if (! $request->has('secret') || ! \DB::connection('videouploader')->table('personal_access_tokens')->where('name', $request->secret)->exists())
             throw new \Illuminate\Auth\Access\AuthorizationException('Token mismatch, you are not authorized to do this.');
 
         return $next($request);
