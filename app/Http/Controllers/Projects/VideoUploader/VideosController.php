@@ -85,9 +85,9 @@ class VideosController extends Controller
     {
         $video = Video::where('video_path', $request->old_path)->first();
 
-        if ($video->isEmpty())
+        if (is_null($video))
             abort(404);
-        
+
         // \Storage::disk('public')->move($video->video_path, $request->new_path);
 
         // $video->update(['video_path' => $request->new_path]);
