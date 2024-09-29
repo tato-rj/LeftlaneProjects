@@ -89,9 +89,9 @@ class VideosController extends Controller
             abort(404);
 
         if ($video->video_path != $request->new_path) {
-            // return response()->json([
-            //     'message' => $video->video_path . ' | ' . $request->new_path
-            // ], 413);
+            return response()->json([
+                'message' => $video->video_path . ' | ' . $request->new_path
+            ], 413);
             // \Storage::disk('public')->move($video->video_path, $request->new_path);
 
             // $video->update(['video_path' => $request->new_path]);
