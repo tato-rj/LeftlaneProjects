@@ -91,19 +91,19 @@ class VideosController extends Controller
             ], 404);
         }
 
-        if ($video->video_path != $request->new_path) {
-            \Storage::disk('public')->move($video->video_path, $request->new_path);
+        // if ($video->video_path != $request->new_path) {
+        //     \Storage::disk('public')->move($video->video_path, $request->new_path);
 
-            $video->update(['video_path' => $request->new_path]);
+        //     $video->update(['video_path' => $request->new_path]);
 
-            return response()->json([
-                'message' => 'Video path updated to ' . $request->new_path
-            ], 200);
-        }
+        //     return response()->json([
+        //         'message' => 'Video path updated to ' . $request->new_path
+        //     ], 200);
+        // }
 
-        return response()->json([
-            'message' => 'Nothing to change'
-        ], 200);
+        // return response()->json([
+        //     'message' => 'Nothing to change'
+        // ], 200);
     }
 
     public function update(Request $request, Video $video)
