@@ -87,12 +87,12 @@ class VideosController extends Controller
 
         if ($video->isEmpty())
             abort(404);
-
+        
         // \Storage::disk('public')->move($video->video_path, $request->new_path);
 
         // $video->update(['video_path' => $request->new_path]);
 
-        // return response(200);
+        return response(200);
     }
 
     public function update(Request $request, Video $video)
