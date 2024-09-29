@@ -85,20 +85,24 @@ class VideosController extends Controller
     {
         $video = Video::where('video_path', $request->old_path)->first();
 
-        if (is_null($video))
-            abort(404);
+        if (is_null($video)) {
+            return response()->json([
+                'message' => 'Video path not found: ' . $request->old_path
+            ], 404);
+        }
 
         if ($video->video_path != $request->new_path) {
-            return response()->json([
-                'message' => $video->video_path . ' | ' . $request->new_path
-            ], 413);
-            // \Storage::disk('public')->move($video->video_path, $request->new_path);
+            \Storage::disk('public')->move($video->video_path, $request->new_path);
 
-            // $video->update(['video_path' => $request->new_path]);
+            $video->update(['video_path' => $request->new_path]);
+
+            return response()->json([
+                'message' => 'Video path updated to ' . $request->new_path
+            ], 200);
         }
 
         return response()->json([
-            'message' => 'All good'
+            'message' => 'Nothing to change'
         ], 200);
     }
 
