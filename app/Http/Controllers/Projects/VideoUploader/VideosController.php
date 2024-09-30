@@ -83,6 +83,7 @@ class VideosController extends Controller
 
     public function fix(Request $request)
     {
+        return Video::latest()->first();
         // $video = Video::where('video_path', $request->old_path)->first();
 
         // if (is_null($video)) {
