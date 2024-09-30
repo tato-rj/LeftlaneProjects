@@ -14,12 +14,7 @@ class Video extends Model
 
     protected $connection = 'videouploader';
     protected $guarded = [];
-    protected $dates = [
-        'completed_at', 
-        'abandoned_at', 
-        'notification_received_at', 
-        'failed_at'
-    ];
+    protected $dates = ['completed_at'];
     protected $appends = ['video_url'];
 
     public function getNotificationUrlAttribute()
@@ -31,7 +26,6 @@ class Video extends Model
     {
         if ($this->video_path)
             return storage($this->video_path);
-            // return \Storage::disk('gcs')->url($this->video_path);
     }
 
     public function composer()
@@ -63,74 +57,6 @@ class Video extends Model
         return round($this->original_size / 1000000, 1);
     }
 
-    public function getCompressedSizeMbAttribute()
-    {
-        return round($this->compressed_size / 1000000, 1) . 'mb';
-    }
-
-    public function getSizeDecreasePercentageAttribute()
-    {
-        $diff = $this->original_size - $this->compressed_size;
-        $percentage = round(($diff * 100) / $this->original_size) * -1;
-
-        return $percentage > 0 ? '+'.$percentage.'%' : $percentage.'%';
-    }
-
-    public function getProcessingTimeAttribute()
-    {
-        if ($this->isCompleted())
-            return gmdate('i:s', $this->completed_at->diffInSeconds($this->created_at));
-    }
-
-    public function getOriginIconAttribute()
-    {
-        switch ($this->origin) {
-            case 'webapp':
-                return 'fas fa-laptop';
-                break;
-
-            case 'ios':
-                return 'fab fa-apple';
-                break;
-
-            case 'android':
-                return 'fas fa-mobile';
-                break;
-
-            default:
-                return $this->origin ?? 'question';
-                break;
-        }
-    }
-
-    public function getOrientationAttribute()
-    {
-        return 'landscape';
-        $dimensions = $this->dimensions();
-
-        return $dimensions[0] > $dimensions[1] ? 'landscape' : 'portrait';
-    }
-
-    public function dimensions()
-    {
-        return explode('x', $this->compressed_dimensions);
-    }
-
-    public function scopeRemote($query)
-    {
-        return $query->whereIn('origin', ['webapp', 'ios']);
-    }
-
-    public function scopeLocal($query)
-    {
-        return $query->where('origin', 'local');
-    }
-
-    public function isRemote()
-    {
-        return in_array($this->origin, ['webapp', 'ios']);
-    }
-
     public function scopeFromTag($query, $tag)
     {
         $pieces = explode(':', $tag);
@@ -144,38 +70,9 @@ class Video extends Model
         return $query->find($id);
     }
 
-    public function markAsFailed()
-    {
-        $this->update([
-            'completed_at' => null,
-            'abandoned_at' => null,
-            'failed_at' => now()
-        ]);
-    }
-
-    public function markAsAbandoned()
-    {
-        $this->update([
-            'completed_at' => null,
-            'failed_at' => null,
-            'abandoned_at' => now()
-        ]);
-    }
-
-    public function markAsPending()
-    {
-        $this->update([
-            'abandoned_at' => null,
-            'failed_at' => null,
-            'completed_at' => null
-        ]);
-    }
-
     public function markAsCompleted()
     {
         $this->update([
-            'abandoned_at' => null,
-            'failed_at' => null,
             'completed_at' => now()
         ]);
     }
@@ -196,15 +93,15 @@ class Video extends Model
 
     public function scopeTemporary($query, $file, array $request)
     {
-        return $query->create([
-            'origin' => $request['origin'],
-            'piece_id' => $request['piece_id'],
-            'user_id' => $request['user_id'],
-            'user_email' => $request['email'],
-            'notes' => $request['notes'],
-            'temp_path' => \Storage::disk('public')->put('temporary', $file),
-            'original_size' => $file->getSize()
-        ]);
+        // return $query->create([
+        //     'origin' => $request['origin'],
+        //     'piece_id' => $request['piece_id'],
+        //     'user_id' => $request['user_id'],
+        //     'user_email' => $request['email'],
+        //     'notes' => $request['notes'],
+        //     'temp_path' => \Storage::disk('public')->put('temporary', $file),
+        //     'original_size' => $file->getSize()
+        // ]);
     }
 
     public function scopeFilters($query, $request)
