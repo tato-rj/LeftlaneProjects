@@ -83,6 +83,11 @@ class VideosController extends Controller
 
     public function fix(Request $request)
     {
+        $video = Video::find(1047);
+
+        $video->update([
+            'mimeType' => \Storage::disk('public')->mimeType($video->video_path)
+        ]);
         // $video = Video::where('video_path', $request->old_path)->first();
 
         // if (is_null($video)) {
