@@ -15,19 +15,11 @@ return new class extends Migration
     {
         Schema::connection('videouploader')->create('videos', function (Blueprint $table) {
             $table->id();
-            $table->string('origin');
             $table->unsignedInteger('piece_id');
-            $table->unsignedInteger('user_id');
-            $table->string('user_email');
             $table->string('temp_path')->nullable();
             $table->string('video_path')->nullable();
-            $table->string('thumb_path')->nullable();
             $table->string('mimeType')->nullable();
-            $table->string('notes')->nullable();
             $table->unsignedInteger('original_size')->nullable();
-            $table->unsignedInteger('compressed_size')->nullable();
-            $table->string('original_dimensions')->nullable();
-            $table->string('compressed_dimensions')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamp('failed_at')->nullable();
             $table->timestamp('abandoned_at')->nullable();

@@ -20,7 +20,7 @@ class Video extends Model
         'notification_received_at', 
         'failed_at'
     ];
-    protected $appends = ['video_url', 'thumb_url'];
+    protected $appends = ['video_url'];
 
     public function getNotificationUrlAttribute()
     {
@@ -56,12 +56,6 @@ class Video extends Model
         $filenameWithoutExtension = pathinfo($part, PATHINFO_FILENAME);
 
         return $filenameWithoutExtension;
-    }
-
-    public function getThumbUrlAttribute()
-    {
-        // if ($this->thumb_path)
-        //     return \Storage::disk('gcs')->url($this->thumb_path);
     }
 
     public function getOriginalSizeMbAttribute()
