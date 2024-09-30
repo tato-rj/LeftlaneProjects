@@ -85,6 +85,10 @@ class VideosController extends Controller
     {
         $video = Video::where('video_path', 'videos/performance/359.mp4')->first();
 
+        \Storage::disk('public')->move($video->video_path, 'dmitry-kabalevsky/op27-no1-01.mp4');
+        
+        $video->update(['video_path' => 'dmitry-kabalevsky/op27-no1-01.mp4']);
+
         return $video;
         // $video = Video::where('video_path', $request->old_path)->first();
 
