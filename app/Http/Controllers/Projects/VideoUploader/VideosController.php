@@ -21,12 +21,8 @@ class VideosController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'file' => 'required',
-            'email' => 'required|email',
             'name' => 'required',
             'composer' => 'required',
-            'user_id' => 'required|integer',
-            'piece_id' => 'required|integer',
-            'origin' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -55,20 +51,11 @@ class VideosController extends Controller
             $path = \Storage::disk('public')->putFileAs(str_slug($request->composer), $file, $filename);
 
             $video = Video::create([
-                // 'origin' => $request->origin,
-                'piece_id' => $request->piece_id,
-                // 'user_id' => $request->user_id,
-                // 'user_email' => $request->email,
-                'notes' => $request->notes,
-                // 'temp_path' => $path,
                 'video_path' => $path,
                 'original_size' => $file->getSize(),
             ]);
 
             $video->markAsCompleted();
-            // ProcessVideo::dispatch(
-            //     Video::temporary($file, $request->toArray())
-            // );
 
             unlink($file->getPathname());
 
@@ -116,12 +103,12 @@ class VideosController extends Controller
         return back()->with('success', 'The video has been updated');
     }
 
-    public function rotate(Video $video)
-    {
-        RotateVideo::dispatch($video);
+    // public function rotate(Video $video)
+    // {
+    //     RotateVideo::dispatch($video);
 
-        return back()->with('success', 'The video is being rotated');
-    }
+    //     return back()->with('success', 'The video is being rotated');
+    // }
 
     public function destroy(Request $request, Video $video)
     {
