@@ -75,6 +75,10 @@ return [
     */
 
     'providers' => [
+        'quickreads-v2' => [
+            'driver' => 'eloquent',
+            'model' => App\Projects\Quickreads\Api\V2\User::class,
+        ],
         'quickreads-admins' => [
             'driver' => 'eloquent',
             'model' => App\Projects\Quickreads\QuickreadsAdmin::class,
@@ -117,6 +121,16 @@ return [
             'provider' => 'videouploader-admins',
             'table' => 'password_resets',
             'expire' => 60,
+        ],
+    ],
+
+    'passwords' => [
+        'quickreads-v2' => [
+            'provider' => 'quickreads-v2',
+            'table' => 'password_resets',
+            'connection' => 'quickreads',
+            'expire' => 60,
+            'throttle' => 60,
         ],
     ],
 

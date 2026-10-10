@@ -20,3 +20,8 @@ Route::get('/', function () {
 });
 
 require base_path('routes/projects/quickreads.php');
+
+// A separate reset landing page for the v2 broker; existing reset URLs are untouched.
+Route::get('/quickreads/v2/password/reset', function () {
+    return response()->view('projects.quickreads.v2.password-reset')->header('Cache-Control', 'no-store');
+})->name('quickreads.v2.password.form');

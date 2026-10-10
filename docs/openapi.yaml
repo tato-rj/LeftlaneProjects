@@ -1,0 +1,3163 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "QuickReads API v2",
+    "version": "2.0.0",
+    "description": "Implemented parallel API. Existing /quickreads URLs are untouched. All IDs are decimal strings in responses. JSON success uses data; lists add meta and links. Nullable fields are emitted as explicit null. Public catalog ignores account aliases, cookies and bearer credentials; fetch private favorites separately. Mutation bodies are JSON objects; unsupported/non-object bodies fail. Unknown fields/query parameters are ignored. Dates use RFC3339 UTC. Production MySQL search uses utf8mb4_unicode_ci; SQLite tests emulate legacy functions but are not a production collation or concurrency test. GET also supports HEAD. No reactions, remote progress/audio, social sign-in or historical alias/hash mapping is claimed."
+  },
+  "servers": [
+    {
+      "url": "https://leftlaneapps.com",
+      "description": "Deployment origin (v2 must be deployed and migrated before use)."
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/api/v2/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Sign in with existing QuickReads email and password",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "description": " Limited to 5 attempts per minute per IP per operation, in addition to the API group 60 requests/minute limit."
+      }
+    },
+    "/api/v2/auth/register": {
+      "post": {
+        "operationId": "register",
+        "summary": "Create a QuickReads account and bearer session",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "description": " Limited to 5 attempts per minute per IP per operation, in addition to the API group 60 requests/minute limit."
+      }
+    },
+    "/api/v2/auth/password/email": {
+      "post": {
+        "operationId": "requestPasswordReset",
+        "summary": "Request password reset instructions",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "202": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetAcceptedResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetEmailRequest"
+              }
+            }
+          }
+        },
+        "description": "202 returns the same body for missing accounts and broker-throttled requests. Reset token lifetime is 60 minutes; broker email throttle 60 seconds. Requires working outbound mail. No mail failure is falsely acknowledged: unexpected mail errors return sanitized 500. Limited to 5 attempts per minute per IP per operation, in addition to the API group 60 requests/minute limit."
+      }
+    },
+    "/api/v2/auth/password/reset": {
+      "post": {
+        "operationId": "resetPassword",
+        "summary": "Reset password and revoke all v2 tokens",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetCompleteResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          }
+        },
+        "description": " Limited to 5 attempts per minute per IP per operation, in addition to the API group 60 requests/minute limit."
+      }
+    },
+    "/api/v2/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "summary": "Revoke the presented token",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "description": "No fields are used. Omit the body or send an empty JSON object. Account IDs supplied by callers never determine ownership.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/me": {
+      "get": {
+        "operationId": "getAccount",
+        "summary": "Fetch the authenticated account",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      },
+      "head": {
+        "operationId": "getAccountHead",
+        "summary": "Headers for fetch the authenticated account",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          }
+        }
+      }
+    },
+    "/api/v2/stories": {
+      "get": {
+        "operationId": "listStories",
+        "summary": "List or search compact story summaries",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "description": "Trimmed literal substring over title or author; blank means browse all. LOWER + production utf8mb4_unicode_ci collation is case/accent insensitive. No explicit Unicode normalization; not full-text/theme search. %, _ and ! are escaped literal characters."
+          },
+          {
+            "name": "author_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Filter by author ID; unknown ID is 404."
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Filter by the single stored category ID; unknown ID is 404."
+          },
+          {
+            "name": "exclude_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Exclude an extant story ID, including current story when expanding related results."
+          },
+          {
+            "name": "min_minutes",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "description": "Inclusive lower bound. Omit for no lower bound."
+          },
+          {
+            "name": "max_minutes",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "description": "Inclusive upper bound. Omit for no upper bound; must be >= min_minutes."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "editorial",
+                "title",
+                "latest",
+                "popular"
+              ],
+              "default": "editorial"
+            },
+            "description": "Editorial: category sorting_order ascending (null last), then story ID ascending. Title: database title ordering then ID. Latest: created_at descending then ID. Popular: distinct favoriting accounts descending then ID. No relevance ranking. Cannot combine sort with section."
+          },
+          {
+            "name": "section",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "featured",
+                "latest",
+                "popular",
+                "under_10_minutes",
+                "classics",
+                "suggestions"
+              ]
+            },
+            "description": "Explore expansion criteria. Featured is one deterministic daily UTC pick; latest/popular use corresponding sort. Under 10 includes <=10; classics uses is_classic; suggestions is editorial catalog order. Other filters intersect the section. All sorts use ID ties."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryPage"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "listStoriesHead",
+        "summary": "Headers for list or search compact story summaries",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "description": "Trimmed literal substring over title or author; blank means browse all. LOWER + production utf8mb4_unicode_ci collation is case/accent insensitive. No explicit Unicode normalization; not full-text/theme search. %, _ and ! are escaped literal characters."
+          },
+          {
+            "name": "author_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Filter by author ID; unknown ID is 404."
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Filter by the single stored category ID; unknown ID is 404."
+          },
+          {
+            "name": "exclude_id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "description": "Exclude an extant story ID, including current story when expanding related results."
+          },
+          {
+            "name": "min_minutes",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "description": "Inclusive lower bound. Omit for no lower bound."
+          },
+          {
+            "name": "max_minutes",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1000000
+            },
+            "description": "Inclusive upper bound. Omit for no upper bound; must be >= min_minutes."
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "editorial",
+                "title",
+                "latest",
+                "popular"
+              ],
+              "default": "editorial"
+            },
+            "description": "Editorial: category sorting_order ascending (null last), then story ID ascending. Title: database title ordering then ID. Latest: created_at descending then ID. Popular: distinct favoriting accounts descending then ID. No relevance ranking. Cannot combine sort with section."
+          },
+          {
+            "name": "section",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "featured",
+                "latest",
+                "popular",
+                "under_10_minutes",
+                "classics",
+                "suggestions"
+              ]
+            },
+            "description": "Explore expansion criteria. Featured is one deterministic daily UTC pick; latest/popular use corresponding sort. Under 10 includes <=10; classics uses is_classic; suggestions is editorial catalog order. Other filters intersect the section. All sorts use ID ties."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/stories/resolve": {
+      "get": {
+        "operationId": "resolveLegacyStory",
+        "summary": "Resolve an exact current title and optional author without guessing",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 140,
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorySummaryResponse"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "resolveLegacyStoryHead",
+        "summary": "Headers for resolve an exact current title and optional author without guessing",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 140,
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "409": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/stories/{storyId}": {
+      "get": {
+        "operationId": "getStory",
+        "summary": "Fetch story detail, author biography and the first related page",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryDetailResponse"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "getStoryHead",
+        "summary": "Headers for fetch story detail, author biography and the first related page",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/stories/{storyId}/content": {
+      "get": {
+        "operationId": "getContent",
+        "summary": "Fetch the exact original story body and revision",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentResponse"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "getContentHead",
+        "summary": "Headers for fetch the exact original story body and revision",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "503": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/authors": {
+      "get": {
+        "operationId": "listAuthors",
+        "summary": "List alphabetical author summaries and distinct story counts",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorPage"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "listAuthorsHead",
+        "summary": "Headers for list alphabetical author summaries and distinct story counts",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/categories": {
+      "get": {
+        "operationId": "listCategories",
+        "summary": "List categories in editorial order",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryPage"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "listCategoriesHead",
+        "summary": "Headers for list categories in editorial order",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/explore": {
+      "get": {
+        "operationId": "getExplore",
+        "summary": "Fetch six ordered editorial sections with bounded story pages",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExploreResponse"
+                }
+              }
+            },
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "getExploreHead",
+        "summary": "Headers for fetch six ordered editorial sections with bounded story pages",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "304": {
+            "description": "Representation unchanged. No body.",
+            "headers": {
+              "ETag": {
+                "description": "Quoted SHA-256 validator of serialized response JSON. Present on successful public GET/HEAD.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/me/favorites": {
+      "get": {
+        "operationId": "listFavorites",
+        "summary": "List unique favorites for the authenticated account",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoritePage"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "description": "Remote favorite state, not an offline Library/download guarantee. Ascending story ID. Existing duplicate legacy rows are collapsed with EXISTS; removed stories are omitted."
+      },
+      "head": {
+        "operationId": "listFavoritesHead",
+        "summary": "Headers for list unique favorites for the authenticated account",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/PerPage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "404": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "405": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "413": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "422": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "429": {
+            "description": "Same status and headers as GET, without a response body."
+          },
+          "500": {
+            "description": "Same status and headers as GET, without a response body."
+          }
+        }
+      }
+    },
+    "/api/v2/me/favorites/{storyId}": {
+      "put": {
+        "operationId": "addFavorite",
+        "summary": "Idempotently add an existing story to account favorites",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoriteStateResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "description": "No fields are used. Omit the body or send an empty JSON object. Account IDs supplied by callers never determine ownership.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeFavorite",
+        "summary": "Idempotently remove account favorites, including after story deletion",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StoryId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoriteStateResponse"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "description": "No fields are used. Omit the body or send an empty JSON object. Account IDs supplied by callers never determine ownership.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "QuickReadsBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Sanctum personal access token",
+        "description": "HTTPS Authorization: Bearer <access_token>. QuickReads-only token model/table and ability, 30-day expiry. Cookies, Basic credentials, facebook_id, VideoUploader tokens and IDs alone cannot authenticate. Reauthenticate after expiry; logout revokes only current token, password reset revokes all account v2 tokens."
+      }
+    },
+    "parameters": {
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
+          "default": 1
+        },
+        "description": "Offset pagination; positive page number. Past the end returns an empty successful page. Not a frozen snapshot; editorial changes or writes between requests can shift pages."
+      },
+      "PerPage": {
+        "name": "per_page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "StoryId": {
+        "name": "storyId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      "IfNoneMatch": {
+        "name": "If-None-Match",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        },
+        "description": "ETag from a previous GET of the same complete URL. A matching representation returns 304 with no body."
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Malformed JSON or non-object JSON request body.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Credentials/token missing, invalid, expired, revoked or outside QuickReads scope.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "Operation not permitted.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Resource, filter identity or route not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error405": {
+        "description": "HTTP method not allowed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Allow": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Supported HTTP methods."
+          }
+        }
+      },
+      "Error409": {
+        "description": "Multiple exact current title/author matches; identity cannot be resolved safely.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Request exceeds server body limit.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error415": {
+        "description": "Nonempty mutation bodies must use application/json.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Validation failed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Rate limit exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Seconds before retry."
+          }
+        }
+      },
+      "Error500": {
+        "description": "Unexpected internal error; details are not exposed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Error503": {
+        "description": "Story exists but has no available nonempty content.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "headers": {
+          "Cache-Control": {
+            "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Id": {
+        "type": "string",
+        "pattern": "^[1-9][0-9]{0,9}$",
+        "description": "Canonical database primary key encoded as a decimal string. Never use a title, slug, artwork URL or account alias as identity."
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message",
+              "fields"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "malformed_request",
+                  "unauthenticated",
+                  "forbidden",
+                  "not_found",
+                  "method_not_allowed",
+                  "conflict",
+                  "payload_too_large",
+                  "unsupported_media_type",
+                  "validation_failed",
+                  "rate_limited",
+                  "unavailable",
+                  "internal_error"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "description": "Field-specific messages for 422; empty object for other errors."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthorReference": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "AuthorDetail": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "biography",
+          "date_label"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "biography": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_label": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "AuthorSummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "story_count"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "story_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryReference": {
+        "type": "object",
+        "required": [
+          "id",
+          "key",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Category": {
+        "type": "object",
+        "required": [
+          "id",
+          "key",
+          "name",
+          "kind",
+          "description",
+          "story_count"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "category"
+            ],
+            "description": "Source has no canonical genre/editorial classification. No classification inferred from English display names."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "story_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "Artwork": {
+        "type": "object",
+        "required": [
+          "cover_url",
+          "thumbnail_url",
+          "width",
+          "height",
+          "content_type",
+          "revision"
+        ],
+        "properties": {
+          "cover_url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "Stable HTTPS URL with ?v=<asset SHA-256>. No expiry. Asset availability and static-server cache headers depend on deployment."
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "Currently always null; there are no generated thumbnail variants."
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "content_type": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "Pagination": {
+        "type": "object",
+        "required": [
+          "page",
+          "per_page",
+          "total",
+          "has_more",
+          "next_page",
+          "criteria"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "per_page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page": {
+            "type": "integer",
+            "minimum": 2,
+            "nullable": true
+          },
+          "criteria": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Applied criteria excluding page/per_page. Stories include trimmed q and default sort or section; directory/favorites criteria is {}."
+          }
+        },
+        "additionalProperties": false
+      },
+      "PageLinks": {
+        "type": "object",
+        "required": [
+          "next"
+        ],
+        "properties": {
+          "next": {
+            "type": "string",
+            "description": "Relative URL preserving validated criteria and per_page; null at end. Resolve against origin, not the /api/v2 base path.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Account": {
+        "type": "object",
+        "required": [
+          "id",
+          "legacy_account_id",
+          "email",
+          "first_name",
+          "last_name",
+          "locale"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "legacy_account_id": {
+            "type": "string",
+            "description": "Exact existing facebook_id alias for this verified account. Not a Facebook credential; not unique by schema and never sufficient authentication.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Session": {
+        "type": "object",
+        "required": [
+          "user",
+          "access_token",
+          "token_type",
+          "expires_at"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 UTC. Default lifetime 30 days. Reauthenticate when expired; no refresh token."
+          }
+        },
+        "additionalProperties": false
+      },
+      "FavoriteState": {
+        "type": "object",
+        "required": [
+          "account_id",
+          "story_id",
+          "favorited"
+        ],
+        "properties": {
+          "account_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "story_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "favorited": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Content": {
+        "type": "object",
+        "required": [
+          "story_id",
+          "text",
+          "format",
+          "language",
+          "revision",
+          "hash_algorithm",
+          "hash_encoding",
+          "hash_input"
+        ],
+        "properties": {
+          "story_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "text": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "plain_text",
+              "html"
+            ],
+            "description": "Conservative detection: html if PHP strip_tags changes stored text, otherwise plain_text. This is not an editorial format designation; validate the actual catalog before rendering HTML."
+          },
+          "language": {
+            "type": "string",
+            "description": "Currently always null: no per-story language data exists. Client chooses local speech fallback.",
+            "nullable": true
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "hash_algorithm": {
+            "type": "string",
+            "enum": [
+              "sha256"
+            ]
+          },
+          "hash_encoding": {
+            "type": "string",
+            "enum": [
+              "hex"
+            ]
+          },
+          "hash_input": {
+            "type": "string",
+            "enum": [
+              "original_utf8"
+            ],
+            "description": "Exact stored text UTF-8 bytes, before JSON escaping. No NFC/NFD, newline, entity, HTML or whitespace normalization."
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "additionalProperties": true
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "password",
+          "password_confirmation"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255
+          },
+          "first_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "last_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72,
+            "description": "8 to 72 characters; additionally at most 72 UTF-8 bytes for bcrypt. Spaces are preserved."
+          },
+          "password_confirmation": {
+            "type": "string",
+            "description": "Must equal password."
+          },
+          "locale": {
+            "type": "string",
+            "maxLength": 35,
+            "nullable": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "ResetEmailRequest": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255
+          }
+        },
+        "additionalProperties": true
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "token",
+          "password",
+          "password_confirmation"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 72,
+            "description": "8 to 72 characters; additionally at most 72 UTF-8 bytes for bcrypt. Spaces are preserved."
+          },
+          "password_confirmation": {
+            "type": "string",
+            "description": "Must equal password."
+          }
+        },
+        "additionalProperties": true
+      },
+      "ResetAccepted": {
+        "type": "object",
+        "required": [
+          "accepted",
+          "message"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResetComplete": {
+        "type": "object",
+        "required": [
+          "reset"
+        ],
+        "properties": {
+          "reset": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "Logout": {
+        "type": "object",
+        "required": [
+          "revoked"
+        ],
+        "properties": {
+          "revoked": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "StorySummary": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "reading_minutes",
+          "is_classic",
+          "author",
+          "categories",
+          "artwork",
+          "metadata_revision"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "reading_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Existing editorial estimate in minutes, parsed from numeric legacy time. No recalculation/rounding. Invalid values become null and are excluded from duration filters.",
+            "nullable": true
+          },
+          "is_classic": {
+            "type": "boolean"
+          },
+          "author": {
+            "$ref": "#/components/schemas/AuthorReference"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryReference"
+            }
+          },
+          "artwork": {
+            "$ref": "#/components/schemas/Artwork"
+          },
+          "metadata_revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryPage": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta",
+          "links"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorySummary"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "links": {
+            "$ref": "#/components/schemas/PageLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthorPage": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta",
+          "links"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorSummary"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "links": {
+            "$ref": "#/components/schemas/PageLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryPage": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta",
+          "links"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "links": {
+            "$ref": "#/components/schemas/PageLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FavoritePage": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta",
+          "links"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorySummary"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "links": {
+            "$ref": "#/components/schemas/PageLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryDetail": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "reading_minutes",
+          "is_classic",
+          "author",
+          "categories",
+          "artwork",
+          "metadata_revision",
+          "language",
+          "related"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "reading_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Existing editorial estimate in minutes, parsed from numeric legacy time. No recalculation/rounding. Invalid values become null and are excluded from duration filters.",
+            "nullable": true
+          },
+          "is_classic": {
+            "type": "boolean"
+          },
+          "author": {
+            "$ref": "#/components/schemas/AuthorDetail"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryReference"
+            }
+          },
+          "artwork": {
+            "$ref": "#/components/schemas/Artwork"
+          },
+          "metadata_revision": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "related": {
+            "$ref": "#/components/schemas/StoryPage"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExploreSection": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "heading",
+          "stories"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "featured",
+              "latest",
+              "popular",
+              "under_10_minutes",
+              "classics",
+              "suggestions"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "featured",
+              "collection"
+            ]
+          },
+          "heading": {
+            "type": "string"
+          },
+          "stories": {
+            "$ref": "#/components/schemas/StoryPage"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StorySummaryResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StorySummary"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryDetailResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StoryDetail"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContentResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Content"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccountResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Account"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SessionResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Session"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FavoriteStateResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FavoriteState"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResetAcceptedResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ResetAccepted"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResetCompleteResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ResetComplete"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogoutResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Logout"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExploreResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExploreSection"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// V2 is additive; legacy app routes remain in routes/projects/quickreads.php.
+require base_path('routes/api/quickreads_v2.php');

@@ -27,10 +27,9 @@ class VideoTest extends TestCase
         $this->videoRequest = [
             'secret' => auth()->user()->tokens->first()->name,
             'origin' => 'test',
-            'video' => UploadedFile::fake()->image('cover.mp4'),
-            'email' => $this->faker->email,
-            'user_id' => $this->faker->randomDigit,
-            'piece_id' => $this->faker->randomDigit
+            'file' => UploadedFile::fake()->image('cover.mp4'),
+            'name' => 'test-video',
+            'composer' => 'Test Composer'
         ];
 
         $this->setUpFaker();
@@ -52,7 +51,7 @@ class VideoTest extends TestCase
         array_pop($this->videoRequest);
 
         $this->postJson(route('videouploader.upload'), $this->videoRequest)->assertJson([
-            'piece_id' => ['The piece id field is required.']
+            'composer' => ['The composer field is required.']
         ]);
     }
 }

@@ -28,6 +28,15 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    public function render($request, Throwable $exception)
+    {
+        if ($request->is('api/v2', 'api/v2/*')) {
+            return \App\Projects\Quickreads\Api\V2\Responses::error($exception);
+        }
+
+        return parent::render($request, $exception);
+    }
+
     public function register()
     {
         $this->reportable(function (Throwable $e) {

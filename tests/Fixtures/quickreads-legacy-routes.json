@@ -1,0 +1,575 @@
+[
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "/",
+    "name": null,
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "api/user",
+    "name": null,
+    "action": "Closure",
+    "middleware": [
+      "api",
+      "Illuminate\\Auth\\Middleware\\Authenticate:api"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AdminController@index",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/authors",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@app",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/categories",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@app",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/categories/show",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/explore",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@explore",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/login/{email}/{password}",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@appLogin",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/records/purchase",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UserPurchaseRecordController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/app/records/purchase",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UserPurchaseRecordController@store",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "DELETE",
+    "uri": "quickreads/app/records/purchase",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UserPurchaseRecordController@delete",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/records/purchase/check",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UserPurchaseRecordController@check",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/stories",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@app",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/stories/text",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@text",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/stories/time",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@time",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/app/stories/views",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@incrementViews",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/stories/{storyTitle}/rating",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\RatingsController@show",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/test",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@test",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/app/users",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@app",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/authors",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@store",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/authors/add",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@create",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/authors/delete",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@delete",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/authors/edit",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@select",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/authors/edit/{author}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@edit",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "PATCH",
+    "uri": "quickreads/authors/{author}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@update",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "DELETE",
+    "uri": "quickreads/authors/{author}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AuthorsController@destroy",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/cache",
+    "name": null,
+    "action": "Closure",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/categories",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@store",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/categories/add",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@create",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/categories/delete",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@delete",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/categories/edit",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@select",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/categories/edit/{category}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@edit",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "PATCH",
+    "uri": "quickreads/categories/{category}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@update",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "DELETE",
+    "uri": "quickreads/categories/{category}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\CategoriesController@destroy",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/login",
+    "name": "quickreads.admin.login",
+    "action": "App\\Http\\Controllers\\Auth\\Quickreads\\LoginController@showLoginForm",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:quickreads-admin"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/login",
+    "name": "quickreads.admin.login.submit",
+    "action": "App\\Http\\Controllers\\Auth\\Quickreads\\LoginController@login",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated:quickreads-admin"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/password/email",
+    "name": "password.email",
+    "action": "App\\Http\\Controllers\\Auth\\ForgotPasswordController@sendResetLinkEmail",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/password/reset",
+    "name": "password.request",
+    "action": "App\\Http\\Controllers\\Auth\\ForgotPasswordController@showLinkRequestForm",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/password/reset",
+    "name": null,
+    "action": "App\\Http\\Controllers\\Auth\\ResetPasswordController@reset",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/password/reset/{token}",
+    "name": "password.reset",
+    "action": "App\\Http\\Controllers\\Auth\\ResetPasswordController@showResetForm",
+    "middleware": [
+      "web",
+      "App\\Http\\Middleware\\RedirectIfAuthenticated"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/statistics",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\AdminController@statistics",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/stories",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@store",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/stories/add",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@create",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/stories/delete",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@delete",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/stories/edit",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@select",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/stories/edit/{story}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@edit",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "PATCH",
+    "uri": "quickreads/stories/{story}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@update",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "DELETE",
+    "uri": "quickreads/stories/{story}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\StoriesController@destroy",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin",
+      "Illuminate\\Auth\\Middleware\\Authenticate"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "GET|HEAD",
+    "uri": "quickreads/users",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@index",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/users/facebook",
+    "name": "quickreads.admin.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@store",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "POST",
+    "uri": "quickreads/users/register",
+    "name": "quickreads.admin.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@register",
+    "middleware": [
+      "web"
+    ]
+  },
+  {
+    "domain": null,
+    "method": "DELETE",
+    "uri": "quickreads/users/{user}",
+    "name": "quickreads.",
+    "action": "App\\Http\\Controllers\\Projects\\Quickreads\\UsersController@destroy",
+    "middleware": [
+      "web",
+      "Illuminate\\Auth\\Middleware\\Authenticate:quickreads-admin"
+    ]
+  }
+]
