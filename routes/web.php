@@ -25,3 +25,13 @@ require base_path('routes/projects/quickreads.php');
 Route::get('/quickreads/v2/password/reset', function () {
     return response()->view('projects.quickreads.v2.password-reset')->header('Cache-Control', 'no-store');
 })->name('quickreads.v2.password.form');
+
+Route::get('/docs/openapi.yaml', function () {
+    $path = base_path('docs/openapi.yaml');
+
+    abort_unless(file_exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/yaml; charset=UTF-8',
+    ]);
+});
