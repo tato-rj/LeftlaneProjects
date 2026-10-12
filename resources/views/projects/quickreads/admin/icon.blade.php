@@ -23,6 +23,10 @@
         <rect x="3" y="4" width="18" height="16" rx="2"/>
         <path d="M3 9h18M9 9v11"/>
         @break
+        @case('explore')
+        <circle cx="12" cy="12" r="9"/>
+        <path d="m16 8-2.5 5.5L8 16l2.5-5.5L16 8Z"/>
+        @break
         @case('plus')
         <path d="M12 5v14M5 12h14"/>
         @break

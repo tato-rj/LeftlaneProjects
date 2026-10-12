@@ -29,7 +29,7 @@ class Editor
             'is_classic' => 'nullable|boolean', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120',
         ], ['category_id.exists' => 'Choose a regular category. Latest additions is an automatic collection.']);
         unset($data['image']);
-        $data['time'] = (string) (float) $data['time'];
+        $data['time'] = (string) max(1, (int) round((float) $data['time']));
         $data['cost'] = 'Free';
         $data['is_classic'] = $request->boolean('is_classic');
         return $data;

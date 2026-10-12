@@ -2,6 +2,8 @@
 
 Implemented on October 9, 2026 against `API_REQUIREMENTS_V2.md`. The authoritative contract is [openapi.yaml](openapi.yaml); the Swift handoff is [SWIFT_V2_MIGRATION.md](SWIFT_V2_MIGRATION.md). The OpenAPI document uses JSON syntax, which is valid YAML 1.2, allowing dependency-free PHP contract checks.
 
+Both documents are publicly served from the tracked files at `/docs/openapi.yaml` and `/docs/SWIFT_V2_MIGRATION.md` (GET/HEAD).
+
 ## Structure and design
 
 The new base path is `/api/v2`. The existing `/quickreads/...` routes remain at their original URLs, with their methods, handlers, middleware and response behavior unchanged. No `/api/v1` routes, redirects or legacy deprecations were introduced. `routes/api.php` only adds the v2 route file. `routes/web.php` only adds a separate v2 password-reset landing page.
@@ -18,7 +20,7 @@ Responses are `{data: ...}`. Paginated responses also have `meta` and `links`. R
 | POST | `/auth/password/reset` | Complete reset; revoke all v2 tokens for this account |
 | POST | `/auth/logout` | Revoke the presented bearer token |
 | GET | `/me` | Verified own account and existing legacy alias |
-| GET | `/explore` | Six ordered sections, each with a bounded story page |
+| GET | `/explore` | Admin-curated sections, each with a bounded story page |
 | GET | `/stories` | Browse/filter/search summaries or expand a section |
 | GET | `/stories/resolve` | Resolve exact current title and optional author safely |
 | GET | `/stories/{storyId}` | Detail, author biography/date label, first related page |
@@ -67,7 +69,9 @@ Ordering:
 - `popular`: count of distinct non-null favoriting account IDs descending, then ID ascending; duplicate legacy saves do not inflate v2 ranking.
 - Authors: database name order, then ID. Categories: stored `sorting_order`, null last, then ID. Favorites: story ID ascending.
 
-Explore preserves the six legacy headings in order and supplies stable section IDs/roles: `featured`, `latest`, `popular`, `under_10_minutes`, `classics`, `suggestions`. Featured has one deterministic daily UTC pick, selected by ordered IDs and `YYYYMMDD % catalog_count`; it is not a manually curated record. Other initial sections contain up to eight stories, with count/continuation. Latest/popular use their corresponding order; under-10 includes `<=10`; classics uses `is_classic`; suggestions uses editorial order. This deliberately replaces legacy random selection and tie ambiguity with reproducibility. `/stories?section=...` expands exactly the same criteria. Additional filters intersect a section; `sort` cannot override section ordering. IDs may appear in multiple sections but never duplicate within a section/page. Continue Reading and featured-writer presentation priorities remain local.
+Explore uses the layout saved in the Quickreads admin Explore tab. The default IDs are `featured`, `latest`, `popular`, `under_10_minutes`, `classics`, `suggestions`; custom sections have stable string IDs. Clients must render the returned array instead of enumerating these defaults. `featured` stays first with role `featured` and one daily UTC pick or a hand-picked story. Other sections have role `collection` and up to eight summaries initially, with count/continuation. The admin can rename/reorder/remove shelves, choose hand-picked order, or use automatic daily/latest/popular/quick/classics/author/category selections. A shelf is bounded at 24 stories; latest additions always resolves the newest ten, ordered by creation date then descending ID. Popularity counts distinct saved account IDs. Automatic sections refresh against the current library; manual sections omit deleted/orphaned stories. Continue Reading remains local.
+
+`/stories?section=<id>` expands the same bounded selection and preserves its ordering. Additional filters intersect the selection; `sort` cannot override section ordering. Original default IDs remain valid fallback filters when their shelves are removed. Removed custom IDs return validation errors. IDs may appear in different sections but never duplicate within a section/page. See [QUICKREADS_ADMIN.md](QUICKREADS_ADMIN.md) for editing and deployment, including the required `explore_layouts` migration.
 
 Categories expose stored slug as `key`, name, count, `description: null`, and `kind: category`. The system-managed Latest additions record is excluded from this directory; v2 clients use the existing `latest` Explore section or `/stories?section=latest` instead. Other source categories have no genre/editorial classification or descriptions, so they retain generic category metadata. Independently cacheable author/category directories satisfy Search discovery without a full-catalog download; no redundant discovery-bundle endpoint was needed.
 
@@ -111,7 +115,7 @@ Inspected all application route files, QuickReads controllers/models/migrations/
 
 | Existing app URL | Parameters / authentication | Existing response and behavior preserved |
 | --- | --- | --- |
-| GET `/quickreads/app/explore` | Optional `facebook_id`; no app authentication | Six `{title, collection}` sections. Latest stories is the ten newest stories and refreshes on every request; the other sections cache under `quickreads-explore-6` for 1440 seconds in Laravel 9. Random pick/classics/suggestions and the joined metadata/model count fields remain. Matching alias adds Boolean favorite state. |
+| GET `/quickreads/app/explore` | Optional `facebook_id`; no app authentication | Ordered `{title, collection}` sections from the admin layout, defaulting to six. The featured collection stays first with at most one story. Latest additions is always the newest ten. All shelves resolve fresh bounded selections; the old `quickreads-explore-6` cache is ignored. Joined story metadata/model count fields remain, and matching alias adds Boolean favorite state. |
 | GET `/quickreads/app/stories` | Optional `facebook_id`; no app authentication | Complete flat array, no pagination. String `id`, author/dates/life/title/summary/time/cost/artwork/category plus sorting_order. Guest rows lack `favorited`; matching alias adds Bool using legacy `contains(id)` behavior. |
 | GET `/quickreads/app/stories/text` | `id`; public | Array of `{text}` rows, empty array for nonexistent ID. Primary-key lookup allows at most one matching row in this schema. |
 | GET `/quickreads/app/stories/time` | `min`, `max` cast to integers; public | `whereBetween` on legacy string column; complete formatted story array. No personalized favorite addition. Actual MySQL string-column comparisons are retained; v2 explicitly casts numeric minutes. |

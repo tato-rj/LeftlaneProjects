@@ -14,7 +14,7 @@
         OVERVIEW
     </div>
     <nav aria-label="Main navigation">
-        @foreach(['dashboard' => ['Dashboard', '/quickreads'], 'statistics' => ['Statistics', '/quickreads/statistics'], 'users' => ['Users', '/quickreads/users'], 'stories' => ['Stories', '/quickreads/stories'], 'authors' => ['Authors', '/quickreads/authors'], 'categories' => ['Categories', '/quickreads/categories']] as $icon => $item)
+        @foreach(['dashboard' => ['Dashboard', '/quickreads'], 'statistics' => ['Statistics', '/quickreads/statistics'], 'users' => ['Users', '/quickreads/users'], 'explore' => ['Explore', '/quickreads/explore'], 'stories' => ['Stories', '/quickreads/stories'], 'authors' => ['Authors', '/quickreads/authors'], 'categories' => ['Categories', '/quickreads/categories']] as $icon => $item)
             @if($icon === 'stories')
                 <div class="nav-label nav-divider">
                     LIBRARY

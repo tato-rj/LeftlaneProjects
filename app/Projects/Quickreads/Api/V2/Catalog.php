@@ -6,15 +6,23 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Storage, Validator};
 use Illuminate\Validation\Rule;
+use App\Projects\Quickreads\Explore;
 
 class Catalog
 {
     public const SECTIONS = ['featured', 'latest', 'popular', 'under_10_minutes', 'classics', 'suggestions'];
     private array $artwork = [];
+    private ?array $explore = null;
 
     public function beginRequest(): void
     {
         $this->artwork = [];
+        $this->explore = null;
+    }
+
+    public function exploreSections(): array
+    {
+        return $this->explore ??= Explore::read()['sections'];
     }
 
     public function db()
@@ -45,8 +53,11 @@ class Catalog
             'min_minutes' => 'sometimes|required|numeric|min:0|max:1000000',
             'max_minutes' => 'sometimes|required|numeric|min:0|max:1000000',
             'sort' => ['sometimes', 'required', Rule::in(['editorial', 'title', 'latest', 'popular'])],
-            'section' => ['sometimes', 'required', Rule::in(self::SECTIONS)],
+            'section' => ['sometimes', 'required', 'string', 'max:80'],
         ])->validate();
+        if (isset($input['section']) && !in_array($input['section'], array_merge(self::SECTIONS, array_column($this->exploreSections(), 'id')), true)) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['section' => ['Choose an available Explore section.']]);
+        }
         if (isset($input['min_minutes'], $input['max_minutes']) && $input['min_minutes'] > $input['max_minutes']) {
             throw \Illuminate\Validation\ValidationException::withMessages(['max_minutes' => ['Must be greater than or equal to min_minutes.']]);
         }
@@ -84,21 +95,20 @@ class Catalog
                     ->orWhereRaw("LOWER(a.name) LIKE ? ESCAPE '!'", [$term]);
             });
         }
-        if (isset($input['min_minutes']) || isset($input['max_minutes']) || ($input['section'] ?? null) === 'under_10_minutes') {
+        if (isset($input['min_minutes']) || isset($input['max_minutes'])) {
             // time is a legacy string; do not treat nonnumeric values as zero.
             $query->whereRaw("s.time REGEXP '^[0-9]+([.][0-9]+)?$'");
             if (isset($input['min_minutes'])) $query->whereRaw('CAST(s.time AS DECIMAL(12,4)) >= ?', [$input['min_minutes']]);
             if (isset($input['max_minutes'])) $query->whereRaw('CAST(s.time AS DECIMAL(12,4)) <= ?', [$input['max_minutes']]);
         }
         $section = $input['section'] ?? null;
-        if ($section === 'featured') {
-            $count = $this->db()->table('stories')->count();
-            $id = $count ? $this->db()->table('stories')->orderBy('id')->offset((int) now('UTC')->format('Ymd') % $count)->value('id') : null;
-            $query->where('s.id', $id ?? 0);
+        if ($section !== null) {
+            $definition = collect($this->exploreSections())->firstWhere('id', $section)
+                ?? collect(Explore::defaults())->firstWhere('id', $section);
+            $ids = $definition ? Explore::ids($definition) : [];
+            return Explore::orderIds($query->whereIn('s.id', $ids), $ids, 's.id');
         }
-        if ($section === 'under_10_minutes') $query->whereRaw('CAST(s.time AS DECIMAL(12,4)) <= 10');
-        if ($section === 'classics') $query->where('s.is_classic', true);
-        $sort = $section === 'latest' ? 'latest' : ($section === 'popular' ? 'popular' : ($input['sort'] ?? 'editorial'));
+        $sort = $input['sort'] ?? 'editorial';
         if ($sort === 'popular') {
             $query->orderByDesc($this->db()->table('user_purchase_records as f')
                 ->selectRaw('COUNT(DISTINCT f.user_id)')->whereColumn('f.story_id', 's.id'));

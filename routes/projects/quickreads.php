@@ -15,6 +15,10 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	
 	Route::get('/statistics', 'Projects\Quickreads\AdminController@statistics');
 	Route::get('/lookups', 'Projects\Quickreads\AdminController@lookups');
+	Route::get('/explore', 'Projects\Quickreads\ExploreController@index');
+	Route::patch('/explore', 'Projects\Quickreads\ExploreController@update');
+	Route::post('/explore/preview', 'Projects\Quickreads\ExploreController@preview');
+	Route::get('/explore/stories', 'Projects\Quickreads\ExploreController@stories');
 
 	Route::prefix('/users')->group(function() {
 		Route::get('', 'Projects\Quickreads\UsersController@index');

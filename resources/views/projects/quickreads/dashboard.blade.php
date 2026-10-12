@@ -82,7 +82,7 @@
                                     </span>
                                 </td>
                                 <td class="nowrap">
-                                    {{ $story->time }} min
+                                    {{ is_numeric($story->time) ? max(1, (int) round((float) $story->time)) : $story->time }} min
                                 </td>
                                 <td>
                                     <a class="row-action" href="/quickreads/stories/edit/{{ $story->slug }}" aria-label="Edit {{ $story->title }}">

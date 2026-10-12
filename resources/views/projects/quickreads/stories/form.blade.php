@@ -127,9 +127,10 @@
                                 *
                             </span>
                         </label>
-                        <input type="number" id="time" name="time" min="0.1" max="1440" step="0.1" value="{{ old('time', $story->time ?? '') }}" required aria-describedby="time-help">
+                        @php($readingMinutes = old('time', $story->time ?? ''))
+                        <input type="number" id="time" name="time" min="1" max="1440" step="1" value="{{ is_numeric($readingMinutes) ? max(1, (int) round((float) $readingMinutes)) : '' }}" required aria-describedby="time-help">
                         <small id="time-help">
-                            Automatically estimated at 200 words per minute as you edit the story text.
+                            Automatically estimated at 200 words per minute and rounded to the nearest whole minute as you edit the story text.
                         </small>
                         @error('time')
                             <small class="field-error">

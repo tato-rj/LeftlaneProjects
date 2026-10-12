@@ -35,3 +35,13 @@ Route::get('/docs/openapi.yaml', function () {
         'Content-Type' => 'application/yaml; charset=UTF-8',
     ]);
 });
+
+Route::get('/docs/SWIFT_V2_MIGRATION.md', function () {
+    $path = base_path('docs/SWIFT_V2_MIGRATION.md');
+
+    abort_unless(file_exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'text/markdown; charset=UTF-8',
+    ]);
+});

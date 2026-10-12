@@ -115,7 +115,7 @@
                                 </span>
                             </td>
                             <td>
-                                {{ $story->time }} min
+                                {{ is_numeric($story->time) ? max(1, (int) round((float) $story->time)) : $story->time }} min
                             </td>
                             <td>
                                 {{ number_format($story->views) }}

@@ -85,7 +85,7 @@
   const updateReadingTime = () => {
     const words = (text.value.match(/\S+/gu) || []).length;
     if (count) count.textContent = `${words.toLocaleString()} words`;
-    if (readingTime) readingTime.value = words ? String(Math.max(0.1, Math.round(words / 200 * 10) / 10)) : '';
+    if (readingTime) readingTime.value = words ? String(Math.max(1, Math.round(words / 200))) : '';
   };
   if (text) { text.addEventListener('input', updateReadingTime); updateReadingTime(); }
   const file = document.querySelector('#image');

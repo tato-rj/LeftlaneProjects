@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="{{ asset('css/quickreads-admin.css') }}?v={{ filemtime(public_path('css/quickreads-admin.css')) }}">
         <script src="{{ asset('js/quickreads-admin.js') }}?v={{ filemtime(public_path('js/quickreads-admin.js')) }}" defer>
         </script>
+        @stack('styles')
+        @stack('scripts')
     </head>
     <body>
         <a class="skip-link" href="#main">

@@ -105,13 +105,11 @@ class CatalogController extends Controller
     public function explore(Request $request)
     {
         $this->catalog->beginRequest();
-        $headings = ['featured' => "Today's pick", 'latest' => 'Latest stories', 'popular' => 'Most popular',
-            'under_10_minutes' => 'Under 10 minutes', 'classics' => 'Classics', 'suggestions' => 'Not sure what to read?'];
         $sections = [];
-        foreach (Catalog::SECTIONS as $section) {
-            $input = ['section' => $section, 'page' => 1, 'per_page' => $section === 'featured' ? 1 : 8, 'q' => ''];
-            $sections[] = ['id' => $section, 'role' => $section === 'featured' ? 'featured' : 'collection',
-                'heading' => $headings[$section], 'stories' => $this->catalog->page($this->catalog->filtered($input), $input,
+        foreach ($this->catalog->exploreSections() as $section) {
+            $input = ['section' => $section['id'], 'page' => 1, 'per_page' => $section['id'] === 'featured' ? 1 : 8, 'q' => ''];
+            $sections[] = ['id' => $section['id'], 'role' => $section['id'] === 'featured' ? 'featured' : 'collection',
+                'heading' => $section['title'], 'stories' => $this->catalog->page($this->catalog->filtered($input), $input,
                     '/api/v2/stories', fn ($story) => $this->catalog->summary($story))];
         }
         return Responses::json($request, ['data' => $sections]);

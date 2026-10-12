@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\{Story, User, UserPurchaseRecord, LatestAdditions};
+use App\Projects\Quickreads\{Story, User, UserPurchaseRecord, LatestAdditions, Explore};
 use Illuminate\Support\Facades\DB;
 use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Support\Facades\Storage;
@@ -22,27 +22,16 @@ class StoriesController extends QuickreadsController
 
     public function explore(Request $request)
     {
-        $collection = \Cache::remember('quickreads-explore-6', 1440, function() {
-            $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])]);
-            $latest = collect(['title' => 'Latest stories', 'collection' => collect()]);
-            $popular = collect(['title' => 'Most popular', 'collection' => Story::withCount('favorites')->formatted()->orderBy('favorites_count', 'desc')->take(8)->get()]);
-            $under10 = collect(['title' => 'Under 10 minutes', 'collection' => Story::formatted()->where('time', '<=', 10)->take(8)->get()]);
-            $classics = collect(['title' => 'Classics', 'collection' => Story::formatted()->where('is_classic', true)->inRandomOrder()->take(6)->get()]);
-            $suggestions = collect(['title' => 'Not sure what to read?', 'collection' => Story::formatted()->inRandomOrder()->take(6)->get()]);
+        $collection = Explore::collections(Explore::read()['sections']);
 
-            return collect([$pick, $latest, $popular, $under10, $classics, $suggestions]);
-        });
-
-        // Refresh this section on every request, including when the remaining
-        // Explore sections came from an older cache entry.
-        $collection->put(1, collect(['title' => 'Latest stories', 'collection' => LatestAdditions::stories()]));
-
-        if ($user = User::where('facebook_id', $request->facebook_id)->first()) {
-            $favorites = UserPurchaseRecord::where('user_id', $user->id)->get();
+        $alias = $request->query('facebook_id');
+        if (is_string($alias) && $alias !== '' && ($user = User::where('facebook_id', $alias)->first())) {
+            $ids = $collection->flatMap(fn ($section) => $section['collection']->pluck('id'))->unique()->values()->all();
+            $favorites = UserPurchaseRecord::where('user_id', $user->id)->whereIn('story_id', $ids)->pluck('story_id')->flip();
 
             foreach ($collection as $item) {
                 foreach($item['collection'] as $story) {
-                    $story->favorited = ! $favorites->where('story_id', $story->id)->isEmpty();
+                    $story->favorited = $favorites->has($story->id);
                 }
             }
         }

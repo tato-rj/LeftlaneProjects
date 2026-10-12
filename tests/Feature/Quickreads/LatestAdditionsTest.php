@@ -60,6 +60,7 @@ class LatestAdditionsTest extends QuickreadsTestCase
     public function test_latest_refreshes_even_with_warm_explore_cache_and_after_deletions(): void
     {
         $this->legacyCategory(); $this->catalogue();
+        Cache::put('quickreads-explore-6', collect(), 1440); // An old deployment's cache must not override the layout.
         $this->getJson('/quickreads/app/explore')->assertOk()->assertJsonPath('1.collection.0.id', 18);
         $this->assertTrue(Cache::has('quickreads-explore-6'));
         $db = DB::connection('quickreads');

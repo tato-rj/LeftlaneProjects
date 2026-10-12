@@ -530,16 +530,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "featured",
-                "latest",
-                "popular",
-                "under_10_minutes",
-                "classics",
-                "suggestions"
-              ]
+              "maxLength": 80,
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$"
             },
-            "description": "Explore expansion criteria. Featured is one deterministic daily UTC pick; latest/popular use corresponding sort. Under 10 includes <=10; classics uses is_classic; suggestions is editorial catalog order. Other filters intersect the section. All sorts use ID ties."
+            "description": "Explore section ID. Includes default sections and custom sections configured in admin."
           }
         ],
         "responses": {
@@ -697,16 +691,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "featured",
-                "latest",
-                "popular",
-                "under_10_minutes",
-                "classics",
-                "suggestions"
-              ]
+              "maxLength": 80,
+              "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$"
             },
-            "description": "Explore expansion criteria. Featured is one deterministic daily UTC pick; latest/popular use corresponding sort. Under 10 includes <=10; classics uses is_classic; suggestions is editorial catalog order. Other filters intersect the section. All sorts use ID ties."
+            "description": "Explore section ID. Includes default sections and custom sections configured in admin."
           }
         ],
         "responses": {
@@ -1539,7 +1527,7 @@
     "/api/v2/explore": {
       "get": {
         "operationId": "getExplore",
-        "summary": "Fetch six ordered editorial sections with bounded story pages",
+        "summary": "Fetch admin-curated sections with bounded story pages",
         "security": [],
         "parameters": [
           {
@@ -1610,7 +1598,7 @@
       },
       "head": {
         "operationId": "getExploreHead",
-        "summary": "Headers for fetch six ordered editorial sections with bounded story pages",
+        "summary": "Headers for fetch admin-curated sections with bounded story pages",
         "security": [],
         "parameters": [
           {
@@ -3010,14 +2998,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "enum": [
-              "featured",
-              "latest",
-              "popular",
-              "under_10_minutes",
-              "classics",
-              "suggestions"
-            ]
+            "maxLength": 80,
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,79}$"
           },
           "role": {
             "type": "string",
