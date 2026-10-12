@@ -46,13 +46,16 @@ class ExploreController extends QuickreadsController
 
     public function stories(Request $request)
     {
-        $input = $request->validate(['q' => 'nullable|string|max:150']);
+        $input = $request->validate(['q' => 'nullable|string|max:150', 'page' => 'sometimes|integer|min:1|max:1000000']);
         $query = Queries::stories()->whereNotNull('a.id')->whereNotNull('c.id')
             ->select('s.id', 's.title', 's.slug', 's.time', 's.summary', 'a.name as author');
         Queries::search($query, ['s.title', 'a.name'], $input['q'] ?? null);
-        return response()->json($query->orderByDesc('s.created_at')->orderByDesc('s.id')->limit(20)->get()->map(function ($story) {
+        $page = $query->orderBy('s.title')->orderBy('s.id')->simplePaginate(20);
+        $stories = collect($page->items())->map(function ($story) {
             $story->story_filename = asset('storage/stories/'.$story->slug.'/'.$story->slug.'.jpeg');
             return Explore::card($story);
-        }));
+        });
+        return response()->json(['data' => $stories, 'meta' => ['page' => $page->currentPage(),
+            'has_more' => $page->hasMorePages(), 'next_page' => $page->hasMorePages() ? $page->currentPage() + 1 : null]]);
     }
 }

@@ -16,8 +16,9 @@
   const minutes = document.querySelector('#section-minutes');
   const filter = document.querySelector('#section-filter');
   const filterResults = document.querySelector('#explore-filter-results');
-  const search = document.querySelector('#explore-story-search');
-  const results = document.querySelector('[data-story-results]');
+  const newSectionForm = document.querySelector('[data-new-section-form]');
+  const newSectionTitle = document.querySelector('#new-section-title');
+  const createSection = document.querySelector('[data-create-section]');
   const csrf = document.querySelector('meta[name=csrf-token]').content;
   const sources = {
     manual: ['Hand-picked stories', 'Choose the stories yourself and arrange them just the way you like.'],
@@ -31,7 +32,7 @@
   };
   let sections = initial.sections, revision = initial.revision, selectedId = 'featured';
   let dirty = false, saving = false, previewTimer, previewController, previewSequence = 0;
-  let searchTimer, searchController, filterTimer, filterController, drag = null;
+  let filterTimer, filterController, drag = null, activePicker, modalPicker, draftStories = [];
   const preview = new Map(initial.preview.map(s => [s.id, s.stories]));
   const expanded = new Set();
   const labels = new Map(Object.entries(initial.labels || {}));
@@ -41,9 +42,10 @@
   const announce = text => { document.querySelector('[data-drag-announcement]').textContent = text; };
   const notify = (text, error = false, undo) => {
     message.replaceChildren(document.createTextNode(text)); message.hidden = false; message.classList.toggle('error', error);
+    message.dataset.kind = error ? 'error' : undo ? 'undo' : 'notice';
     if (undo) message.append(button('Undo', '', () => { undo(); message.hidden = true; }));
   };
-  const markDirty = () => { dirty = true; save.disabled = saving; saveState.textContent = 'Unsaved changes'; save.closest('.explore-save').classList.add('has-changes'); schedulePreview(); };
+  const markDirty = () => { dirty = true; save.disabled = saving; saveState.textContent = 'Unsaved changes'; save.closest('.explore-save').classList.add('has-changes'); if (message.dataset.kind === 'notice') message.hidden = true; schedulePreview(); };
   const payload = () => sections.map(s => ({ ...s, limit: s.id === 'featured' ? 1 : s.source === 'latest' ? 10 : s.source === 'manual' ? Math.max(1, s.story_ids.length) : Number(s.limit), max_minutes: Number(s.max_minutes) }));
   const request = async (url, options = {}) => {
     const response = await fetch(url, { ...options, headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, ...options.headers } });
@@ -68,6 +70,100 @@
     if (story.image) el.append(image(story));
     return el;
   };
+  // The same bounded library browser powers existing shelves and the new-section form.
+  function storyPicker(host, { id, getStories, onChange, max }) {
+    let rows = [], nextPage = null, controller, timer, disposed = false, loading = false, sequence = 0;
+    const wrap = node('div', 'explore-picker'), heading = node('div', 'explore-picker-heading'), count = node('span');
+    heading.append(node('h3', '', max === 1 ? 'Featured story' : 'Stories in this section'), count);
+    const picked = node('div', 'explore-picked-list'); picked.setAttribute('aria-label', 'Selected stories');
+    const label = node('label', 'explore-search-label', 'Find stories'); label.htmlFor = id;
+    const search = node('input'); search.id = id; search.type = 'search'; search.autocomplete = 'off'; search.maxLength = 150;
+    search.placeholder = 'Search title or author…'; search.setAttribute('aria-label', id === 'new-section-stories' ? 'Search stories for new section' : 'Search stories to add');
+    const caption = node('p', 'explore-browse-caption', 'Browse your library · A–Z');
+    const results = node('div', 'explore-search-results'), status = node('p', 'explore-picker-status'); status.setAttribute('role', 'status');
+    const more = button('Load more stories', 'explore-load-more', () => load(nextPage)); more.hidden = true;
+    const pickedGroup = node('div', 'explore-picked-group'), libraryGroup = node('div', 'explore-library-group');
+    pickedGroup.append(heading, picked); libraryGroup.append(label, search, caption, results, status, more);
+    wrap.append(pickedGroup, libraryGroup); host.replaceChildren(wrap);
+    function change(next) { onChange(next); render(); }
+    function renderPicked() {
+      const chosen = getStories(), scroll = picked.scrollTop; count.textContent = chosen.length+'/'+max;
+      const focused = document.activeElement, focusedId = picked.contains(focused) ? focused.closest('[data-story-id]')?.dataset.storyId : null;
+      const focusSelector = focused?.classList.contains('explore-drag') ? '.explore-drag' : '.explore-picked-remove';
+      picked.replaceChildren();
+      if (!chosen.length) picked.append(node('p', 'explore-picker-empty', 'No stories selected. Add them below.'));
+      chosen.forEach((story, index) => {
+        const row = node('div', 'explore-picked-story'); row.dataset.storyId = story.id;
+        const handle = button('⠿', 'explore-drag', () => {}, 'Drag '+story.title+' to reorder'); handle.dataset.dragKind = 'picker';
+        handle.setAttribute('aria-describedby', 'explore-drag-help');
+        handle.addEventListener('keydown', event => {
+          const direction = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
+          if (!direction) return; event.preventDefault(); const next = [...getStories()], target = index + direction;
+          if (target < 0 || target >= next.length) return;
+          [next[index], next[target]] = [next[target], next[index]]; change(next);
+          picked.querySelector(`[data-story-id="${story.id}"] .explore-drag`)?.focus();
+        });
+        const copy = node('span', 'explore-picked-copy'); copy.append(node('strong', '', story.title), node('small', '', story.author));
+        if (max > 1) row.append(handle);
+        row.append(copy, button('×', 'explore-picked-remove', () => change(getStories().filter(s => s.id !== story.id)), 'Remove '+story.title+' from selection'));
+        picked.append(row);
+      });
+      picked.scrollTop = scroll;
+      if (focusedId) picked.querySelector(`[data-story-id="${focusedId}"] ${focusSelector}`)?.focus({ preventScroll: true });
+    }
+    function renderResults() {
+      const scroll = results.scrollTop, chosen = getStories();
+      const focusedId = results.contains(document.activeElement) ? document.activeElement.dataset.resultStoryId : null;
+      results.replaceChildren();
+      rows.forEach(story => {
+        const included = chosen.some(s => s.id === story.id);
+        const row = button('', 'explore-search-result'+(included ? ' is-selected' : ''), () => {
+          if (included) change(getStories().filter(s => s.id !== story.id));
+          else if (max === 1) change([story]);
+          else if (getStories().length < max) change([...getStories(), story]);
+        }, (included ? 'Remove ' : max === 1 ? 'Feature ' : 'Add ')+story.title);
+        row.dataset.resultStoryId = story.id; row.setAttribute('aria-pressed', String(included)); row.disabled = !included && max !== 1 && chosen.length >= max;
+        const thumbnail = node('span', 'explore-result-cover'); if (story.image) thumbnail.append(image(story));
+        const copy = node('span', 'explore-result-copy'); copy.append(node('strong', '', story.title), node('small', '', story.author+' · '+story.time+' min'));
+        row.append(thumbnail, copy, node('span', 'explore-result-add', included ? '✓ Remove' : max === 1 ? 'Choose' : '+ Add')); results.append(row);
+      });
+      results.scrollTop = scroll;
+      if (focusedId) results.querySelector(`[data-result-story-id="${focusedId}"]`)?.focus({ preventScroll: true });
+    }
+    function render() { if (disposed) return; renderPicked(); renderResults(); }
+    async function load(page = 1) {
+      if (disposed || !page || loading && page !== 1) return;
+      const current = ++sequence, q = search.value; controller?.abort(); controller = new AbortController(); loading = true;
+      if (page === 1) { rows = []; nextPage = null; more.hidden = true; renderResults(); }
+      status.textContent = 'Loading stories…'; more.disabled = true;
+      try {
+        const data = await request('/quickreads/explore/stories?'+new URLSearchParams({ q, page }), { signal: controller.signal });
+        if (disposed || current !== sequence || search.value !== q) return;
+        rows = [...new Map([...rows, ...data.data].map(s => [s.id, s])).values()]; nextPage = data.meta.next_page;
+        renderResults(); more.hidden = !nextPage;
+        caption.textContent = q.trim() ? 'Search results · title or author' : 'Browse your library · A–Z';
+        status.textContent = rows.length ? rows.length+' stories shown'+(nextPage ? '' : ' · end of results') : 'No stories found. Try another title or author.';
+      } catch (error) {
+        if (error.name !== 'AbortError' && !disposed && current === sequence) {
+          status.replaceChildren(document.createTextNode('Unable to load stories. '), button('Retry', '', () => load(page)));
+        }
+      } finally { if (current === sequence) { loading = false; more.disabled = false; } }
+    }
+    search.addEventListener('input', () => {
+      clearTimeout(timer); controller?.abort(); sequence++; rows = []; nextPage = null; more.hidden = true;
+      renderResults(); status.textContent = 'Searching…'; timer = setTimeout(() => load(1), 250);
+    });
+    search.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); clearTimeout(timer); load(1); } });
+    picked.addEventListener('pointerdown', event => beginDrag(event, order => {
+      const chosen = getStories(); change(order.map(storyId => chosen.find(s => s.id === storyId)).filter(Boolean));
+    }, render));
+    render(); load(1);
+    return { render, focus: () => search.focus(), destroy: () => { disposed = true; clearTimeout(timer); controller?.abort(); } };
+  }
+  function setSectionStories(section, stories) {
+    section.source = 'manual'; section.story_ids = stories.map(s => s.id); section.limit = Math.max(1, stories.length);
+    preview.set(section.id, stories); markDirty(); renderCanvas(); updateSelectionOptions(); activePicker?.render();
+  }
   const moveSection = direction => {
     const index = sections.findIndex(s => s.id === selectedId), target = index + direction;
     if (index < 1 || target < 1 || target >= sections.length) return;
@@ -81,7 +177,7 @@
     [section.story_ids[index], section.story_ids[target]] = [section.story_ids[target], section.story_ids[index]];
     const stories = preview.get(section.id) || [];
     preview.set(section.id, section.story_ids.map(id => stories.find(s => s.id === id)).filter(Boolean));
-    markDirty(); renderCanvas(); announce('Story moved.');
+    markDirty(); renderCanvas(); activePicker?.render(); announce('Story moved.');
   };
   const dragHandle = (kind, section, storyId) => {
     const handle = button('⠿', 'explore-drag', () => {}, kind === 'section' ? 'Drag '+section.title+' to reorder' : 'Drag story to reorder');
@@ -97,7 +193,9 @@
   };
   const storyCard = (story, section) => {
     const card = node('div', 'explore-story'); card.dataset.storyId = story.id;
-    card.append(cover(story), node('h4', '', story.title), node('p', '', story.author), node('span', 'explore-time', story.time+' min'));
+    const copy = node('div', 'explore-story-copy');
+    copy.append(node('h4', '', story.title), node('p', '', story.author), node('span', 'explore-time', story.time+' min'));
+    card.append(cover(story), copy);
     if (section.source === 'manual' && section.id === selectedId) {
       card.classList.add('is-editable');
       const tools = node('div', 'explore-story-tools');
@@ -106,10 +204,10 @@
         event.stopPropagation(); const index = section.story_ids.indexOf(story.id);
         section.story_ids = section.story_ids.filter(id => id !== story.id);
         preview.set(section.id, (preview.get(section.id) || []).filter(s => s.id !== story.id));
-        markDirty(); renderCanvas(); updatePickedCount(); renderSearchResults();
-        notify('Story removed from this section.', false, () => { section.story_ids.splice(index, 0, story.id); preview.set(section.id, [...(preview.get(section.id) || []), story]); reorderPreview(section); markDirty(); renderCanvas(); updatePickedCount(); renderSearchResults(); });
+        markDirty(); renderCanvas(); activePicker?.render();
+        notify('Story removed from this section.', false, () => { section.story_ids.splice(index, 0, story.id); preview.set(section.id, [...(preview.get(section.id) || []), story]); reorderPreview(section); markDirty(); renderCanvas(); activePicker?.render(); });
       }, 'Remove '+story.title+' from this section'));
-      card.append(tools);
+      copy.append(tools);
     }
     return card;
   };
@@ -121,6 +219,7 @@
       const header = node('div', 'explore-section-heading');
       header.append(section.id === 'featured' ? node('span', 'explore-lock', '◇') : dragHandle('section', section));
       header.append(node('h3', '', section.id === 'featured' ? 'Today’s pick' : section.title));
+      if (section.source !== 'latest') header.append(button('+ Stories', 'explore-edit', () => { select(section.id); activePicker?.focus(); }, 'Add stories to '+section.title));
       header.append(button(section.id === selectedId ? 'Editing' : 'Edit', 'explore-edit', () => select(section.id), 'Edit '+section.title));
       const caption = node('div', 'explore-section-caption');
       const stories = preview.get(section.id) || [];
@@ -139,16 +238,10 @@
       el.addEventListener('click', event => { if (!event.target.closest('button') && !drag) select(section.id); });
       canvas.append(el);
     });
-    document.querySelector('[data-add-section]').disabled = sections.length >= 20;
+    document.querySelectorAll('[data-add-section]').forEach(b => b.disabled = sections.length >= 20);
   }
-  const updatePickedCount = () => { const s = selected(); document.querySelector('[data-picked-count]').textContent = s.story_ids.length+'/'+(s.id === 'featured' ? 1 : 24); };
-  function renderInspector() {
+  function updateSelectionOptions() {
     const s = selected(), featured = s.id === 'featured';
-    document.querySelector('[data-inspector-heading]').textContent = featured ? 'Today’s pick' : s.title;
-    document.querySelector('[data-section-kind]').textContent = featured ? 'FEATURED' : 'COLLECTION';
-    document.querySelector('[data-section-help]').textContent = featured ? 'The first thing readers see. Feature one story of your choice, or let it change each day.' : 'Give this shelf a name and choose how its stories are selected.';
-    document.querySelector('[data-title-field]').hidden = featured;
-    title.value = s.title;
     source.replaceChildren();
     Object.entries(sources).filter(([key]) => !featured || ['daily', 'manual'].includes(key)).forEach(([key, [label]]) => { const option = node('option', '', featured && key === 'daily' ? 'A new pick each day' : label); option.value = key; source.append(option); });
     source.value = s.source; limit.value = String(s.limit); minutes.value = s.max_minutes;
@@ -156,7 +249,17 @@
     document.querySelector('[data-limit-field]').hidden = featured || ['manual', 'latest'].includes(s.source);
     document.querySelector('[data-minutes-field]').hidden = s.source !== 'quick';
     document.querySelector('[data-filter-field]').hidden = !['category', 'author'].includes(s.source);
-    document.querySelector('[data-manual-field]').hidden = s.source !== 'manual';
+    document.querySelector('[data-section-picker]').hidden = s.source === 'latest';
+    document.querySelector('[data-selection-note]').textContent = s.source === 'latest' ? 'Latest additions always shows the 10 newest stories automatically.' : s.source === 'manual' ? 'Your selection stays exactly as you arrange it. Drag stories here or in the preview.' : 'Currently automatic. Add or remove a story below to keep your own selection.';
+  }
+  function renderInspector() {
+    const s = selected(), featured = s.id === 'featured';
+    activePicker?.destroy(); activePicker = null;
+    document.querySelector('[data-inspector-heading]').textContent = featured ? 'Today’s pick' : s.title;
+    document.querySelector('[data-section-kind]').textContent = featured ? 'FEATURED' : 'COLLECTION';
+    document.querySelector('[data-section-help]').textContent = featured ? 'Choose one story to feature at the top of Explore.' : 'Name this section and add the stories you want readers to discover.';
+    document.querySelector('[data-title-field]').hidden = featured;
+    title.value = s.title; updateSelectionOptions();
     document.querySelector('[data-section-actions]').hidden = featured;
     const index = sections.indexOf(s);
     document.querySelector('[data-move-section="-1"]').disabled = index <= 1;
@@ -166,14 +269,13 @@
     filter.placeholder = 'Search '+(s.source === 'author' ? 'authors' : 'categories')+'…';
     filter.value = labels.get(s.source+':'+s[s.source+'_id']) || '';
     document.querySelector('[data-filter-selected]').textContent = s[s.source+'_id'] ? 'Selected: '+(filter.value || 'ID '+s[s.source+'_id']) : 'Choose a result to fill this section.';
-    document.querySelector('[data-picker-heading]').textContent = featured ? 'Choose the featured story' : 'Pick your stories';
-    updatePickedCount(); search.value = ''; searchRows = []; renderSearchResults();
-    if (s.source === 'manual') loadStories();
+    const host = document.querySelector('[data-section-picker]'); host.replaceChildren();
+    if (s.source !== 'latest') activePicker = storyPicker(host, { id: 'explore-story-search', getStories: () => preview.get(s.id) || [], onChange: rows => setSectionStories(s, rows), max: featured ? 1 : 24 });
   }
   function select(id) {
-    selectedId = id; searchController?.abort(); filterController?.abort(); clearTimeout(searchTimer); clearTimeout(filterTimer);
+    selectedId = id; filterController?.abort(); clearTimeout(filterTimer); document.querySelector('.explore-automatic').open = false;
     renderCanvas(); renderInspector();
-    if (window.matchMedia('(max-width: 650px), (min-width: 801px) and (max-width: 1000px)').matches) { inspector.scrollIntoView({ behavior: 'smooth', block: 'start' }); (id === 'featured' ? source : title).focus({ preventScroll: true }); }
+    if (window.matchMedia('(max-width: 650px), (min-width: 801px) and (max-width: 1000px)').matches) { inspector.scrollIntoView({ behavior: 'smooth', block: 'start' }); (id === 'featured' ? document.querySelector('#explore-story-search') : title)?.focus({ preventScroll: true }); }
   }
   const schedulePreview = () => {
     previewController?.abort(); clearTimeout(previewTimer); previewSequence++;
@@ -185,12 +287,17 @@
     try {
       const data = await request('/quickreads/explore/preview', { method: 'POST', body: JSON.stringify({ sections: payload() }), signal: previewController.signal });
       if (sequence !== previewSequence) return;
-      data.preview.forEach(s => preview.set(s.id, s.stories)); renderCanvas();
+      data.preview.forEach(s => preview.set(s.id, s.stories)); renderCanvas(); activePicker?.render();
     } catch (error) { if (error.name !== 'AbortError' && sequence === previewSequence) notify(error.message, true); }
     finally { if (sequence === previewSequence) root.classList.remove('explore-editor-loading'); }
   }
   title.addEventListener('input', () => { selected().title = title.value; document.querySelector('[data-inspector-heading]').textContent = title.value || 'Untitled section'; markDirty(); renderCanvas(); });
-  source.addEventListener('change', () => { selected().source = source.value; markDirty(); renderInspector(); schedulePreview(); });
+  source.addEventListener('change', () => {
+    const s = selected(), choice = source.value;
+    if (choice === 'manual') setSectionStories(s, preview.get(s.id) || []);
+    else { s.source = choice; markDirty(); }
+    renderInspector();
+  });
   limit.addEventListener('change', () => { selected().limit = Number(limit.value); markDirty(); schedulePreview(); });
   minutes.addEventListener('input', () => { selected().max_minutes = minutes.value; markDirty(); schedulePreview(); });
   document.querySelectorAll('[data-move-section]').forEach(b => b.addEventListener('click', () => moveSection(Number(b.dataset.moveSection))));
@@ -200,46 +307,31 @@
     markDirty(); renderCanvas(); renderInspector();
     notify('“'+removed.title+'” removed. Save Explore to apply.', false, () => { sections.splice(Math.min(index, sections.length), 0, removed); selectedId = removed.id; markDirty(); renderCanvas(); renderInspector(); });
   });
-  document.querySelector('[data-add-section]').addEventListener('click', () => dialog.showModal());
-  document.querySelector('[data-close-dialog]').addEventListener('click', () => dialog.close());
+  document.querySelectorAll('[data-add-section]').forEach(b => b.addEventListener('click', () => {
+    if (sections.length >= 20) return;
+    newSectionForm.reset(); draftStories = []; createSection.disabled = true;
+    modalPicker?.destroy();
+    modalPicker = storyPicker(document.querySelector('[data-new-section-picker]'), {
+      id: 'new-section-stories', getStories: () => draftStories,
+      onChange: rows => { draftStories = rows; updateCreateButton(); }, max: 24
+    });
+    dialog.showModal(); newSectionTitle.focus();
+  }));
+  const updateCreateButton = () => { createSection.disabled = !newSectionTitle.value.trim() || !draftStories.length; };
+  newSectionTitle.addEventListener('input', updateCreateButton);
+  document.querySelectorAll('[data-close-dialog]').forEach(b => b.addEventListener('click', () => dialog.close()));
+  dialog.addEventListener('close', () => { modalPicker?.destroy(); modalPicker = null; });
   dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } });
-  Object.entries(sources).forEach(([key, [label, help]]) => {
-    const choice = button('', 'explore-section-type', () => {
-      if (sections.length >= 20) return;
-      const section = { id: 'section-'+crypto.randomUUID(), title: key === 'manual' ? 'A shelf of your own' : label,
-        source: key, limit: key === 'latest' ? 10 : 8, story_ids: [], category_id: null, author_id: null, max_minutes: 10 };
-      sections.push(section); selectedId = section.id; markDirty(); dialog.close(); renderCanvas(); renderInspector(); schedulePreview();
-      inspector.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); title.focus({ preventScroll: true }); title.select();
-    });
-    choice.append(node('strong', '', label), node('small', '', help)); document.querySelector('[data-section-types]').append(choice);
+  newSectionForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!newSectionTitle.value.trim() || !draftStories.length || sections.length >= 20) return;
+    const section = { id: 'section-'+crypto.randomUUID(), title: newSectionTitle.value.trim(), source: 'manual',
+      limit: draftStories.length, story_ids: draftStories.map(s => s.id), category_id: null, author_id: null, max_minutes: 10 };
+    sections.push(section); preview.set(section.id, [...draftStories]); selectedId = section.id;
+    markDirty(); dialog.close(); renderCanvas(); renderInspector();
+    canvas.querySelector(`[data-section-id="${section.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    announce('Section created. Save Explore to apply.');
   });
-  let searchRows = [];
-  function renderSearchResults() {
-    results.replaceChildren(); const s = selected();
-    if (!searchRows.length) { results.append(node('p', '', 'Search your library to add a story.')); return; }
-    searchRows.forEach(story => {
-      const picked = s.story_ids.includes(story.id), full = s.id !== 'featured' && s.story_ids.length >= 24;
-      const row = button('', 'explore-search-result', () => {
-        s.story_ids = s.id === 'featured' ? [story.id] : [...s.story_ids, story.id];
-        const rows = preview.get(s.id) || []; if (!rows.some(row => row.id === story.id)) rows.push(story);
-        preview.set(s.id, rows); reorderPreview(s); markDirty(); renderCanvas(); updatePickedCount(); renderSearchResults();
-      }, (picked ? 'Selected: ' : s.id === 'featured' ? 'Feature ' : 'Add ')+story.title);
-      row.disabled = picked || full;
-      const thumbnail = node('span', 'explore-result-cover'); if (story.image) thumbnail.append(image(story));
-      const copy = node('span'); copy.append(node('strong', '', story.title), node('small', '', story.author+' · '+story.time+' min'));
-      row.append(thumbnail, copy, node('span', 'explore-result-add', picked ? '✓' : '+')); results.append(row);
-    });
-  }
-  async function loadStories() {
-    searchController?.abort(); searchController = new AbortController(); const id = selectedId, q = search.value;
-    results.replaceChildren(node('p', '', 'Searching…'));
-    try {
-      const rows = await request('/quickreads/explore/stories?'+new URLSearchParams({ q }), { signal: searchController.signal });
-      if (selectedId !== id || search.value !== q) return; searchRows = rows; renderSearchResults();
-      if (!rows.length) results.replaceChildren(node('p', '', 'No stories found. Try another title or author.'));
-    } catch (error) { if (error.name !== 'AbortError' && selectedId === id) results.replaceChildren(node('p', '', 'Unable to load stories. Try searching again.')); }
-  }
-  search.addEventListener('input', () => { clearTimeout(searchTimer); searchController?.abort(); searchTimer = setTimeout(loadStories, 250); });
   async function loadFilters() {
     const s = selected(); if (!['author', 'category'].includes(s.source)) return;
     const id = s.id, kind = s.source, q = filter.value;
@@ -279,14 +371,15 @@
   window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 
   // Pointer events support mouse, pen and touch without a CDN dependency.
-  canvas.addEventListener('pointerdown', event => {
+  function beginDrag(event, commit, restore) {
     const handle = event.target.closest('[data-drag-kind]'); if (!handle || event.button !== 0) return;
     previewController?.abort(); clearTimeout(previewTimer); previewSequence++; root.classList.remove('explore-editor-loading');
     const item = handle.closest(handle.dataset.dragKind === 'section' ? '[data-section-id]' : '[data-story-id]');
     const section = handle.closest('[data-section-id]');
-    drag = { handle, item, section, kind: handle.dataset.dragKind, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: false };
+    drag = { handle, item, section, commit, restore, kind: handle.dataset.dragKind, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: false };
     handle.setPointerCapture(event.pointerId);
-  });
+  }
+  canvas.addEventListener('pointerdown', event => beginDrag(event));
   window.addEventListener('pointermove', event => {
     if (!drag || event.pointerId !== drag.pointer) return;
     if (!drag.active && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 6) return;
@@ -295,14 +388,19 @@
       drag.active = true; const bounds = drag.item.getBoundingClientRect(); drag.bounds = bounds;
       drag.ghost = drag.item.cloneNode(true); drag.ghost.classList.add('explore-drag-ghost'); drag.ghost.setAttribute('aria-hidden', 'true'); drag.ghost.inert = true;
       Object.assign(drag.ghost.style, { width: bounds.width+'px', left: bounds.left+'px', top: bounds.top+'px' });
-      document.body.append(drag.ghost); drag.item.classList.add('is-dragging'); document.body.classList.add('explore-dragging');
+      (drag.handle.closest('dialog[open]') || document.body).append(drag.ghost); drag.item.classList.add('is-dragging'); document.body.classList.add('explore-dragging');
+    }
+    if (drag.kind === 'picker') {
+      const list = drag.item.parentElement, bounds = list.getBoundingClientRect();
+      if (event.clientY < bounds.top + 24) list.scrollTop -= 12;
+      else if (event.clientY > bounds.bottom - 24) list.scrollTop += 12;
     }
     drag.ghost.style.transform = `translate(${event.clientX - drag.x}px, ${event.clientY - drag.y}px)`;
     const under = document.elementFromPoint(event.clientX, event.clientY);
     const target = under?.closest(drag.kind === 'section' ? '[data-section-id]' : '[data-story-id]');
     if (target && target !== drag.item && target.parentElement === drag.item.parentElement && (drag.kind !== 'section' || target.dataset.sectionId !== 'featured')) {
       const bounds = target.getBoundingClientRect();
-      const after = drag.kind === 'section' ? event.clientY > bounds.top + bounds.height / 2 : event.clientY > bounds.bottom || event.clientY >= bounds.top && event.clientX > bounds.left + bounds.width / 2;
+      const after = ['section', 'picker'].includes(drag.kind) ? event.clientY > bounds.top + bounds.height / 2 : event.clientY > bounds.bottom || event.clientY >= bounds.top && event.clientX > bounds.left + bounds.width / 2;
       target.parentElement.insertBefore(drag.item, after ? target.nextSibling : target);
     }
     if (event.clientY < 75) window.scrollBy(0, -18); else if (event.clientY > window.innerHeight - 75) window.scrollBy(0, 18);
@@ -312,6 +410,12 @@
     current.ghost?.remove(); current.item.classList.remove('is-dragging'); document.body.classList.remove('explore-dragging');
     if (current.handle.hasPointerCapture(current.pointer)) current.handle.releasePointerCapture(current.pointer);
     if (!current.active) { if (dirty) schedulePreview(); return; }
+    if (current.kind === 'picker') {
+      if (cancelled) current.restore();
+      else { current.commit([...current.item.parentElement.children].map(el => el.dataset.storyId)); announce('Story order updated.'); }
+      if (dirty) schedulePreview();
+      return;
+    }
     if (!cancelled) {
       if (current.kind === 'section') { const order = [...canvas.children].map(el => el.dataset.sectionId); sections.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)); }
       else { const section = sections.find(s => s.id === current.section.dataset.sectionId); const order = [...current.item.parentElement.children].map(el => el.dataset.storyId); section.story_ids.sort((a, b) => { const ai = order.indexOf(a), bi = order.indexOf(b); return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi); }); reorderPreview(section); }

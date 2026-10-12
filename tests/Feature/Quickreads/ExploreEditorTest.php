@@ -128,11 +128,36 @@ class ExploreEditorTest extends QuickreadsTestCase
     {
         $this->admin(); $db = Explore::db(); $base = (array) $db->table('stories')->find(1);
         for ($id = 7; $id <= 100; $id++) $db->table('stories')->insert(array_merge($base, ['id' => $id, 'slug' => 'story-'.$id, 'title' => 'Story '.$id]));
-        $this->getJson('/quickreads/explore/stories')->assertOk()->assertJsonCount(20);
-        $this->getJson('/quickreads/explore/stories?q=Writer%20Two')->assertOk()->assertJsonCount(2);
-        $this->getJson('/quickreads/explore/stories?q=%25')->assertOk()->assertExactJson([]);
-        $row = $this->getJson('/quickreads/explore/stories?q=Story%20100')->assertOk()->assertJsonCount(1)->json('0');
+        $page = $this->getJson('/quickreads/explore/stories')->assertOk()->assertJsonCount(20, 'data')
+            ->assertJsonPath('meta.page', 1)->assertJsonPath('meta.has_more', true)->assertJsonPath('meta.next_page', 2);
+        $ids = array_column($page->json('data'), 'id');
+        while ($next = $page->json('meta.next_page')) {
+            $page = $this->getJson('/quickreads/explore/stories?page='.$next)->assertOk()->assertJsonCount(20, 'data');
+            $ids = array_merge($ids, array_column($page->json('data'), 'id'));
+        }
+        $this->assertCount(100, array_unique($ids));
+        $this->assertCount(100, $ids);
+        $page->assertJsonPath('meta.has_more', false)->assertJsonPath('meta.next_page', null);
+        $this->getJson('/quickreads/explore/stories?q=Writer%20Two')->assertOk()->assertJsonCount(2, 'data');
+        $this->getJson('/quickreads/explore/stories?q=%25')->assertOk()->assertJsonCount(0, 'data');
+        $row = $this->getJson('/quickreads/explore/stories?q=Story%20100')->assertOk()->assertJsonCount(1, 'data')->json('data.0');
         $this->assertSame('100', $row['id']); $this->assertArrayNotHasKey('text', $row);
         $this->getJson('/quickreads/explore/stories?q='.str_repeat('x', 151))->assertStatus(422);
+        $this->getJson('/quickreads/explore/stories?page=0')->assertStatus(422);
+        $this->getJson('/quickreads/explore/stories?page=1000001')->assertStatus(422);
+        $this->getJson('/quickreads/explore/stories?page=6')->assertOk()->assertJsonCount(0, 'data')->assertJsonPath('meta.next_page', null);
+    }
+
+    public function test_existing_automatic_shelves_can_become_explicit_curated_selections(): void
+    {
+        $this->admin(); $sections = Explore::defaults();
+        $sections[3]['source'] = 'manual'; $sections[3]['story_ids'] = ['5', '1'];
+        $saved = $this->patchJson('/quickreads/explore', ['revision' => 'initial', 'sections' => $sections])->assertOk();
+        $saved->assertJsonPath('sections.3.limit', 2)->assertJsonPath('sections.3.source', 'manual');
+        // A twenty-minute story belongs here when the editor explicitly chooses it.
+        $legacy = $this->getJson('/quickreads/app/explore')->assertOk()->json('3.collection');
+        $this->assertSame([5, 1], array_column($legacy, 'id'));
+        $this->getJson('/api/v2/stories?section=under_10_minutes')->assertOk()->assertJsonPath('meta.total', 2)->assertJsonPath('data.0.id', '5');
+        $this->get('/quickreads/explore')->assertOk()->assertViewHas('initial', fn ($initial) => $initial['sections'][3]['story_ids'] === ['5', '1']);
     }
 }
