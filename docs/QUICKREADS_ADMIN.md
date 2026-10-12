@@ -2,6 +2,8 @@
 
 The admin remains at `/quickreads`, protected by the existing `quickreads-admin` session guard. The mobile and desktop interface uses local CSS, JavaScript and SVG icons; it has no CDN, jQuery, DataTables, chart-library or asset-build dependency.
 
+Typography uses a 16px body size, 14px secondary text, 13px compact labels and headings of at least 16px, including on mobile. Sizes use rem units to respect browser font preferences. Explore covers are 60 × 88px (76 × 110px for the featured story), and library-picker thumbnails are 32 × 46px. The preview adapts its columns to keep story titles readable.
+
 ## Pages and workflows
 
 - **Dashboard:** catalogue and reader totals, 30-day activity, recent stories/readers, and links to fix missing author/category relationships or invalid reading times. Summary counts refresh every five minutes and are invalidated by admin changes.
