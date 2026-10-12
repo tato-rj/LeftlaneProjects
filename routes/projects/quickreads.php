@@ -14,13 +14,17 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	Route::get('', 'Projects\Quickreads\AdminController@index');
 	
 	Route::get('/statistics', 'Projects\Quickreads\AdminController@statistics');
+	Route::get('/lookups', 'Projects\Quickreads\AdminController@lookups');
 
 	Route::prefix('/users')->group(function() {
 		Route::get('', 'Projects\Quickreads\UsersController@index');
+		Route::get('/{userId}', 'Projects\Quickreads\UsersController@show')->whereNumber('userId');
+		Route::delete('/id/{userId}', 'Projects\Quickreads\UsersController@destroyById')->whereNumber('userId');
 		Route::delete('/{user}', 'Projects\Quickreads\UsersController@destroy');
 	});
 
 	Route::prefix('/stories')->group(function() {
+		Route::get('', 'Projects\Quickreads\StoriesController@index');
 		Route::get('/add', 'Projects\Quickreads\StoriesController@create');
 		Route::get('/edit', 'Projects\Quickreads\StoriesController@select');
 		Route::get('/edit/{story}', 'Projects\Quickreads\StoriesController@edit');
@@ -32,6 +36,7 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	});
 
 	Route::prefix('/authors')->group(function() {
+		Route::get('', 'Projects\Quickreads\AuthorsController@index');
 		Route::get('/add', 'Projects\Quickreads\AuthorsController@create');
 		Route::get('/edit', 'Projects\Quickreads\AuthorsController@select');
 		Route::get('/edit/{author}', 'Projects\Quickreads\AuthorsController@edit');
@@ -43,6 +48,7 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	});
 
 	Route::prefix('/categories')->group(function() {
+		Route::get('', 'Projects\Quickreads\CategoriesController@index');
 		Route::get('/add', 'Projects\Quickreads\CategoriesController@create');
 		Route::get('/edit', 'Projects\Quickreads\CategoriesController@select');
 		Route::get('/edit/{category}', 'Projects\Quickreads\CategoriesController@edit');

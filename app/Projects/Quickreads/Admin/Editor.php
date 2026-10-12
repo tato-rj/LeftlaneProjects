@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Projects\Quickreads\Admin;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+
+class Editor
+{
+    public static function slug(string $table, string $name): string
+    {
+        $base = Str::slug($name) ?: 'item';
+        $slug = $base;
+        for ($n = 2; Queries::db()->table($table)->where('slug', $slug)->exists(); $n++) $slug = $base.'-'.$n;
+        return $slug;
+    }
+
+    public static function story(Request $request, $story = null): array
+    {
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255', Rule::unique('quickreads.stories', 'title')->ignore($story->id ?? null)],
+            'summary' => 'required|string|max:10000', 'text' => 'required|string|max:2000000',
+            'author_id' => 'required|integer|exists:quickreads.authors,id',
+            'category_id' => 'required|integer|exists:quickreads.categories,id',
+            'time' => 'required|numeric|min:0.1|max:1440',
+            'cost' => ['required', 'string', 'max:20', function ($attribute, $value, $fail) {
+                if (strtolower($value) !== 'free' && (!is_numeric($value) || $value < 0 || $value > 9999)) $fail('Enter Free or a coin amount from 0 to 9999.');
+            }],
+            'is_classic' => 'nullable|boolean', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120',
+        ]);
+        unset($data['image']);
+        $data['time'] = (string) (float) $data['time'];
+        $data['cost'] = strtolower($data['cost']) === 'free' || (float) $data['cost'] === 0.0
+            ? 'Free' : (string) (float) $data['cost'];
+        $data['is_classic'] = $request->boolean('is_classic');
+        return $data;
+    }
+
+    public static function changed(): void
+    {
+        Cache::forget('quickreads.admin.dashboard.v1');
+        // Old report entries expire naturally; a new namespace also prevents
+        // an in-flight report from restoring deleted records to the next view.
+        Cache::forever('quickreads.admin.report_version', (string) Str::uuid());
+        // Existing app discovery uses this cache key. Editors should see their changes in the app.
+        Cache::forget('quickreads-explore-6');
+    }
+}

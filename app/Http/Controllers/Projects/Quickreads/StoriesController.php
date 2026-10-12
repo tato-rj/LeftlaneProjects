@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\{Story, User, Author, Category, UserPurchaseRecord};
+use App\Projects\Quickreads\{Story, User, UserPurchaseRecord};
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\Upload;
-use Illuminate\Support\Facades\File;
+use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -82,46 +81,44 @@ class StoriesController extends QuickreadsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function index(Request $request)
     {
-        $authors = Author::orderBy('name')->get();
-        $categories = Category::orderBy('category')->get();
-        return view('projects/quickreads/stories/add', compact(['authors', 'categories']));
+        $criteria = Queries::criteria($request);
+        $query = Queries::stories()->select('s.id', 's.slug', 's.title', 's.time', 's.cost', 's.is_classic', 's.views', 's.created_at', 'a.name as author', 'c.category');
+        Queries::search($query, ['s.title', 'a.name'], $criteria['q'] ?? null);
+        foreach (['author_id', 'category_id'] as $field) if (!empty($criteria[$field])) $query->where('s.'.$field, $criteria[$field]);
+        if (isset($criteria['classic'])) $query->where('s.is_classic', $criteria['classic']);
+        if (($criteria['issue'] ?? '') === 'relationships') $query->where(fn ($q) => $q->whereNull('a.id')->orWhereNull('c.id'));
+        if (($criteria['issue'] ?? '') === 'time') $query->where(fn ($q) => Queries::invalidTime($q));
+        $sort = $criteria['sort'] ?? 'newest';
+        $sort === 'name' ? $query->orderBy('s.title') : $query->orderBy('s.created_at', $sort === 'oldest' ? 'asc' : 'desc');
+        $stories = Queries::page($query->orderByDesc('s.id'), $criteria);
+        $selectedAuthor = !empty($criteria['author_id']) ? Queries::db()->table('authors')->find($criteria['author_id']) : null;
+        $selectedCategory = !empty($criteria['category_id']) ? Queries::db()->table('categories')->find($criteria['category_id']) : null;
+        return view('projects.quickreads.stories.index', compact('stories', 'selectedAuthor', 'selectedCategory'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function create()
+    {
+        return view('projects.quickreads.stories.form', ['story' => null, 'selectedAuthor' => $this->selected('authors', old('author_id')), 'selectedCategory' => $this->selected('categories', old('category_id'))]);
+    }
+
+    private function selected($table, $id)
+    {
+        return $id ? Queries::db()->table($table)->find($id) : null;
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|unique:quickreads.stories|max:255',
-            'summary' => 'required',
-            'text' => 'required',
-            'author_id' => 'required',
-            'category_id' => 'required',
-            'time' => 'required',
-            'cost' => 'required',
-        ]);
-
-        $story = Story::create([
-            'slug' => str_slug($request->title),
-            'title' => $request->title,
-            'summary' => $request->summary,
-            'text' => $request->text,
-            'author_id' => $request->author_id,
-            'category_id' => $request->category_id,
-            'time' => $request->time,
-            'cost' => $request->cost,
-            'is_classic' => $request->is_classic ? 1 : 0
-        ]);
-
-        $this->saveFile($request);
-
-        return redirect()->back()->with('success', "$request->title has been successfully added!");
+        $data = Editor::story($request);
+        $data['slug'] = Editor::slug('stories', $data['title']);
+        $story = Queries::db()->transaction(function () use ($data, $request) {
+            $story = Story::create($data);
+            $this->saveCover($request, $story);
+            return $story;
+        });
+        Editor::changed();
+        return redirect('/quickreads/stories/edit/'.$story->slug)->with('success', 'Story added. It is now available in the catalogue.');
     }
 
     public function incrementViews(Request $request)
@@ -130,100 +127,57 @@ class StoriesController extends QuickreadsController
         Story::find($id)->increment('views');
     }
 
-    public function saveFile($request)
+    private function saveCover(Request $request, Story $story): void
     {
-        if ($request->file('image')) {
-            $slug = str_slug($request->title);
-            (new Upload($request->file('image')))->name($slug)->path("/public/stories/$slug/")->save();            
+        if (!$request->hasFile('image')) return;
+        // Retain the legacy cover URL used by older clients. The v2 API detects the actual MIME type.
+        $saved = $request->file('image')->storeAs('stories/'.$story->slug, $story->slug.'.jpeg', 'public');
+        if (!$saved) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['image' => 'The cover could not be saved. Please try again.']);
         }
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Story  $story
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Story $story)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Story  $story
-     * @return \Illuminate\Http\Response
-     */
     public function select()
     {
-        $stories = Story::orderBy('title')->get();
-
-        return view('projects/quickreads/stories/edit', compact(['stories']));
+        return redirect('/quickreads/stories');
     }
 
     public function edit(Story $story)
     {
-        $authors = Author::orderBy('name')->get();
-        $categories = Category::orderBy('category')->get();
-        $stories = Story::orderBy('title')->get();
-
-        return view('projects/quickreads/stories/edit', compact(['stories', 'story', 'authors', 'categories']));
+        $selectedAuthor = $this->selected('authors', old('author_id', $story->author_id));
+        $selectedCategory = $this->selected('categories', old('category_id', $story->category_id));
+        $artwork = (new \App\Projects\Quickreads\Api\V2\Catalog)->image($story);
+        return view('projects.quickreads.stories.form', compact('story', 'selectedAuthor', 'selectedCategory', 'artwork'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Story  $story
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Story $story)
     {
-        $slug = str_slug($request->title);
-
-        $request->validate([
-            'title' => 'required|max:255',
-            'summary' => 'required',
-            'text' => 'required',
-            'author_id' => 'required',
-            'category_id' => 'required',
-            'time' => 'required',
-            'cost' => 'required',
-        ]);
-
-        $story->update([
-            'slug' => $slug,
-            'title' => $request->title,
-            'summary' => $request->summary,
-            'text' => $request->text,
-            'author_id' => $request->author_id,
-            'category_id' => $request->category_id,
-            'time' => $request->time,
-            'cost' => $request->cost,
-            'is_classic' => $request->is_classic ? 1 : 0
-        ]);
-
-        $this->saveFile($request);
-
-        return redirect("/quickreads/stories/edit/$slug")->with('success', "$request->title has been updated");
+        // Keep the slug stable when renaming, so existing cover URLs and links remain valid.
+        $data = Editor::story($request, $story);
+        Queries::db()->transaction(function () use ($story, $data, $request) {
+            $story->update($data);
+            $this->saveCover($request, $story);
+        });
+        Editor::changed();
+        return redirect('/quickreads/stories/edit/'.$story->slug)->with('success', 'Story updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Story  $story
-     * @return \Illuminate\Http\Response
-     */
     public function delete()
     {
-        $stories = Story::orderBy('title')->get();
-        return view('projects/quickreads/stories/delete', compact(['stories']));       
+        return redirect('/quickreads/stories');
     }
 
-    public function destroy(Story $story)
+    public function destroy(Request $request, Story $story)
     {
-        File::deleteDirectory("storage/stories/$story->slug");
-        $story->delete();
-        return redirect()->back()->with('success', "$story->title has been successfully removed!");
+        $request->validate(['confirm' => 'required|accepted']);
+        Queries::db()->transaction(function () use ($story) {
+            // Historical tables have no foreign keys. Clean up their dependent rows explicitly.
+            Queries::db()->table('stories')->where('id', $story->id)->lockForUpdate()->first();
+            foreach (['user_purchase_records', 'ratings', 'comments'] as $table) Queries::db()->table($table)->where('story_id', $story->id)->delete();
+            $story->delete();
+        });
+        if (preg_match('/^[a-zA-Z0-9_-]+$/D', $story->slug)) Storage::disk('public')->deleteDirectory('stories/'.$story->slug);
+        Editor::changed();
+        return redirect('/quickreads/stories')->with('success', 'Story and its saved-story records, ratings and comments removed.');
     }
 }

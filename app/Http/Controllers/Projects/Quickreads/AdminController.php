@@ -2,44 +2,32 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
+use App\Projects\Quickreads\Admin\Queries;
 use Illuminate\Http\Request;
-use App\Projects\Quickreads\{Story, Author, Category, User, UserPurchaseRecord, Subscription};
 
 class AdminController extends QuickreadsController
 {
-	public function index()
-	{
-		$stories_count = Story::count();
-		$categories_count = Category::count();
-		$authors_count = Author::count();
-		$users_count = User::count();
-		$subscriptions_count = Subscription::count();
-
-		return view('projects/quickreads/dashboard', 
-			compact('stories_count', 'categories_count', 'authors_count', 'users_count', 'subscriptions_count'));
-	}
-
-    public function statistics()
+    public function index()
     {
-    	$dailySignups = User::statistics()->daily()->take(30)->get();
-		$monthlySignups = User::statistics()->monthly()->take(12)->get();
-		$yearlySignups = User::statistics()->yearly()->take(4)->get();
+        $summary = Queries::dashboard();
+        $recentStories = Queries::stories()->select('s.id', 's.slug', 's.title', 's.time', 's.created_at', 'a.name as author', 'c.category')
+            ->orderByDesc('s.created_at')->orderByDesc('s.id')->limit(6)->get();
+        $recentUsers = Queries::db()->table('users')->select('id', 'first_name', 'last_name', 'email', 'created_at')
+            ->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get();
+        return view('projects.quickreads.dashboard', compact('summary', 'recentStories', 'recentUsers'));
+    }
 
-		$storiesRecords = UserPurchaseRecord::pluck('story_id')->toArray();
+    public function statistics(Request $request)
+    {
+        return view('projects.quickreads.statistics.index', Queries::statistics($request));
+    }
 
-		$storiesArray = array_count_values($storiesRecords);
-		$storiesArray = collect($storiesArray);
-		
-		$topStories = $storiesArray->sort()->reverse();
-
-		$usersRecords = UserPurchaseRecord::pluck('user_id')->toArray();
-
-		$usersArray = array_count_values($usersRecords);
-		$usersArray = collect($usersArray);
-		
-		$activeUsers = $usersArray->sort()->reverse();
-
-    	return view('projects/quickreads/statistics/index', 
-    		compact(['dailySignups', 'monthlySignups', 'yearlySignups', 'topStories', 'activeUsers']));
+    public function lookups(Request $request)
+    {
+        $input = $request->validate(['type' => 'required|in:authors,categories', 'q' => 'nullable|string|max:150']);
+        $column = $input['type'] === 'authors' ? 'name' : 'category';
+        $query = Queries::db()->table($input['type'])->select('id', $column.' as label');
+        Queries::search($query, [$column], $input['q'] ?? null);
+        return response()->json($query->orderBy($column)->orderBy('id')->limit(20)->get());
     }
 }

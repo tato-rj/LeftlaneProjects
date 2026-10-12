@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\User;
+use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Http\Request;
 
 class UsersController extends QuickreadsController
@@ -12,13 +13,23 @@ class UsersController extends QuickreadsController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(20);
-
-        return view('projects/quickreads/users/index', compact('users'));
+        $criteria = Queries::criteria($request);
+        $query = Queries::db()->table('users as u')->select('u.id', 'u.first_name', 'u.last_name', 'u.email', 'u.locale', 'u.created_at')
+            ->selectSub(Queries::db()->table('user_purchase_records as p')->selectRaw('COUNT(*)')->whereColumn('p.user_id', 'u.id'), 'saves');
+        $fullName = Queries::db()->getDriverName() === 'sqlite'
+            ? "(u.first_name || ' ' || u.last_name)" : "CONCAT_WS(' ', u.first_name, u.last_name)";
+        Queries::search($query, [$fullName, 'u.email'], $criteria['q'] ?? null);
+        if (!empty($criteria['activity'])) {
+            $query->whereExists(function ($q) { $q->selectRaw('1')->from('user_purchase_records as p')->whereColumn('p.user_id', 'u.id'); }, 'and', $criteria['activity'] === 'none');
+        }
+        $sort = $criteria['sort'] ?? 'newest';
+        $sort === 'name' ? $query->orderBy('u.first_name')->orderBy('u.last_name') : $query->orderBy('u.created_at', $sort === 'oldest' ? 'asc' : 'desc');
+        $users = Queries::page($query->orderByDesc('u.id'), $criteria);
+        return view('projects.quickreads.users.index', compact('users'));
     }
-    
+
     public function app()
     {
         return User::latest()->with(['comments', 'ratings', 'stories'])->get();
@@ -97,9 +108,21 @@ class UsersController extends QuickreadsController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $userId)
     {
-        //
+        $request->validate(['page' => 'nullable|integer|min:1|max:100000']);
+        $db = Queries::db();
+        $user = $db->table('users')->select('id', 'first_name', 'last_name', 'email', 'locale', 'gender', 'created_at')->find($userId);
+        abort_unless($user, 404);
+        $counts = [];
+        foreach (['user_purchase_records' => 'saves', 'ratings' => 'ratings', 'comments' => 'comments'] as $table => $key) $counts[$key] = $db->table($table)->where('user_id', $userId)->count();
+        $saves = $db->table('user_purchase_records as p')->leftJoin('stories as s', 's.id', '=', 'p.story_id')
+            ->select('p.id', 'p.created_at', 's.slug', 's.title')->where('p.user_id', $userId)->orderByDesc('p.created_at')->orderByDesc('p.id')->paginate(25)->withQueryString();
+        $ratings = $db->table('ratings as r')->leftJoin('stories as s', 's.id', '=', 'r.story_id')
+            ->select('s.title', 'r.score', 'r.created_at')->where('r.user_id', $userId)->orderByDesc('r.created_at')->orderByDesc('r.id')->limit(10)->get();
+        $comments = $db->table('comments as c')->leftJoin('stories as s', 's.id', '=', 'c.story_id')
+            ->select('s.title', 'c.body', 'c.created_at')->where('c.user_id', $userId)->orderByDesc('c.created_at')->orderByDesc('c.id')->limit(10)->get();
+        return view('projects.quickreads.users.show', compact('user', 'counts', 'saves', 'ratings', 'comments'));
     }
 
     /**
@@ -131,11 +154,24 @@ class UsersController extends QuickreadsController
      * @param  int  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
-        $user->purchases()->delete();
-        $user->delete();
+        return $this->destroyById($request, $user->id);
+    }
 
-        return redirect()->back()->with('success', "The user has been successfully deleted!");
+    public function destroyById(Request $request, $userId)
+    {
+        $request->validate(['confirm' => 'required|accepted']);
+        $db = Queries::db();
+        $db->transaction(function () use ($db, $userId) {
+            $user = $db->table('users')->where('id', $userId)->lockForUpdate()->first();
+            abort_unless($user, 404);
+            foreach (['user_purchase_records', 'ratings', 'comments'] as $table) $db->table($table)->where('user_id', $userId)->delete();
+            $db->table('api_v2_tokens')->where('tokenable_id', $userId)->where('tokenable_type', \App\Projects\Quickreads\Api\V2\User::class)->delete();
+            $db->table('password_resets')->where('email', $user->email)->delete();
+            $db->table('users')->where('id', $userId)->delete();
+        });
+        Editor::changed();
+        return redirect('/quickreads/users')->with('success', 'User and their saved stories, ratings, comments and access tokens removed.');
     }
 }

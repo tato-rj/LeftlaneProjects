@@ -1,64 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quickreads | Admin</title>
-    <link rel="stylesheet" type="text/css" href="{{asset('css/app.css')}}">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-    <style type="text/css">
-        body {
-            background: #161d25;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="row align-items-center full-height">
-            <div class="col-lg-4 col-md-6 col-sm-8 col-xs-10 mx-auto text-white">
-                <form class="form-horizontal" method="POST" action="{{ route('quickreads.admin.login.submit') }}">
-                    {{ csrf_field() }}
-                    <div class="col-lg-5 col-md-6 col-sm-6 col-xs-6 mx-auto mb-4">
-                        <img class="w-100 mb-3" src="{{asset('images/icon.svg')}}">
-                        <h5>QUICKREADS</h5>
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex, nofollow">
+        <title>
+            Sign in · Quickreads
+        </title>
+        <link rel="stylesheet" href="{{ asset('css/quickreads-admin.css') }}?v={{ filemtime(public_path('css/quickreads-admin.css')) }}">
+    </head>
+    <body class="login-body">
+        <main class="login-layout">
+            <section class="login-intro">
+                <a href="/quickreads" class="brand">
+                    <span class="brand-symbol">
+                        @include('projects.quickreads.admin.icon', ['name' => 'stories'])
+                    </span>
+                    <span>
+                        Quickreads
+                        <small>
+                            ADMIN WORKSPACE
+                        </small>
+                    </span>
+                </a>
+                <div>
+                    <p class="eyebrow">
+                        A GOOD DAY FOR A GOOD STORY
+                    </p>
+                    <h1>
+                        Small stories.
+                        <br>
+                        Big possibilities.
+                    </h1>
+                    <p>
+                        A thoughtful space to manage your library
+                        <br>
+                        and the people who read it.
+                    </p>
+                </div>
+                <span>
+                    A little reading goes a long way.
+                </span>
+            </section>
+            <section class="login-form">
+                <p class="eyebrow">
+                    WELCOME BACK
+                </p>
+                <h2>
+                    Open your workspace.
+                </h2>
+                <p class="muted">
+                    Sign in with your administrator account.
+                </p>
+                @if($errors->any())
+                    <div class="notice error" role="alert">
+                        {{ $errors->first() }}
                     </div>
-                    
-                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="E-mail" required autofocus>
-                        @if ($errors->has('email'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('email') }}</strong>
-                        </span>
-                        @endif
-
+                @endif
+                <form method="POST" action="{{ route('quickreads.admin.login.submit') }}">
+                    @csrf
+                    <div class="field">
+                        <label for="email">
+                            Email address
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" required autocomplete="username" autofocus>
                     </div>
-                    <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                        <input id="password" type="password" class="form-control" name="password" placeholder="Password" required>
-
-                        @if ($errors->has('password'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('password') }}</strong>
-                        </span>
-                        @endif
+                    <div class="field">
+                        <label for="password">
+                            Password
+                        </label>
+                        <input type="password" name="password" id="password" required autocomplete="current-password">
                     </div>
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-default btn-block">
-                            Login
-                        </button>
-                    </div>
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
+                        Keep me signed in
+                    </label>
+                    <button class="button primary" type="submit">
+                        Sign in
+                        @include('projects.quickreads.admin.icon', ['name' => 'arrow'])
+                    </button>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
-</body>
+            </section>
+        </main>
+    </body>
 </html>

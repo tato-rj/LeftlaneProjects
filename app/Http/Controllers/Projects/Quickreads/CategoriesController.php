@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\{Category, Story};
+use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoriesController extends QuickreadsController
 {
@@ -11,10 +13,16 @@ class CategoriesController extends QuickreadsController
     {
         $this->middleware('auth', ['except' => ['app', 'time', 'show']]);
     }
-    
-    public function index()
+
+    public function index(Request $request)
     {
-        //
+        $criteria = Queries::criteria($request);
+        $query = Queries::db()->table('categories as r')->select('r.*')
+            ->selectSub(Queries::db()->table('stories as s')->selectRaw('COUNT(*)')->whereColumn('s.category_id', 'r.id'), 'stories_count');
+        Queries::search($query, ['r.category'], $criteria['q'] ?? null);
+        $query->orderByRaw('r.sorting_order IS NULL')->orderBy('r.sorting_order');
+        $categories = Queries::page($query->orderBy('r.category')->orderBy('r.id'), $criteria);
+        return view('projects.quickreads.categories.index', compact('categories'));
     }
 
     public function app()
@@ -38,94 +46,62 @@ class CategoriesController extends QuickreadsController
         return Story::formatted()->where('category_id', $request->category_id)->get();//->favoritedBy($request->facebook_id);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        return view('projects/quickreads/categories/add');
+        return view('projects.quickreads.categories.form', ['category' => null]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    private function validated(Request $request, $category = null): array
+    {
+        return $request->validate([
+            'category' => ['required', 'string', 'max:120', Rule::unique('quickreads.categories', 'category')->ignore($category->id ?? null)],
+            'sorting_order' => 'nullable|integer|between:-128,127',
+        ]);
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'category' => 'required|unique:quickreads.categories|max:120'
-        ]);
-
-        $category = Category::create([
-            'slug' => str_slug($request->category),
-            'category' => $request->category
-        ]);
-
-        return redirect()->back()->with('success', "$request->category has been successfully added!");
+        $data = $this->validated($request);
+        $data['slug'] = Editor::slug('categories', $data['category']);
+        $category = Category::create($data);
+        Editor::changed();
+        return redirect('/quickreads/categories/edit/'.$category->slug)->with('success', 'Category added.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
     public function select()
     {
-
-        $categories = Category::orderBy('category')->get();
-        return view('projects/quickreads/categories/edit', compact(['categories']));
+        return redirect('/quickreads/categories');
     }
 
     public function edit(Category $category)
     {
-        $categories = Category::orderBy('category')->get();
-        return view('projects/quickreads/categories/edit', compact(['category', 'categories']));
+        return view('projects.quickreads.categories.form', compact('category'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Category $category)
     {
-        $slug = str_slug($request->category);
-
-        $request->validate([
-            'category' => 'required|max:120'
-        ]);
-
-        $category->update([
-            'slug' => $slug,
-            'category' => $request->category,
-            'sorting_order' => $request->sorting_order
-        ]);
-
-        return redirect("/quickreads/categories/edit/$slug")->with('success', "$request->category has been updated");
+        $category->update($this->validated($request, $category));
+        Editor::changed();
+        return redirect('/quickreads/categories/edit/'.$category->slug)->with('success', 'Category updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
     public function delete()
     {
-        $categories = Category::orderBy('category')->get();
-        return view('projects/quickreads/categories/delete', compact(['categories']));        
+        return redirect('/quickreads/categories');
     }
-    
-    public function destroy(Category $category)
+
+    public function destroy(Request $request, Category $category)
     {
-        $category->delete();
-        return redirect()->back()->with('success', "$category->category has been successfully removed!");
+        $request->validate(['confirm' => 'required|accepted']);
+        $removed = Queries::db()->transaction(function () use ($category) {
+            Queries::db()->table('categories')->where('id', $category->id)->lockForUpdate()->first();
+            if (Queries::db()->table('stories')->where('category_id', $category->id)->exists()) return false;
+            $category->delete();
+            return true;
+        });
+        if (!$removed) return back()->withErrors(['delete' => 'Reassign this category’s stories before deleting it.']);
+        Editor::changed();
+        return redirect('/quickreads/categories')->with('success', 'Category removed.');
     }
 }
