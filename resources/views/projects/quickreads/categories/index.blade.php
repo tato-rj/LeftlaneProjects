@@ -2,6 +2,9 @@
 @section('title', 'Categories')
 @section('content')
     @include('projects.quickreads.admin.heading', ['eyebrow' => 'THE LIBRARY', 'heading' => 'Categories', 'description' => 'Give every story a place. Organize the categories readers explore.', 'action' => ['Add a category', '/quickreads/categories/add']])
+    <p class="muted">
+        Latest additions is automatic: the app receives the 10 newest stories across all categories. No assignment or editing is needed.
+    </p>
     <form method="GET" class="filter-bar standalone">
         @include('projects.quickreads.admin.search', ['placeholder' => 'Search categories…'])
         @include('projects.quickreads.admin.page-size')

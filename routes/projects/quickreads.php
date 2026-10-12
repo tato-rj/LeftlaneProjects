@@ -69,6 +69,7 @@ Route::get('/quickreads/app/test', 'Projects\Quickreads\StoriesController@test')
 
 Route::get('/quickreads/app/explore', 'Projects\Quickreads\StoriesController@explore');
 Route::get('/quickreads/app/stories', 'Projects\Quickreads\StoriesController@app');
+Route::get('/quickreads/app/stories/latest', 'Projects\Quickreads\StoriesController@latest');
 Route::get('/quickreads/app/stories/text', 'Projects\Quickreads\StoriesController@text');
 Route::get('/quickreads/app/stories/time', 'Projects\Quickreads\CategoriesController@time');
 Route::get('/quickreads/app/stories/{storyTitle}/rating', 'Projects\Quickreads\RatingsController@show');

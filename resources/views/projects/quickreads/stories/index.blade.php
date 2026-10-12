@@ -77,9 +77,6 @@
                             Reading time
                         </th>
                         <th>
-                            Cost
-                        </th>
-                        <th>
                             Views
                         </th>
                         <th>
@@ -121,9 +118,6 @@
                                 {{ $story->time }} min
                             </td>
                             <td>
-                                {{ is_numeric($story->cost) && $story->cost > 0 ? $story->cost.' coins' : (is_numeric($story->cost) ? 'Free' : $story->cost) }}
-                            </td>
-                            <td>
                                 {{ number_format($story->views) }}
                             </td>
                             <td class="nowrap">
@@ -137,7 +131,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="empty-state">
+                            <td colspan="6" class="empty-state">
                                 <h3>
                                     No stories found
                                 </h3>

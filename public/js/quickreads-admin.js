@@ -81,8 +81,13 @@
 
   const text = document.querySelector('#text');
   const count = document.querySelector('[data-word-count]');
-  const updateCount = () => { if (count) count.textContent = `${text.value.trim().split(/\s+/u).filter(Boolean).length.toLocaleString()} words`; };
-  if (text) { text.addEventListener('input', updateCount); updateCount(); }
+  const readingTime = document.querySelector('#time');
+  const updateReadingTime = () => {
+    const words = (text.value.match(/\S+/gu) || []).length;
+    if (count) count.textContent = `${words.toLocaleString()} words`;
+    if (readingTime) readingTime.value = words ? String(Math.max(0.1, Math.round(words / 200 * 10) / 10)) : '';
+  };
+  if (text) { text.addEventListener('input', updateReadingTime); updateReadingTime(); }
   const file = document.querySelector('#image');
   let imageUrl;
   file?.addEventListener('change', () => {

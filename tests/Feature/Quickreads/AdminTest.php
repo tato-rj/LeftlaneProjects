@@ -101,7 +101,7 @@ class AdminTest extends QuickreadsTestCase
 
     private function storyInput(): array
     {
-        return ['title' => 'New title', 'summary' => 'A summary', 'text' => 'Full text', 'author_id' => 1, 'category_id' => 1, 'time' => '12.5', 'cost' => 'Free', 'is_classic' => '1'];
+        return ['title' => 'New title', 'summary' => 'A summary', 'text' => 'Full text', 'author_id' => 1, 'category_id' => 1, 'time' => '12.5', 'is_classic' => '1'];
     }
 
     public function test_statistics_keep_a_fixed_query_count_as_saved_records_grow(): void
@@ -128,10 +128,12 @@ class AdminTest extends QuickreadsTestCase
         $this->post('/quickreads/stories', array_merge($this->storyInput(), ['author_id' => 999, 'time' => '-1']))->assertSessionHasErrors(['author_id', 'time']);
         $this->post('/quickreads/stories', array_merge($this->storyInput(), ['image' => UploadedFile::fake()->create('malware.txt')]))->assertSessionHasErrors('image');
         $this->post('/quickreads/stories', array_merge($this->storyInput(), ['image' => UploadedFile::fake()->image('cover.png')]))->assertRedirect('/quickreads/stories/edit/new-title');
+        $this->assertSame('Free', Queries::db()->table('stories')->where('slug', 'new-title')->value('cost'));
         Storage::disk('public')->assertExists('stories/new-title/new-title.jpeg');
-        $this->patch('/quickreads/stories/new-title', array_merge($this->storyInput(), ['title' => 'Renamed title', 'is_classic' => '0']))->assertRedirect('/quickreads/stories/edit/new-title');
+        $this->patch('/quickreads/stories/new-title', array_merge($this->storyInput(), ['title' => 'Renamed title', 'is_classic' => '0', 'cost' => '999']))->assertRedirect('/quickreads/stories/edit/new-title');
         $story = Queries::db()->table('stories')->where('slug', 'new-title')->first();
         $this->assertSame('Renamed title', $story->title); $this->assertFalse((bool)$story->is_classic);
+        $this->assertSame('Free', $story->cost);
         Storage::disk('public')->assertExists('stories/new-title/new-title.jpeg');
         $this->patch('/quickreads/stories/new-title', array_merge($this->storyInput(), ['title' => 'Story 1']))->assertSessionHasErrors('title');
     }

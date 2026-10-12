@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\{Story, User, UserPurchaseRecord};
+use App\Projects\Quickreads\{Story, User, UserPurchaseRecord, LatestAdditions};
 use Illuminate\Support\Facades\DB;
 use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Support\Facades\Storage;
@@ -12,7 +12,7 @@ class StoriesController extends QuickreadsController
 {
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore', 'test']]);
+        $this->middleware('auth', ['except' => ['app', 'text', 'incrementViews', 'explore', 'latest', 'test']]);
     }
 
     public function test()
@@ -24,7 +24,7 @@ class StoriesController extends QuickreadsController
     {
         $collection = \Cache::remember('quickreads-explore-6', 1440, function() {
             $pick = collect(['title' => 'Today\'s pick', 'collection' => collect([Story::formatted()->inRandomOrder()->first()])]);
-            $latest = collect(['title' => 'Latest stories', 'collection' => Story::formatted()->latest()->take(5)->get()]);
+            $latest = collect(['title' => 'Latest stories', 'collection' => collect()]);
             $popular = collect(['title' => 'Most popular', 'collection' => Story::withCount('favorites')->formatted()->orderBy('favorites_count', 'desc')->take(8)->get()]);
             $under10 = collect(['title' => 'Under 10 minutes', 'collection' => Story::formatted()->where('time', '<=', 10)->take(8)->get()]);
             $classics = collect(['title' => 'Classics', 'collection' => Story::formatted()->where('is_classic', true)->inRandomOrder()->take(6)->get()]);
@@ -32,6 +32,10 @@ class StoriesController extends QuickreadsController
 
             return collect([$pick, $latest, $popular, $under10, $classics, $suggestions]);
         });
+
+        // Refresh this section on every request, including when the remaining
+        // Explore sections came from an older cache entry.
+        $collection->put(1, collect(['title' => 'Latest stories', 'collection' => LatestAdditions::stories()]));
 
         if ($user = User::where('facebook_id', $request->facebook_id)->first()) {
             $favorites = UserPurchaseRecord::where('user_id', $user->id)->get();
@@ -44,6 +48,11 @@ class StoriesController extends QuickreadsController
         }
 
         return $collection;
+    }
+
+    public function latest()
+    {
+        return LatestAdditions::stories();
     }
 
     public function app()
@@ -84,7 +93,7 @@ class StoriesController extends QuickreadsController
     public function index(Request $request)
     {
         $criteria = Queries::criteria($request);
-        $query = Queries::stories()->select('s.id', 's.slug', 's.title', 's.time', 's.cost', 's.is_classic', 's.views', 's.created_at', 'a.name as author', 'c.category');
+        $query = Queries::stories()->select('s.id', 's.slug', 's.title', 's.time', 's.is_classic', 's.views', 's.created_at', 'a.name as author', 'c.category');
         Queries::search($query, ['s.title', 'a.name'], $criteria['q'] ?? null);
         foreach (['author_id', 'category_id'] as $field) if (!empty($criteria[$field])) $query->where('s.'.$field, $criteria[$field]);
         if (isset($criteria['classic'])) $query->where('s.is_classic', $criteria['classic']);
@@ -100,7 +109,10 @@ class StoriesController extends QuickreadsController
 
     public function create()
     {
-        return view('projects.quickreads.stories.form', ['story' => null, 'selectedAuthor' => $this->selected('authors', old('author_id')), 'selectedCategory' => $this->selected('categories', old('category_id'))]);
+        $selectedCategory = $this->selected('categories', old('category_id'));
+        $automaticCategory = LatestAdditions::isCategory($selectedCategory);
+        if ($automaticCategory) $selectedCategory = null;
+        return view('projects.quickreads.stories.form', ['story' => null, 'selectedAuthor' => $this->selected('authors', old('author_id')), 'selectedCategory' => $selectedCategory, 'automaticCategory' => $automaticCategory]);
     }
 
     private function selected($table, $id)
@@ -146,8 +158,10 @@ class StoriesController extends QuickreadsController
     {
         $selectedAuthor = $this->selected('authors', old('author_id', $story->author_id));
         $selectedCategory = $this->selected('categories', old('category_id', $story->category_id));
+        $automaticCategory = LatestAdditions::isCategory($selectedCategory);
+        if ($automaticCategory) $selectedCategory = null;
         $artwork = (new \App\Projects\Quickreads\Api\V2\Catalog)->image($story);
-        return view('projects.quickreads.stories.form', compact('story', 'selectedAuthor', 'selectedCategory', 'artwork'));
+        return view('projects.quickreads.stories.form', compact('story', 'selectedAuthor', 'selectedCategory', 'automaticCategory', 'artwork'));
     }
 
     public function update(Request $request, Story $story)

@@ -108,6 +108,9 @@
                     </div>
                     <div class="field">
                         @include('projects.quickreads.admin.lookup', ['type' => 'categories', 'field' => 'category_id', 'label' => 'Category *', 'selected' => $selectedCategory, 'required' => true])
+                        @if($automaticCategory)
+                            <small>Choose a regular category for this story. Latest additions is managed automatically.</small>
+                        @endif
                         @error('category_id')
                             <small class="field-error">
                                 {{ $message }}
@@ -117,38 +120,22 @@
                             Add a category ↗
                         </a>
                     </div>
-                    <div class="two-column">
-                        <div class="field">
-                            <label for="time">
-                                Minutes
-                                <span>
-                                    *
-                                </span>
-                            </label>
-                            <input type="number" id="time" name="time" min="0.1" max="1440" step="0.1" value="{{ old('time', $story->time ?? '') }}" required placeholder="12">
-                            @error('time')
-                                <small class="field-error">
-                                    {{ $message }}
-                                </small>
-                            @enderror
-                        </div>
-                        <div class="field">
-                            <label for="cost">
-                                Cost
-                                <span>
-                                    *
-                                </span>
-                            </label>
-                            <input type="text" id="cost" name="cost" maxlength="20" value="{{ old('cost', $story->cost ?? 'Free') }}" required>
-                            <small>
-                                Free or number of coins
+                    <div class="field">
+                        <label for="time">
+                            Reading time (minutes)
+                            <span>
+                                *
+                            </span>
+                        </label>
+                        <input type="number" id="time" name="time" min="0.1" max="1440" step="0.1" value="{{ old('time', $story->time ?? '') }}" required aria-describedby="time-help">
+                        <small id="time-help">
+                            Automatically estimated at 200 words per minute as you edit the story text.
+                        </small>
+                        @error('time')
+                            <small class="field-error">
+                                {{ $message }}
                             </small>
-                            @error('cost')
-                                <small class="field-error">
-                                    {{ $message }}
-                                </small>
-                            @enderror
-                        </div>
+                        @enderror
                     </div>
                     <input type="hidden" name="is_classic" value="0">
                     <label class="checkbox">

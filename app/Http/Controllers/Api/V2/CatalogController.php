@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Projects\Quickreads\Api\V2\{Catalog, Responses};
+use App\Projects\Quickreads\LatestAdditions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,6 +95,7 @@ class CatalogController extends Controller
         $query = $this->catalog->db()->table('categories as c')->select(['c.id', 'c.slug', 'c.category'])
             ->selectSub($this->catalog->db()->table('stories as s')->selectRaw('COUNT(*)')->whereColumn('s.category_id', 'c.id'), 'story_count')
             ->orderByRaw('c.sorting_order IS NULL')->orderBy('c.sorting_order')->orderBy('c.id');
+        LatestAdditions::categories($query, 'c.', true);
         return Responses::json($request, $this->catalog->page($query, $input, '/api/v2/categories', fn ($category) => [
             'id' => (string) $category->id, 'key' => $category->slug, 'name' => $category->category,
             'kind' => 'category', 'description' => null, 'story_count' => (int) $category->story_count,

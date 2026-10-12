@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Projects\Quickreads\LatestAdditions;
 
 class Editor
 {
@@ -23,17 +24,13 @@ class Editor
             'title' => ['required', 'string', 'max:255', Rule::unique('quickreads.stories', 'title')->ignore($story->id ?? null)],
             'summary' => 'required|string|max:10000', 'text' => 'required|string|max:2000000',
             'author_id' => 'required|integer|exists:quickreads.authors,id',
-            'category_id' => 'required|integer|exists:quickreads.categories,id',
+            'category_id' => ['required', 'integer', Rule::exists('quickreads.categories', 'id')->where(fn ($query) => LatestAdditions::categories($query, '', true))],
             'time' => 'required|numeric|min:0.1|max:1440',
-            'cost' => ['required', 'string', 'max:20', function ($attribute, $value, $fail) {
-                if (strtolower($value) !== 'free' && (!is_numeric($value) || $value < 0 || $value > 9999)) $fail('Enter Free or a coin amount from 0 to 9999.');
-            }],
             'is_classic' => 'nullable|boolean', 'image' => 'nullable|image|mimes:jpeg,png,webp|max:5120',
-        ]);
+        ], ['category_id.exists' => 'Choose a regular category. Latest additions is an automatic collection.']);
         unset($data['image']);
         $data['time'] = (string) (float) $data['time'];
-        $data['cost'] = strtolower($data['cost']) === 'free' || (float) $data['cost'] === 0.0
-            ? 'Free' : (string) (float) $data['cost'];
+        $data['cost'] = 'Free';
         $data['is_classic'] = $request->boolean('is_classic');
         return $data;
     }

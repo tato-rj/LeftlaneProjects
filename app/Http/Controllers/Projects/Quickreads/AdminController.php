@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\Admin\Queries;
+use App\Projects\Quickreads\LatestAdditions;
 use Illuminate\Http\Request;
 
 class AdminController extends QuickreadsController
@@ -27,6 +28,7 @@ class AdminController extends QuickreadsController
         $input = $request->validate(['type' => 'required|in:authors,categories', 'q' => 'nullable|string|max:150']);
         $column = $input['type'] === 'authors' ? 'name' : 'category';
         $query = Queries::db()->table($input['type'])->select('id', $column.' as label');
+        if ($input['type'] === 'categories') LatestAdditions::categories($query, '', true);
         Queries::search($query, [$column], $input['q'] ?? null);
         return response()->json($query->orderBy($column)->orderBy('id')->limit(20)->get());
     }

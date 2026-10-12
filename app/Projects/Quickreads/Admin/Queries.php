@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Cache, DB};
 use Illuminate\Validation\ValidationException;
+use App\Projects\Quickreads\LatestAdditions;
 
 class Queries
 {
@@ -68,7 +69,7 @@ class Queries
                 'stories' => $db->table('stories')->count(),
                 'users' => $db->table('users')->count(),
                 'authors' => $db->table('authors')->count(),
-                'categories' => $db->table('categories')->count(),
+                'categories' => LatestAdditions::categories($db->table('categories'), '', true)->count(),
                 'new_users' => $db->table('users')->where('created_at', '>=', $since)->count(),
                 'saves' => $db->table('user_purchase_records')->where('created_at', '>=', $since)->count(),
                 'relationships' => self::stories()->where(fn ($q) => $q->whereNull('a.id')->orWhereNull('c.id'))->count(),
