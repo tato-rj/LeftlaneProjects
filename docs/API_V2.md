@@ -4,6 +4,61 @@ Implemented on October 9, 2026 against `API_REQUIREMENTS_V2.md`. The authoritati
 
 Both documents are publicly served from the tracked files at `/docs/openapi.yaml` and `/docs/SWIFT_V2_MIGRATION.md` (GET/HEAD).
 
+## October 14, 2026 update
+
+Implemented the supplied Apple handoff and the new activity addendum; the original audit's catalog/auth/favorite requirements were already covered. Source briefs are retained as [APPLE_SIGN_IN_BACKEND_REQUIREMENTS.md](APPLE_SIGN_IN_BACKEND_REQUIREMENTS.md) and [API_REQUIREMENTS_V2.md](API_REQUIREMENTS_V2.md). The referenced activity proposal was not supplied; the finalized contract is in OpenAPI **2.1.0** and the updated [Swift handoff](SWIFT_V2_MIGRATION.md). No deployment, Apple Developer configuration, live Apple login, mail or production database operation is implied by these local changes.
+
+New operations:
+
+| Method | Path relative to `/api/v2` | Purpose |
+| --- | --- | --- |
+| POST | `/auth/apple/challenge` | Public, idempotent 300-second native nonce challenge |
+| POST | `/auth/apple` | Verify both Apple JWTs/code; return the existing session |
+| POST | `/auth/apple/notifications` | Authenticate and process signed Apple lifecycle events |
+| POST | `/story-activity` | Write-only current Reading/Saved/Finished state; optional account bearer or dedicated guest reporting UUID |
+| DELETE | `/me` | Explicit deletion with a bearer issued in the last 10 minutes; provider revocation and account-data removal |
+
+New request bodies are strict, require HTTPS outside local/testing and have a 32,768-byte limit. Existing operation behavior remains unchanged. Error envelopes add optional `reason`; Apple 409 conflicts require `apple_account_link_required` or `apple_attempt_conflict`. All new responses/errors are private/no-store. Challenge/exchange each have a 10/minute/IP bucket and activity has 30/minute/IP; the existing 60/minute API bucket also applies. `429` includes `Retry-After`.
+
+Apple identity is scoped by configured team/native App ID and verified subject hash, with a database unique constraint. Both supplied and redeemed identity JWTs require a trusted RS256 Apple signature, fixed issuer/native audience, expiry/issue time and the **unchanged** nonce, with 60 seconds skew. The existing installed `firebase/php-jwt` 6.8.1 implementation is now a direct dependency; no package version was changed. The developer client secret uses ES256. Apple keys are cached for an hour and refreshed on an unknown kid at most once per minute. Provider requests have bounded timeouts and no redirects or automatic code retries. Client-supplied identity/email/URLs never select keys or authorize accounts.
+
+Challenge state is durable. Only one request claims redemption; a verified encrypted grant is committed before canonical-account/session work. A unique identity reservation and row locks prevent duplicate accounts across attempts; final account/token/recovery writes are atomic and can retry deadlocks. Exact successful payload retries recover one encrypted session response for 300 seconds; changed attempts conflict. Before recovery, the original token/account must remain valid. Provider timeouts need a fresh native attempt. A failure after the durable verified receipt may be retried exactly until challenge expiry; a crash between redemption and receipt cannot be recovered. See the Swift handoff for exact status/reason handling.
+
+New Apple-only users have an empty unusable password, null legacy alias and optional names serialized as strings. Returning sign-in preserves names/email/locale and favorites. A new identity requires Apple-verified usable email; relay addresses are accepted. Email collisions never merge or attach providers. Generic password-reset requests do not send password-setup links for Apple-only users, and existing reset tokens cannot add a password to them. Existing legacy social/password behavior is otherwise unchanged.
+
+Legacy guest catalog lookups require a nonempty alias so null-alias Apple users cannot personalize guest results. The legacy public account directory and ID-only purchase-history read exclude new Apple accounts; the old unverified Facebook registration path cannot return/claim one by email. All preexisting legacy accounts, routes and response shapes are preserved. These guards also work before the Apple table migration; they do not require tokens from installed clients. Existing legacy email-account exposure remains a historical contract concern; no new private activity data is serialized through legacy models.
+
+Refresh tokens, verified grants and recoverable sessions are encrypted with Laravel's protected `APP_KEY`. Raw Apple credentials are not persisted. Sensitive API exceptions bypass general request/exception reporters and log only the exception class; provider exceptions are discarded. Deployment must also exclude bodies/Authorization from proxy/APM/tracing logs and keep signing keys outside this repository/webroot. Ordinary logout does not revoke Apple consent. Signed notifications deduplicate by jti, reject wrong issuer/audience/algorithm and stale/future issue times, and invalidate affected Apple-derived sessions using their provider authorization time. Forwarding changes never delete canonical accounts. User-initiated deletion revokes provider tokens before removing account data; a minimal provider subject/event-time security tombstone remains for up to 90 days to reject proofs issued before deletion.
+
+Activity stores one latest row per reader/story plus minimal hashed mutation receipts for retry acknowledgement, rather than an event or session log. Known reading and saved fields are ordered independently by UTC observation milliseconds and then lowercase UUID, so delayed/stale reports cannot overwrite newer known state. Null never invents state; saved is independent. Accounts are derived only from a valid v2 bearer; invalid Authorization never falls back to guest. Guests use a separate installation UUID, stored only as an HMAC with a domain-separated reader kind. No identity merge, favorites mutation, Library/progress sync, text/position/reaction collection or historical backfill occurs. Inactive state/receipts expire after 90 days. Requests older than retention are acknowledged without applying; future skew over five minutes is rejected.
+
+The protected owner/admin view at `/quickreads/story-activity` shows Reading/Saved/Finished counts per story and guest/account, without reader identifiers. Existing admin access is the authorization boundary; do not grant this guard to public readers. Account deletion erases its reports. Owner support can erase a guest's reports after the installation owner supplies its dedicated reporting UUID:
+
+```sh
+php artisan quickreads:activity-forget-guest <reporting-uuid>
+```
+
+No guest reporting UUID is an authenticated person or an authorization credential for account/history access. Erasure does not revoke future reporting; a client must stop collection/clear pending observations if erasure is intended to persist. Update privacy disclosures before enabling collection in the app.
+
+The existing protected admin account-removal action uses the same provider-revocation/report-erasure service after the new migrations, so owner deletion cannot leave Apple credentials or activity rows orphaned. Its existing confirmation and redirect remain intact; provider outages leave the account available for retry.
+
+### Deployment for this update
+
+The initial token migration and existing admin migrations must already be present. Run only these **additive** migrations on the configured QuickReads database; do not run all historical create-table migrations over production:
+
+```sh
+php artisan migrate --database=quickreads --path=database/migrations/quickreads/2026_10_15_000001_create_apple_auth_tables.php
+php artisan migrate --database=quickreads --path=database/migrations/quickreads/2026_10_15_000002_create_story_activity_tables.php
+```
+
+These add three Apple tables, two nullable provider columns on the isolated v2 token table, and two activity tables. No legacy table, account, story ID or route is renamed/removed. Keep a stable protected `APP_KEY`; rotating it requires an encryption/reader-key migration. Configure a shared persistent cache for multi-worker key caching/rate limits. Rebuild deployment configuration/routes through the usual release process.
+
+Set `QUICKREADS_APPLE_TEAM_ID`, `QUICKREADS_APPLE_KEY_ID` and `QUICKREADS_APPLE_PRIVATE_KEY_PATH` privately; the `.p8` file must be readable by the server, protected and outside the repository/webroot. The native audience is fixed to `com.leftlaneapps.shortstoriesdot`. `QUICKREADS_APPLE_ENABLED` defaults to **false**. Enable it only after App ID capability/key/provisioning, signed notification delivery, relay sender configuration, staging authentication and the iOS account-deletion UI are ready. Register `https://leftlaneapps.com/api/v2/auth/apple/notifications` in the Apple Developer configuration. This release does not create/edit that configuration or expose secrets.
+
+The scheduler now runs `quickreads:v2-prune` every five minutes. Ensure the deployment invokes Laravel `schedule:run` every minute. Expired protected recovery/grants become inaccessible immediately and are cleared at the next prune; challenge records expire after one day, notifications/security tombstones and inactive activity/receipts after 90 days. Do not run the new scheduler before applying the migrations. Protect database backups consistently with these retention policies.
+
+Staging must verify real Apple/JWKS rotation, native provisioning/state/nonce handling, cancellation and first-consent metadata, signed notification delivery, deletion/revocation, lost responses and the published spec, using disposable accounts. The Swift team then refreshes its downloaded spec and wires the actual transports. Local tests cannot prove production deployment or native Apple capability setup. See [Apple's lifecycle guidance](https://developer.apple.com/documentation/signinwithapple/processing-changes-for-sign-in-with-apple-accounts) and [token revocation/account deletion](https://developer.apple.com/documentation/technotes/tn3194-handling-account-deletions-and-revoking-tokens-for-sign-in-with-apple).
+
 ## Structure and design
 
 The new base path is `/api/v2`. The existing `/quickreads/...` routes remain at their original URLs, with their methods, handlers, middleware and response behavior unchanged. No `/api/v1` routes, redirects or legacy deprecations were introduced. `routes/api.php` only adds the v2 route file. `routes/web.php` only adds a separate v2 password-reset landing page.
@@ -31,7 +86,7 @@ Responses are `{data: ...}`. Paginated responses also have `meta` and `links`. R
 | PUT | `/me/favorites/{storyId}` | Idempotent add; requires existing story |
 | DELETE | `/me/favorites/{storyId}` | Idempotent removal, even after editorial deletion |
 
-GET routes also accept HEAD, with the same status/headers and no body. No public user directory, credential-in-path login, numerical-rating mutation, audio, reaction or remote-progress endpoint is introduced into v2.
+GET routes also accept HEAD, with the same status/headers and no body. No public user directory, credential-in-path login, numerical-rating mutation, audio, reaction or remote-progress synchronization endpoint is introduced into v2. The October 14 write-only activity reporting is separate from synchronization.
 
 ## Authentication and accounts
 
@@ -41,7 +96,7 @@ Send JSON credential bodies over HTTPS. Private requests require `Authorization:
 
 `GET /me` returns `id`, `legacy_account_id`, `email`, `first_name`, `last_name`, `locale`. The legacy alias is the exact stored `facebook_id`, despite that historical name; it is not evidence of Facebook sign-in and is not constrained unique. Use authenticated canonical `id` for account scope. Neither supplied aliases nor new names can reassign an old account. Login and password-reset writes lock the account row to serialize verification/token issuance with password changes.
 
-Registration requires email (max 255 characters), first/last names (1–255), password confirmation and a password of 8–72 characters **and at most 72 UTF-8 bytes**, reflecting bcrypt limits. Locale is optional/null, max 35 characters. Caller-supplied IDs/password hashes are ignored. Existing email uniqueness is preserved; new accounts retain a legacy-compatible generated alias. Social-only accounts without valid password hashes cannot use password login; a reset with a verified email can establish a password. No social token verification is invented.
+Registration requires email (max 255 characters), first/last names (1–255), password confirmation and a password of 8–72 characters **and at most 72 UTF-8 bytes**, reflecting bcrypt limits. Locale is optional/null, max 35 characters. Caller-supplied IDs/password hashes are ignored. Existing email uniqueness is preserved; new accounts retain a legacy-compatible generated alias. Legacy social-only accounts without valid password hashes cannot use password login; a reset with a verified email can establish a password. Apple-only accounts are excluded from password setup/reset, as described in the October 14 update.
 
 Password reset uses a new named `quickreads-v2` provider/broker, the existing QuickReads `password_resets` table, 60-minute reset-token expiry and a 60-second broker email throttle. Email requests return the same `202` acknowledgement for nonexistent accounts and broker throttling. Actual mail failures return sanitized `500`; there must be working outbound mail in deployment. The reset notification points to a separate `/quickreads/v2/password/reset` form; `QUICKREADS_V2_RESET_URL` can specify an agreed HTTPS client/web destination instead. Legacy reset URLs are untouched. New password/reset success does not automatically authenticate the app.
 
@@ -99,7 +154,7 @@ Artwork uses existing local public storage, validates the slug/path and image he
 
 ## Database and deployment
 
-One additive migration creates **only** `quickreads.api_v2_tokens` using Sanctum's token columns, token hash uniqueness, tokenable index and expiry. No existing QuickReads tables, records, relationship constraints, IDs or numerical ratings are changed. The existing password-reset table and favorite table are reused. The migration has run only against isolated test databases, not production.
+The initial additive migration creates **only** `quickreads.api_v2_tokens` using Sanctum's token columns, token hash uniqueness, tokenable index and expiry. No existing QuickReads legacy tables, records, relationship constraints, IDs or numerical ratings are changed by that initial migration. The existing password-reset table and favorite table are reused. The October 14 update adds the separate migrations documented above. The migration has run only against isolated test databases, not production.
 
 Deploy code and run the specific migration with the configured QuickReads connection:
 

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "QuickReads API v2",
-    "version": "2.0.0",
-    "description": "Implemented parallel API. Existing /quickreads URLs are untouched. All IDs are decimal strings in responses. JSON success uses data; lists add meta and links. Nullable fields are emitted as explicit null. Public catalog ignores account aliases, cookies and bearer credentials; fetch private favorites separately. Mutation bodies are JSON objects; unsupported/non-object bodies fail. Unknown fields/query parameters are ignored. Dates use RFC3339 UTC. Production MySQL search uses utf8mb4_unicode_ci; SQLite tests emulate legacy functions but are not a production collation or concurrency test. GET also supports HEAD. No reactions, remote progress/audio, social sign-in or historical alias/hash mapping is claimed."
+    "version": "2.1.0",
+    "description": "Implemented parallel API. Existing /quickreads URLs are untouched. All IDs are decimal strings in responses. JSON success uses data; lists add meta and links. Nullable fields are emitted as explicit null. Public catalog ignores account aliases, cookies and bearer credentials; fetch private favorites separately. Mutation bodies are JSON objects; unsupported/non-object bodies fail. Existing operations ignore unknown fields/query parameters; new Apple, account-deletion and activity bodies are strict. Dates use RFC3339 UTC. Production MySQL search uses utf8mb4_unicode_ci; SQLite tests emulate legacy functions but are not a production collation or concurrency test. GET also supports HEAD. Native Sign in with Apple and write-only story-state reporting are implemented behind the documented deployment prerequisites. No reactions, cross-device progress/Library sync, server audio, account linking or historical alias/hash mapping is claimed."
   },
   "servers": [
     {
@@ -432,6 +432,84 @@
           },
           "500": {
             "description": "Same status and headers as GET, without a response body."
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteAccount",
+        "summary": "Delete the authenticated QuickReads account",
+        "description": "HTTPS, explicit delete_account:true, maximum body 32768 bytes. Requires a valid QuickReads bearer issued within the last 10 minutes; sign in again if older (401). Revokes retained Apple refresh tokens server-to-server before deleting account data; provider failure returns 503 and keeps the account for retry. Deletes canonical user, v2 sessions, favorites, comments, ratings, reset records, matching newsletter subscription and account activity/receipts. Provider identity is removed; a subject hash/event-time security tombstone is retained for at most 90 days to reject pre-deletion proofs. Guest reports remain separate. Does not remotely delete offline files or change device data. Logout remains separate. No automatic account linking is provided.",
+        "security": [
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful acknowledgement or session.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
           }
         }
       }
@@ -1920,6 +1998,347 @@
           }
         }
       }
+    },
+    "/api/v2/auth/apple/challenge": {
+      "post": {
+        "operationId": "appleChallenge",
+        "summary": "Begin a native Sign in with Apple attempt",
+        "description": "Native-only audience com.leftlaneapps.shortstoriesdot. HTTPS required (local/testing exception). Maximum JSON body 32768 UTF-8 bytes; unknown fields rejected. Challenge and nonce each contain 256 random bits; TTL 300 seconds. Same UUID returns the same pending, unexpired challenge. Expired attempts require a fresh UUID (401); consumed/conflicting attempts return 409 apple_attempt_conflict. iOS sends nonce unchanged, sets Apple state to attempt_id and validates returned state. Limited to 10 requests/minute/IP/operation plus the API 60/minute/IP bucket. 429 includes Retry-After. Returns 503 while Apple configuration is disabled/incomplete.",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleChallengeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful acknowledgement or session.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppleChallengeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "description": "Typed Apple conflict. No account details, provider binding or session are returned.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppleConflictError"
+                }
+              }
+            }
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v2/auth/apple": {
+      "post": {
+        "operationId": "appleExchange",
+        "summary": "Exchange verified Apple credentials for a QuickReads session",
+        "description": "HTTPS, native-only audience com.leftlaneapps.shortstoriesdot. Maximum body 32768 bytes; strict fields and profile object. Server verifies both the submitted RS256 identity JWT and the JWT returned by Apple code redemption (matching subject, native audience and exact nonce), issuer https://appleid.apple.com and expiry, with 60 seconds clock skew. Developer client secret uses ES256. Email is derived only from verified claims. New Apple accounts have null legacy alias and empty string names when absent; returning accounts retain names and stored email. New identities require a usable verified email (422); existing email collisions return 409 apple_account_link_required with no linking or account disclosure. No implicit password method. Success always 200 SessionResponse, same 30-day QuickReads bearer issuer. Exact semantic retries (fixed required credentials, profile names and locale; key order and omitted/null optional fields equivalent) recover the original encrypted response for 300 seconds after completion, without redeeming code or issuing another token. Changed payload returns 409 apple_attempt_conflict. Expired, failed or revoked attempts return 401. During in-flight redemption return 503 apple_exchange_pending with Retry-After: 2; retry the exact payload briefly, then obtain fresh authorization if stuck. Provider timeout/ambiguous response returns 503 apple_restart_required and requires fresh native authorization; never resubmit a redeemed code with another attempt. After a durable verified receipt, an account/session database failure (500) permits exact retry until original challenge expiry; a crash before that receipt cannot recover and requires a new attempt. Successful recovery also ends on logout/revocation/account deletion. Limits: 10/minute/IP/operation plus 60/minute/IP group. All responses private, no-store.",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleExchangeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful acknowledgement or session.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "description": "Typed Apple conflict. No account details, provider binding or session are returned.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppleConflictError"
+                }
+              }
+            }
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v2/auth/apple/notifications": {
+      "post": {
+        "operationId": "appleNotification",
+        "summary": "Process an authenticated Apple account notification",
+        "description": "Apple server-to-server notification receiver, not an iOS bearer operation. HTTPS and a verified RS256 Apple JWT authenticate the request; never rely on the public route alone. Maximum body 32768 bytes. Native issuer/audience, iat (30-day maximum age, 60-second future allowance), jti and events fields are checked. Supports consent-revoked/account-deleted (invalidate affected Apple-derived sessions and discard refresh token), email-enabled/email-disabled (update forwarding state without deleting the canonical account). Duplicate jti is acknowledged once; out-of-order provider revocations are checked by authorization time. No account data is returned. Register this URL privately in Apple Developer configuration. API 60 requests/minute/IP bucket applies.",
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppleNotificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful acknowledgement or session.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppleNotificationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/api/v2/story-activity": {
+      "post": {
+        "operationId": "reportStoryActivity",
+        "summary": "Report the latest state of one story for the captured reader",
+        "description": "Write-only current-state reporting. HTTPS, strict JSON object, maximum 32768 bytes. Optional valid QuickReads bearer determines canonical account; a supplied invalid/expired Authorization returns 401 and never falls back to guest. Account requests forbid non-null guest_id. Guests require a dedicated reporting UUID, may report Reading/Finished/not_started and saved null/false; saved true is 403. Reject body account IDs, email, names, text, reactions, offsets and unknown fields. Both state keys required; null means unknown/no update; at least one known value required. Per reader/story, each known field is ordered independently by observed_at to millisecond precision, then lexicographically larger lowercase mutation UUID on a timestamp tie. Old reports acknowledge accepted=true, applied=false and cannot overwrite newer known fields. Same reader/mutation UUID and canonical payload recovers original acknowledgement for 90 days; changed payload returns 409. 200 always echoes exact canonical story ID, lowercase mutation UUID and captured reader identity; account_id and guest_id keys are required and the unused value is null. No data merges on login/logout, no favorite/progress/Library writes, and no public history-read operation. Latest inactive state and minimal deduplication receipts retained up to 90 days; owner-only aggregate view is /quickreads/story-activity behind the existing admin guard. Account deletion erases account reports; owner support can erase guest reports by reporting UUID. 30 requests/minute/IP/operation plus API 60/minute/IP, 429 Retry-After. 400/403/404/409/413/415/422 are terminal for unchanged payload; 401 requires the captured account to reauthenticate (never relabel as guest); retry identical mutations with bounded backoff on 429/500/503/network failure. No first-party iOS transport is enabled by publishing this contract.",
+        "security": [
+          {},
+          {
+            "QuickReadsBearer": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoryActivityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful acknowledgement or session.",
+            "headers": {
+              "Cache-Control": {
+                "description": "Always private, no-store, including errors.",
+                "schema": {
+                  "type": "string",
+                  "example": "private, no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoryActivityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "405": {
+            "$ref": "#/components/responses/Error405"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2183,7 +2602,7 @@
         }
       },
       "Error503": {
-        "description": "Story exists but has no available nonempty content.",
+        "description": "Content, Apple verification/configuration or another service is temporarily unavailable. Apple apple_restart_required means obtain a new challenge/native authorization; apple_exchange_pending permits exact retry after 2 seconds while the first exchange completes.",
         "content": {
           "application/json": {
             "schema": {
@@ -2196,6 +2615,13 @@
             "description": "Public GET/HEAD: public, max-age=60, must-revalidate. Private/account/auth and all errors: private, no-store.",
             "schema": {
               "type": "string"
+            }
+          },
+          "Retry-After": {
+            "description": "Seconds to wait before an exact retry when Apple exchange is still processing (currently 2). Omitted when no automatic retry is advised.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
             }
           }
         }
@@ -2250,6 +2676,16 @@
                   }
                 },
                 "description": "Field-specific messages for 422; empty object for other errors."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Optional typed discriminator. Required for Apple 409 responses. Unknown reasons must never trigger automatic linking.",
+                "enum": [
+                  "apple_account_link_required",
+                  "apple_attempt_conflict",
+                  "apple_restart_required",
+                  "apple_exchange_pending"
+                ]
               }
             },
             "additionalProperties": false
@@ -3136,6 +3572,363 @@
             "items": {
               "$ref": "#/components/schemas/ExploreSection"
             }
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleConflictError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "apple_account_link_required",
+                      "apple_attempt_conflict"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AppleChallengeRequest": {
+        "type": "object",
+        "required": [
+          "attempt_id"
+        ],
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleChallenge": {
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "challenge_id",
+          "nonce",
+          "expires_at"
+        ],
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001"
+          },
+          "challenge_id": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "nonce": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$",
+            "description": "32 random bytes encoded as unpadded base64url. Pass this exact string unchanged as the native Apple request nonce; do not hash it."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleChallengeResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AppleChallenge"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleProfile": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 255
+          }
+        },
+        "additionalProperties": false,
+        "nullable": true
+      },
+      "AppleExchangeRequest": {
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "challenge_id",
+          "identity_token",
+          "authorization_code"
+        ],
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001"
+          },
+          "challenge_id": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "identity_token": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "Apple identity JWT. Verified RS256 signature, issuer, native audience, exp, iat and exact nonce are required."
+          },
+          "authorization_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "description": "Single-use native Apple authorization code. Redeemed server-to-server exactly once."
+          },
+          "profile": {
+            "$ref": "#/components/schemas/AppleProfile"
+          },
+          "locale": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 35
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleNotificationRequest": {
+        "type": "object",
+        "required": [
+          "payload"
+        ],
+        "properties": {
+          "payload": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384,
+            "description": "Apple-signed server notification JWT; RS256, issuer and native audience verified. events may be an object or JSON-encoded object. Requires iat within the past 30 days (60 seconds future skew), jti, supported event type, subject and event_time."
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleNotificationAccepted": {
+        "type": "object",
+        "required": [
+          "accepted"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AppleNotificationResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AppleNotificationAccepted"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteAccountRequest": {
+        "type": "object",
+        "required": [
+          "delete_account"
+        ],
+        "properties": {
+          "delete_account": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "Explicit user confirmation; the bearer session must have been issued within 10 minutes."
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteAccountResult": {
+        "type": "object",
+        "required": [
+          "deleted"
+        ],
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteAccountResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeleteAccountResult"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryActivityRequest": {
+        "type": "object",
+        "required": [
+          "story_id",
+          "mutation_id",
+          "reading_status",
+          "saved",
+          "observed_at"
+        ],
+        "properties": {
+          "story_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "mutation_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001"
+          },
+          "guest_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001",
+            "nullable": true,
+            "description": "Required without Authorization. Must be absent/null with a bearer. A dedicated random reporting UUID, separate from protected guest-access identity. Pseudonymous installation, never proof of a person."
+          },
+          "reading_status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "not_started",
+              "reading",
+              "finished",
+              null
+            ],
+            "description": "Null means unknown and leaves known state unchanged. At least reading_status or saved must be non-null. No reading position or content is collected."
+          },
+          "saved": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Independent of reading_status. Null leaves known saved state unchanged. Guests may report null/false, never true. Does not write favorites or upload a Library."
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?(?:Z|[+-]\\d{2}:\\d{2})$",
+            "description": "RFC3339 observation time, up to milliseconds. More than 5 minutes in the future is 422. Reports older than 90 days are acknowledged without applying."
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryActivityReader": {
+        "type": "object",
+        "required": [
+          "kind",
+          "account_id",
+          "guest_id"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "guest",
+              "account"
+            ]
+          },
+          "account_id": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[1-9][0-9]{0,9}$"
+          },
+          "guest_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryActivityAcknowledgement": {
+        "type": "object",
+        "required": [
+          "mutation_id",
+          "story_id",
+          "reader",
+          "accepted",
+          "applied"
+        ],
+        "properties": {
+          "mutation_id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "00000000-0000-4000-8000-000000000001"
+          },
+          "story_id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "reader": {
+            "$ref": "#/components/schemas/StoryActivityReader"
+          },
+          "accepted": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "applied": {
+            "type": "boolean",
+            "description": "True if at least one known field won ordering. False for an accepted stale/expired observation. Exact retries return the original applied value; both outcomes acknowledge this exact mutation."
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoryActivityResponse": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StoryActivityAcknowledgement"
           }
         },
         "additionalProperties": false

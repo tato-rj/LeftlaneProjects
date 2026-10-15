@@ -39,8 +39,10 @@ trait CreatesApplication
                 ]);
             }
             $app['config']->set('database.default', 'leftlaneapps');
-            $this->beforeApplicationDestroyed(function () use ($pdo, $databases) {
-                foreach ($databases as $database) $pdo->exec('DROP DATABASE `'.$database.'`');
+            $this->beforeApplicationDestroyed(function () use ($testSocket, $databases) {
+                // Forked concurrency tests must not share a live cleanup PDO.
+                $cleanup = new \PDO('mysql:unix_socket='.$testSocket, 'root', '');
+                foreach ($databases as $database) $cleanup->exec('DROP DATABASE `'.$database.'`');
             });
         } else {
             // Isolate every named connection before DatabaseMigrations runs.

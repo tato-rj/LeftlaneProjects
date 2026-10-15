@@ -15,7 +15,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        \App\Projects\Quickreads\Api\V2\ApiException::class,
     ];
 
     /**
@@ -26,6 +26,7 @@ class Handler extends ExceptionHandler
     protected $dontFlash = [
         'password',
         'password_confirmation',
+        'identity_token', 'authorization_code', 'payload', 'refresh_token', 'client_secret',
     ];
 
     public function render($request, Throwable $exception)
@@ -42,6 +43,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function report(Throwable $exception)
+    {
+        $request = app('request');
+        if ($request->is('api/v2/auth/apple*', 'api/v2/story-activity') || ($request->isMethod('DELETE') && $request->is('api/v2/me'))) {
+            if (!$this->shouldntReport($exception)) {
+                // Error reporters may capture whole requests/exception arguments.
+                // These endpoints contain credentials or private reading state.
+                \Illuminate\Support\Facades\Log::error('QuickReads sensitive API operation failed.', [
+                    'exception_type' => get_class($exception),
+                ]);
+            }
+            return;
+        }
+        parent::report($exception);
     }
 
     /**

@@ -10,6 +10,9 @@ class JsonRequests
     public function handle(Request $request, Closure $next)
     {
         $request->headers->set('Accept', 'application/json');
+        if ($request->is('api/v2/auth/apple*', 'api/v2/story-activity') || ($request->isMethod('DELETE') && $request->is('api/v2/me'))) {
+            abort_if(strlen($request->getContent()) > 32768, 413);
+        }
         if (!in_array($request->method(), ['GET', 'HEAD']) && $request->request->count() > 0) {
             abort_unless($request->isJson(), 415);
         }

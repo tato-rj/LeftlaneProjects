@@ -2,6 +2,7 @@
 @section('title', 'Statistics')
 @section('content')
     @include('projects.quickreads.admin.heading', ['eyebrow' => 'THE READING PICTURE', 'heading' => 'Statistics', 'description' => 'See how your community is growing and which stories bring readers back.'])
+    <p><a class="button" href="/quickreads/story-activity">View Reading, Saved, and Finished</a></p>
     <form method="GET" class="filter-panel stats-filters">
         <div class="filter-bar">
             <div class="date-range">

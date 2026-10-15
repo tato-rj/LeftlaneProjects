@@ -14,6 +14,7 @@ Route::middleware('auth:quickreads-admin')->prefix('/quickreads')->name('quickre
 	Route::get('', 'Projects\Quickreads\AdminController@index');
 	
 	Route::get('/statistics', 'Projects\Quickreads\AdminController@statistics');
+	Route::get('/story-activity', 'Projects\Quickreads\AdminController@activity');
 	Route::get('/lookups', 'Projects\Quickreads\AdminController@lookups');
 	Route::get('/explore', 'Projects\Quickreads\ExploreController@index');
 	Route::patch('/explore', 'Projects\Quickreads\ExploreController@update');

@@ -15,6 +15,12 @@ class User extends \App\Projects\Quickreads\User
         return $this->morphMany(PersonalAccessToken::class, 'tokenable');
     }
 
+    public function isAppleOnly(): bool
+    {
+        return !$this->password && \Illuminate\Support\Facades\DB::connection('quickreads')
+            ->table('apple_identities')->where('user_id', $this->id)->exists();
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));

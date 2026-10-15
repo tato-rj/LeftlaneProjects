@@ -53,7 +53,8 @@ class StoriesController extends QuickreadsController
                         ->orderBy('sorting_order')
                         ->get();
 
-        if ($user = User::where('facebook_id', request()->facebook_id)->first()) {
+        $alias = request()->facebook_id;
+        if (is_string($alias) && $alias !== '' && ($user = User::where('facebook_id', $alias)->first())) {
             $favorites = UserPurchaseRecord::where('user_id', $user->id)->get();
             
             foreach ($stories as $story) {

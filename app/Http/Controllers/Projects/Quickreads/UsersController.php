@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\User;
+use App\Projects\Quickreads\Api\V2\LegacyAccountAccess;
 use App\Projects\Quickreads\Admin\{Queries, Editor};
 use Illuminate\Http\Request;
 
@@ -32,7 +33,7 @@ class UsersController extends QuickreadsController
 
     public function app()
     {
-        return User::latest()->with(['comments', 'ratings', 'stories'])->get();
+        return LegacyAccountAccess::excludeApple(User::query())->latest()->with(['comments', 'ratings', 'stories'])->get();
     }
 
     /**
@@ -53,7 +54,11 @@ class UsersController extends QuickreadsController
      */
     public function store(Request $request)
     {
-        return User::firstOrCreate(
+        $existing = User::where('email', $request['email'])->first();
+        if ($existing && LegacyAccountAccess::isAppleAccount($existing->id)) {
+            return response()->json('Use Sign in with Apple in the current app.', 403);
+        }
+        $user = User::firstOrCreate(
             [
                 'email' => $request["email"],
             ],
@@ -65,6 +70,10 @@ class UsersController extends QuickreadsController
             'gender' => $request["gender"],
             'facebook_id' => $request["facebook_id"],
         ]);
+        if (LegacyAccountAccess::isAppleAccount($user->id)) {
+            return response()->json('Use Sign in with Apple in the current app.', 403);
+        }
+        return $user;
     }
 
     public function register(Request $request)
@@ -162,6 +171,16 @@ class UsersController extends QuickreadsController
     public function destroyById(Request $request, $userId)
     {
         $request->validate(['confirm' => 'required|accepted']);
+        if (\Illuminate\Support\Facades\Schema::connection('quickreads')->hasTable('story_activity')) {
+            try {
+                app(\App\Projects\Quickreads\Api\V2\AccountDeletion::class)->delete((int) $userId,
+                    app(\App\Projects\Quickreads\Api\V2\AppleProvider::class), 404);
+            } catch (\App\Projects\Quickreads\Api\V2\ApiException $e) {
+                return back()->withErrors(['delete' => 'Account deletion could not be completed. Please retry later.']);
+            }
+            Editor::changed();
+            return redirect('/quickreads/users')->with('success', 'User and their saved stories, ratings, comments and access tokens removed.');
+        }
         $db = Queries::db();
         $db->transaction(function () use ($db, $userId) {
             $user = $db->table('users')->where('id', $userId)->lockForUpdate()->first();

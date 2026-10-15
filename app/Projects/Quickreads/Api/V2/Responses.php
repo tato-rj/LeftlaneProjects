@@ -38,10 +38,12 @@ class Responses
             503 => 'The requested content is unavailable.'];
         $headers = $exception instanceof HttpExceptionInterface ? $exception->getHeaders() : [];
         $headers['Cache-Control'] = 'private, no-store';
-        return response()->json(['error' => [
+        $error = [
             'code' => $codes[$status] ?? 'internal_error',
-            'message' => $messages[$status] ?? 'An internal error occurred.',
+            'message' => $exception instanceof ApiException ? $exception->getMessage() : ($messages[$status] ?? 'An internal error occurred.'),
             'fields' => $exception instanceof ValidationException ? (object) $exception->errors() : (object) [],
-        ]], $status, $headers);
+        ];
+        if ($exception instanceof ApiException && $exception->reason !== null) $error['reason'] = $exception->reason;
+        return response()->json(['error' => $error], $status, $headers);
     }
 }

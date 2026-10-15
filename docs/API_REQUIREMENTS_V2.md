@@ -1,5 +1,93 @@
 # QuickReads iOS — API v2 Requirements
 
+## October 14, 2026 addendum: minimal story activity reporting
+
+This addendum describes a newly requested feature after the original audit and
+the API v2 migration below. The current backend specification was successfully
+refreshed from `https://leftlaneapps.com/docs/openapi.yaml` on October 14. Its 15
+paths include authenticated account favorites but no guest story-activity,
+Reading or Finished ingestion operation. The original audit below is historical.
+
+The owner requests only which stories readers are Reading, have Saved, or have
+Finished, for guests and signed-in readers. This is current-state reporting, not
+screen tracking, event/session counting or cross-device Library/progress sync.
+Saved membership is independent of Reading/Finished. Guest saves still require an
+account. Guest Finished can be observed through successful narration completion;
+the current guest Reader does not expose authenticated Mark as Read/Library edits.
+Scrolling to the bottom does not establish completion.
+
+### Backend handoff
+
+Review and incorporate `STORY_ACTIVITY_API_PROPOSAL.yaml` into the **backend's**
+authoritative specification, implement the receiving operation, and publish it.
+Its suggested route and fields are a proposal, not evidence of a live endpoint.
+No backend source/deployment tools are present in this Swift repository. Editing
+the downloaded `docs/openapi.yaml` would not implement or publish a backend and
+would be overwritten by the next spec refresh; that downloaded file is preserved.
+
+The proposed operation accepts canonical story ID, Reading/Finished/not-started
+status, an independent nullable saved flag, observation time and an idempotent
+mutation UUID. Unknown fields remain null rather than inventing state. Account
+identity must come from a valid bearer token; a body-supplied account ID is never
+trusted. Guests use a separate random reporting UUID, unrelated to the protected
+guest-access Keychain UUID, private reaction identity, advertising IDs or hardware.
+Guest IDs are pseudonymous installation IDs, not authenticated people, and may
+change after reinstall. Signup/logout never merges or reassigns pending activity.
+
+Before publication, finalize ordering/conflict and clock-skew behavior, exact
+acknowledgement and v2 error envelopes, rate limits, retry/terminal responses,
+retention/deletion, and owner-only access to aggregate results by story and
+guest/account. No public API should reveal another reader's history. Retain all
+existing favorites and legacy URLs. Record no email, name, token, story text,
+reaction content, reading position or device fingerprint in activity payloads.
+Update the app's privacy disclosures before shipping remote collection.
+
+### App-side preparation
+
+`StoryActivityReporter.swift` now stores one latest observation per reader/story
+in protected atomic `Application Support/StoryActivity/activity-v1.json`, excluded
+from backup. Production currently has **no transport**: the recorder stores local
+pending observations and sends no network requests. `StoryActivityTransport` is an
+injection seam, not an invented HTTP implementation or a configured service.
+
+The Reader records only after authorized content actually appears in a window,
+for guests and accounts. Explicit successful save/remove paths report saved
+membership; committed Library state changes and the existing narration completion
+path report reading state. Reopening Finished preserves it. Removing a bookmark
+retains reading status where the existing Library behavior retains activity;
+forgetting the Library entry reports not-started. Unchanged callbacks coalesce.
+Metadata/layout previews, failed local mutations and login alone do not backfill
+historical data. Unresolved legacy story identities are skipped, never guessed;
+ambiguous title-only updates cannot select between different story IDs.
+
+Pending records survive restart. A configured adapter must authenticate the
+captured reader, validate the full acknowledgement/identity and return the exact
+mutation UUID only after acceptance. The recorder retries on subsequent changes,
+foreground entry and session changes, sends only the currently active reader's
+queue, and retains inactive readers' queues without reassignment. Newer edits and
+duplicate/stale callbacks cannot be erased by an old acknowledgement. Reporting
+storage/network errors never fail an otherwise successful read/save action. Tests
+disable the production singleton and inject isolated files/transports explicitly.
+
+After the backend publishes the agreed operation, refresh the specification,
+implement the matching `APIEndpoint`/DTO/URLSession adapter, add HTTP contract and
+live integration verification, then configure the production transport. Until
+then, **remote reporting is not implemented or operational**. No Firebase SDK,
+dependency, Core Data model, guest entitlement or account API behavior was added.
+
+### Validation on October 14
+
+- Signed iOS 27 simulator suite: 223 deterministic tests passed; one opt-in live
+  account test skipped (`/tmp/quickreads-story-activity-tests.xcresult`).
+- After the final guest/legacy-identity safeguard and favorite-failure reporting
+  assertions, all 26 focused persistence/Reader/favorite/queue checks passed
+  (`/tmp/quickreads-story-activity-final.xcresult`).
+- Unsigned Release device build passed. Repository integrity, project plist lint
+  and all 31 portable logic assertions passed. The proposal parses as YAML and
+  all its schema references resolve locally; this is not live endpoint validation.
+- The downloaded authoritative specification remained byte-for-byte unchanged
+  after refresh. No remote activity request was sent or claimed to succeed.
+
 ## 1. Current API Architecture
 
 This is a requirements handoff based on a static audit of the Swift/iOS repository on October 9, 2026. It describes what the current app consumes, the integration problems visible in its source, and the client-facing capabilities a future API v2 should provide. It does not specify backend storage, framework, controllers, migrations, or internal implementation. Proposed field names are illustrative; final API architecture belongs to the backend project.

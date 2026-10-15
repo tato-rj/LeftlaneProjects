@@ -24,8 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('quickreads:v2-prune')->everyFiveMinutes()->withoutOverlapping();
     }
 
     /**

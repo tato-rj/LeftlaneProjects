@@ -9,6 +9,7 @@ class UserPurchaseRecordController extends QuickreadsController
 {
     public function show(Request $request)
     {
+        if (\App\Projects\Quickreads\Api\V2\LegacyAccountAccess::isAppleAccount($request->user_id)) return collect();
         return UserPurchaseRecord::where(['user_id' => $request->user_id])->get();
     }
 

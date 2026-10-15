@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
-use App\Projects\Quickreads\Api\V2\{Responses, User};
+use App\Projects\Quickreads\Api\V2\{Responses, Sessions, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Hash, Password, Validator};
 use Illuminate\Support\Str;
@@ -30,11 +30,7 @@ class AuthController extends Controller
 
     private function session(Request $request, User $user, int $status = 200)
     {
-        $expires = now()->addDays(config('quickreads_v2.token_lifetime_days'));
-        $token = $user->createToken('quickreads-ios-v2', ['quickreads:v2'], $expires);
-        return Responses::json($request, ['data' => ['user' => self::profile($user),
-            'access_token' => $token->plainTextToken, 'token_type' => 'Bearer',
-            'expires_at' => $expires->utc()->toIso8601String()]], false)->setStatusCode($status);
+        return Responses::json($request, Sessions::issue($user)['response'], false)->setStatusCode($status);
     }
 
     public function login(Request $request)
@@ -103,7 +99,8 @@ class AuthController extends Controller
     public function forgotPassword(Request $request)
     {
         $input = Validator::make($request->json()->all(), ['email' => 'required|string|email|max:255'])->validate();
-        Password::broker('quickreads-v2')->sendResetLink($input);
+        $user = User::where('email', $input['email'])->first();
+        if (!$user || !$user->isAppleOnly()) Password::broker('quickreads-v2')->sendResetLink($input);
         // Same acknowledgement for unknown emails and broker-throttled requests.
         return Responses::json($request, ['data' => ['accepted' => true,
             'message' => 'If this account exists, password reset instructions will be sent.']], false)->setStatusCode(202);
@@ -118,7 +115,8 @@ class AuthController extends Controller
         $status = DB::connection('quickreads')->transaction(function () use ($input) {
             // Serialize token validation as well as the password change: a
             // concurrent reset must not consume the same reset token twice.
-            User::where('email', $input['email'])->lockForUpdate()->first();
+            $user = User::where('email', $input['email'])->lockForUpdate()->first();
+            if ($user && $user->isAppleOnly()) return Password::INVALID_TOKEN;
             return Password::broker('quickreads-v2')->reset($input, function ($user, $password) {
                 $user = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
                 $user->forceFill(['password' => Hash::make($password), 'remember_token' => Str::random(60)])->save();

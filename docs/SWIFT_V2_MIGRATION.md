@@ -24,6 +24,68 @@ All four credential/reset endpoints have a 5-attempt/minute/IP/operation limit, 
 
 Relevant schemas: `LoginRequest`, `RegisterRequest`, `Session`, `Account`, `ResetEmailRequest`, `ResetAccepted`, `ResetPasswordRequest`, `ResetComplete`, `Logout`, and their response envelopes.
 
+## October 14 additions: Sign in with Apple
+
+This checkout implements these operations but does **not** establish production availability. Deploy the two new migrations, configure Apple privately and verify staging before connecting production buttons. Apple challenge/exchange return `503` while disabled/unconfigured. Disabling new sign-ins leaves configured lifecycle notifications and account deletion operational. The native audience remains **`com.leftlaneapps.shortstoriesdot`**; no bundle/keychain identity change or web Services ID is introduced.
+
+1. On an explicit button tap, generate a fresh UUID and `POST /auth/apple/challenge` with `{attempt_id}`. Receive `data: {attempt_id, challenge_id, nonce, expires_at}`. Challenge lifetime is **300 seconds**. Repeating begin returns the same valid pending challenge. An expired/consumed attempt requires a fresh UUID.
+2. Request Apple's native `.fullName` and `.email` scopes. Pass the returned **nonce unchanged, without hashing**, as `ASAuthorizationAppleIDRequest.nonce`. Set `state` to the attempt UUID and verify returned state. Preserve first-consent names locally while exchange is pending.
+3. `POST /auth/apple` with required `attempt_id`, `challenge_id`, `identity_token`, `authorization_code`; optional/null `profile: {first_name, last_name}` and `locale`. Credentials are UTF-8 strings. Limits: identity JWT 16,384 characters; code 4,096; each name 255; locale 35; complete JSON body 32,768 bytes. Unknown fields are rejected. No email/password or client Apple user ID is required/accepted.
+4. New and returning users both receive **200 `SessionResponse`**. Validate/persist the QuickReads bearer using the existing coordinator, then resume its single pending action. Cancellation/failure establishes no local session and triggers no automatic bookmark, Library upload or pending-action continuation.
+
+Synthetic exchange example:
+
+```json
+{"attempt_id":"00000000-0000-4000-8000-000000000001","challenge_id":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","identity_token":"EXAMPLE_APPLE_JWT","authorization_code":"EXAMPLE_SINGLE_USE_CODE","profile":{"first_name":"Example","last_name":"Reader"},"locale":"en-US"}
+```
+
+The backend verifies Apple's RS256 signature from trusted keys, issuer, exact native audience, expiry, issue time and nonce, with **60 seconds clock skew**. It redeems the single-use code using an ES256 server client secret and verifies the returned identity JWT, including matching subject/audience/nonce. Apple refresh tokens and server secrets never reach iOS. See [Apple's token validation contract](https://developer.apple.com/documentation/signinwithapplerestapi/generate-and-validate-tokens).
+
+Canonical IDs stay decimal strings. New Apple accounts have `legacy_account_id: null`; absent names are empty strings. Returning users may omit email/names; stored metadata remains. New identities require a usable Apple-verified email (`422` otherwise); private-relay email is accepted. Apple-only accounts have no password method: reset-email requests keep the generic `202` response without implicitly adding a password.
+
+An existing email collision returns **409**, `error.reason: apple_account_link_required`, message “Please sign in with email to continue.”, and `fields: {}`. It returns no account details/token and creates no Apple binding. Changed attempt reuse returns `apple_attempt_conflict`. `Error.reason` is an additive optional shared property, required for these Apple conflicts. Unknown/absent reasons get generic conflict handling. There is **no account-linking operation**; never infer an action from message prose.
+
+Lost-response recovery:
+
+- Keep the exact credentials, attempt, names and locale for retries. Key order and omitted/null optional values are equivalent. Exact retries recover the **same session** for **300 seconds after completion**, without code redemption or another bearer. Logout/revocation/deletion also ends recovery; changed payloads return `409 apple_attempt_conflict`.
+- `503 apple_exchange_pending` with `Retry-After: 2` permits a brief exact retry while the first request finishes. If still unavailable, obtain fresh native authorization; never reuse the code under a new attempt.
+- `503 apple_restart_required` means redemption timed out or had an ambiguous response: obtain a fresh challenge/native authorization. Failed/expired attempts subsequently return `401`.
+- A database failure after a durable verified grant returns sanitized `500`; an exact retry can finish until the **original challenge expiry**. A crash before that durable receipt cannot recover and needs new authorization. Do not promise unlimited retries of a redeemed code.
+
+HTTPS is required. All responses/errors are `private, no-store`. Challenge/exchange each have 10 requests/minute/IP, plus the API's 60/minute bucket; honor `429 Retry-After`. The owner must enable the Apple capability, authorize the server key privately, refresh provisioning, add the `Default` Apple entitlement, register the server notification URL and configure private-relay mail senders. Client/server/proxy diagnostics must redact credentials.
+
+## Account lifecycle
+
+Logout only revokes the QuickReads session. Apple refresh tokens are encrypted on the server. `POST /auth/apple/notifications` receives **Apple-signed server notifications**, not iOS bearer requests. Consent/account revocation invalidates affected Apple-derived sessions; forwarding changes update delivery state without deleting accounts. Separate email-derived sessions remain valid.
+
+`DELETE /me` with `{delete_account: true}` is the implemented user-initiated deletion operation. Require deliberate UI confirmation and a bearer issued within **10 minutes**; reauthenticate on `401`. Success is `{data: {deleted: true}}`. The server revokes retained Apple tokens before deleting account data; Apple failure returns `503` and keeps the account for retry. Account reports, favorites, comments, ratings, resets and the matching newsletter subscription are removed. A hashed provider/event-time security tombstone remains for up to 90 days to reject pre-deletion proofs. Guest reporting and local offline data stay independently scoped. Coordinate the iOS deletion UI before production Apple release; logout is not deletion.
+
+## October 14 additions: story activity reporting
+
+The addendum references `STORY_ACTIVITY_API_PROPOSAL.yaml`, which was **not supplied**. The finalized backend operation is **`POST /story-activity`**, using OpenAPI `StoryActivityRequest`/`StoryActivityResponse`. Refresh the published spec and implement/test the matching adapter before enabling the production transport. This backend change modifies no Swift source or transport.
+
+```json
+{"story_id":"101","mutation_id":"00000000-0000-4000-8000-000000000001","guest_id":"00000000-0000-4000-8000-000000000002","reading_status":"reading","saved":null,"observed_at":"2026-10-14T20:00:00Z"}
+```
+
+Both state keys are required and independently nullable; at least one must be known. `reading_status` is `not_started`, `reading` or `finished`. Null means unknown/no update. Saved is independent of Reading/Finished; reporting never changes favorites or syncs Library/progress. Guests can report saved null/false, never true (`403`). Completion still comes from successful narration/explicit completion, never scrolling.
+
+Accounts send the captured reader's valid bearer and omit/null `guest_id`. Ownership comes solely from the bearer. Invalid/expired Authorization returns `401` and never falls back to guest. Guests omit Authorization and use a dedicated random reporting UUID, separate from guest-access Keychain, reaction and device identities. Signup/logout never merges or reassigns queues.
+
+Success is **200**:
+
+```json
+{"data":{"mutation_id":"00000000-0000-4000-8000-000000000001","story_id":"101","reader":{"kind":"guest","account_id":null,"guest_id":"00000000-0000-4000-8000-000000000002"},"accepted":true,"applied":true}}
+```
+
+Validate **all** returned identity fields and mutation UUID against the captured queue entry before acknowledging. `applied: false` still acknowledges an accepted stale report. Exact reader/mutation/payload retries recover the original acknowledgement for 90 days; changed reuse returns `409`. Never clear a newer local edit with an old acknowledgement.
+
+Each known field is ordered independently by RFC3339 `observed_at` (up to milliseconds), then lexicographically larger lowercase mutation UUID on ties. A later unknown field cannot hide an older known observation of the other field. More than five minutes of future skew is `422`; reports older than 90 days are acknowledged without applying. Inactive latest state/minimal receipts expire after 90 days and are removed at the next scheduled prune. There is no event/session log.
+
+Bodies are strict, maximum 32,768 bytes. Only canonical story IDs are accepted (`404` if unknown). No email, name, story text, reaction, position or fingerprint fields are accepted. HTTPS and `private, no-store` apply. Limit: 30/minute/IP plus the API 60/minute bucket. Retry the **same mutation** with bounded backoff after network errors, `429` (`Retry-After`), `500` or `503`. `400/403/404/409/413/415/422` require correction and are terminal for an unchanged payload. On `401`, reauthenticate the captured account and retain inactive queues separately. Reporting failure never undoes a valid read/save.
+
+Only `/quickreads/story-activity`, behind the existing owner/admin guard, shows aggregate counts by story and guest/account without reader identifiers. There is no public history API. Account deletion erases its reports; owner support can erase guest reports using the dedicated reporting UUID and `quickreads:activity-forget-guest`. Update privacy disclosures before collection. Use staging/disposable accounts to verify the full HTTP acknowledgement contract before shipping a client transport.
+
 ## Endpoint mapping
 
 Paths below are relative to the v2 base URL.
