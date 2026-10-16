@@ -446,6 +446,115 @@ main {
     cursor: wait;
 }
 
+.activity-metrics .metric-card.is-selected {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 1px var(--teal);
+}
+
+.activity-filters .filter-bar {
+    flex-wrap: wrap;
+}
+
+.activity-filters .search-field {
+    flex-basis: 260px;
+}
+
+.activity-filters select {
+    min-width: 140px;
+}
+
+.activity-filters .button {
+    white-space: nowrap;
+}
+
+.activity-caption {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.activity-report-heading {
+    flex-wrap: wrap;
+}
+
+.activity-views {
+    display: inline-flex;
+    padding: 4px;
+    gap: 4px;
+    background: #f4f6ef;
+    border-radius: 8px;
+}
+
+.activity-views a {
+    font-size: .875rem;
+    padding: 8px 12px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+
+.activity-views a[aria-current] {
+    background: white;
+    color: var(--teal);
+    box-shadow: 0 1px 3px #20392c14;
+}
+
+.story-activity-table {
+    min-width: 900px;
+}
+
+.activity-detail {
+    display: block;
+    margin-top: 6px;
+    font-size: .8125rem;
+    color: var(--muted);
+}
+
+.activity-detail time {
+    white-space: nowrap;
+}
+
+.activity-state.reading {
+    background: #e8f2fa;
+    color: #235b7b;
+}
+
+.activity-state.finished {
+    background: #f0eafa;
+    color: #644389;
+}
+
+.activity-state.saved {
+    background: #edf5e6;
+    color: #42663a;
+}
+
+.activity-state.unknown, .activity-state.unsaved, .activity-state.not_started {
+    background: #f0f1ef;
+    color: #68746b;
+}
+
+.activity-report-note {
+    font-size: .875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+    .activity-filters .search-field {
+        flex-basis: 100%;
+    }
+
+    .activity-filters .filter-bar > div:not(.search-field) {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+    }
+
+    .activity-filters select {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
 .metric-grid {
     display: grid;
     grid-template-columns: repeat(4,minmax(0,1fr));

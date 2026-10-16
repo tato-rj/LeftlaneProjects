@@ -105,6 +105,7 @@
             </div>
         </section>
         <aside class="activity-panel">
+            <a class="text-link" href="/quickreads/story-activity">Saved, Reading &amp; Finished →</a>
             <p class="eyebrow">
                 THE LAST 30 DAYS
             </p>

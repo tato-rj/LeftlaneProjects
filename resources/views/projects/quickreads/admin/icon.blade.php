@@ -9,6 +9,9 @@
         @case('statistics')
         <path d="M4 3v17h17M8 15l4-5 4 2 5-7"/>
         @break
+        @case('story-activity')
+        <path d="M3 5h18M3 12h6M3 19h6m4-6 3 3 5-7"/>
+        @break
         @case('stories')
         <path d="M12 5v15M12 5C9 3 5 3 2 4v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/>
         @break
