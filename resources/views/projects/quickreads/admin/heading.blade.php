@@ -12,7 +12,7 @@
     </div>
     @isset($action)
         <a class="button primary" href="{{ $action[1] }}">
-            @include('projects.quickreads.admin.icon', ['name' => 'plus'])
+            @include('projects.quickreads.admin.icon', ['name' => $action[2] ?? 'plus'])
             {{ $action[0] }}
         </a>
     @endisset

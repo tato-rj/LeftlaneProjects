@@ -124,6 +124,38 @@ class AppleAuthTest extends QuickreadsTestCase
         $this->assertSame('', User::first()->password);
     }
 
+    public function test_verified_apple_signup_and_app_completion_appear_in_the_admin_immediately(): void
+    {
+        $this->actingAs(\App\Projects\Quickreads\QuickreadsAdmin::create([
+            'name' => 'Owner', 'email' => 'owner@example.test', 'password' => 'unused']), 'quickreads-admin');
+        $this->get('/quickreads')->assertOk(); // Warm catalogue caches before signup.
+        $input = $this->exchangeInput($this->attempt());
+        unset($input['profile']); // Apple may omit the name on later authorizations.
+        $signup = $this->postJson('/api/v2/auth/apple', $input)->assertOk();
+        $id = $signup->json('data.user.id');
+        $headers = ['Authorization' => 'Bearer '.$signup->json('data.access_token')];
+        $this->postJson('/api/v2/story-activity', ['story_id' => '1', 'mutation_id' => (string) Str::uuid(),
+            'reading_status' => 'finished', 'saved' => true, 'observed_at' => now()->utc()->toIso8601String()], $headers)->assertOk()->assertJsonPath('data.applied', true);
+        $directory = $this->get('/quickreads/users?provider=apple&status=finished')->assertOk()->assertSee('Reader #'.$id);
+        $this->assertSame(1, $directory->viewData('users')->total());
+        $this->assertSame(1, $directory->viewData('readerSummary')['apple_users']);
+        $profile = $this->get('/quickreads/users/'.$id)->assertOk()->assertSee('Authorized')->assertSee('Apple private relay address');
+        $this->assertSame(1, (int) $profile->viewData('user')->activity->finished);
+        $this->assertSame(1, (int) $profile->viewData('user')->activity->saved);
+        $this->assertSame('finished', $profile->viewData('currentStories')->first()->reading_status);
+        $dashboard = $this->get('/quickreads')->assertOk();
+        $this->assertSame(1, $dashboard->viewData('summary')['apple_users']);
+        $this->assertSame(1, $dashboard->viewData('summary')['users']);
+        $this->assertSame(1, (int) $dashboard->viewData('activitySummary')->finished);
+        foreach ([$directory, $profile, $dashboard, $this->get('/quickreads/story-activity?provider=apple')->assertOk()] as $page) {
+            $page->assertDontSee('synthetic-refresh')->assertDontSee($signup->json('data.access_token'));
+        }
+        $next = $this->exchangeInput($this->attempt(), ['email' => null, 'email_verified' => null]);
+        unset($next['profile']);
+        $this->postJson('/api/v2/auth/apple', $next)->assertOk()->assertJsonPath('data.user.id', $id);
+        $this->assertSame(1, $this->get('/quickreads/users?provider=apple')->assertOk()->viewData('users')->total());
+    }
+
     public function test_unverified_tokens_and_mismatched_attempts_never_create_an_account(): void
     {
         $challenge = $this->attempt();

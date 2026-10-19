@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Projects\Quickreads;
 
 use App\Projects\Quickreads\User;
 use App\Projects\Quickreads\Api\V2\LegacyAccountAccess;
-use App\Projects\Quickreads\Admin\{Queries, Editor};
+use App\Projects\Quickreads\Admin\{ActivityReport, ReaderReport, Queries, Editor};
 use Illuminate\Http\Request;
 
 class UsersController extends QuickreadsController
@@ -16,19 +16,8 @@ class UsersController extends QuickreadsController
      */
     public function index(Request $request)
     {
-        $criteria = Queries::criteria($request);
-        $query = Queries::db()->table('users as u')->select('u.id', 'u.first_name', 'u.last_name', 'u.email', 'u.locale', 'u.created_at')
-            ->selectSub(Queries::db()->table('user_purchase_records as p')->selectRaw('COUNT(*)')->whereColumn('p.user_id', 'u.id'), 'saves');
-        $fullName = Queries::db()->getDriverName() === 'sqlite'
-            ? "(u.first_name || ' ' || u.last_name)" : "CONCAT_WS(' ', u.first_name, u.last_name)";
-        Queries::search($query, [$fullName, 'u.email'], $criteria['q'] ?? null);
-        if (!empty($criteria['activity'])) {
-            $query->whereExists(function ($q) { $q->selectRaw('1')->from('user_purchase_records as p')->whereColumn('p.user_id', 'u.id'); }, 'and', $criteria['activity'] === 'none');
-        }
-        $sort = $criteria['sort'] ?? 'newest';
-        $sort === 'name' ? $query->orderBy('u.first_name')->orderBy('u.last_name') : $query->orderBy('u.created_at', $sort === 'oldest' ? 'asc' : 'desc');
-        $users = Queries::page($query->orderByDesc('u.id'), $criteria);
-        return view('projects.quickreads.users.index', compact('users'));
+        return response()->view('projects.quickreads.users.index', ReaderReport::directory($request))
+            ->header('Cache-Control', 'private, no-store');
     }
 
     public function app()
@@ -121,17 +110,24 @@ class UsersController extends QuickreadsController
     {
         $request->validate(['page' => 'nullable|integer|min:1|max:100000']);
         $db = Queries::db();
-        $user = $db->table('users')->select('id', 'first_name', 'last_name', 'email', 'locale', 'gender', 'created_at')->find($userId);
+        $query = ReaderReport::withProvider($db->table('users as u')->select('u.id', 'u.first_name', 'u.last_name', 'u.email', 'u.locale', 'u.gender', 'u.created_at'), 'u.id');
+        foreach (['user_purchase_records' => 'saves', 'ratings' => 'ratings', 'comments' => 'comments'] as $table => $key) {
+            $query->selectSub($db->table($table.' as related')->selectRaw('COUNT(*)')->whereColumn('related.user_id', 'u.id'), $key);
+        }
+        $user = $query->where('u.id', $userId)->first();
         abort_unless($user, 404);
-        $counts = [];
-        foreach (['user_purchase_records' => 'saves', 'ratings' => 'ratings', 'comments' => 'comments'] as $table => $key) $counts[$key] = $db->table($table)->where('user_id', $userId)->count();
+        ReaderReport::decorate(collect([$user]));
+        $apple = $db->table('apple_identities')->where('user_id', $userId)
+            ->selectRaw('COUNT(*) as identities, SUM(CASE WHEN revoked_at IS NULL THEN 1 ELSE 0 END) as active, MAX(authorized_at) as authorized_at')->first();
+        $currentStories = ActivityReport::details(ActivityReport::base()->where('activity.reader_kind', 'account')->where('activity.user_id', $userId))->limit(10)->get();
+        $counts = ['legacy saves' => $user->saves, 'ratings' => $user->ratings, 'comments' => $user->comments];
         $saves = $db->table('user_purchase_records as p')->leftJoin('stories as s', 's.id', '=', 'p.story_id')
             ->select('p.id', 'p.created_at', 's.slug', 's.title')->where('p.user_id', $userId)->orderByDesc('p.created_at')->orderByDesc('p.id')->paginate(25)->withQueryString();
         $ratings = $db->table('ratings as r')->leftJoin('stories as s', 's.id', '=', 'r.story_id')
             ->select('s.title', 'r.score', 'r.created_at')->where('r.user_id', $userId)->orderByDesc('r.created_at')->orderByDesc('r.id')->limit(10)->get();
         $comments = $db->table('comments as c')->leftJoin('stories as s', 's.id', '=', 'c.story_id')
             ->select('s.title', 'c.body', 'c.created_at')->where('c.user_id', $userId)->orderByDesc('c.created_at')->orderByDesc('c.id')->limit(10)->get();
-        return view('projects.quickreads.users.show', compact('user', 'counts', 'saves', 'ratings', 'comments'));
+        return response()->view('projects.quickreads.users.show', compact('user', 'apple', 'currentStories', 'counts', 'saves', 'ratings', 'comments'))->header('Cache-Control', 'private, no-store');
     }
 
     /**

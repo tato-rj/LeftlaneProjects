@@ -16,7 +16,9 @@
     </div>
     <form method="GET" class="filter-panel activity-filters">
         <input type="hidden" name="view" value="{{ $view }}">
-        @if(!empty($filters['story_id']))<input type="hidden" name="story_id" value="{{ $filters['story_id'] }}">@endif
+        @foreach(['story_id', 'user_id'] as $identityFilter)
+            @if(!empty($filters[$identityFilter]))<input type="hidden" name="{{ $identityFilter }}" value="{{ $filters[$identityFilter] }}">@endif
+        @endforeach
         <div class="filter-bar">
             <div class="search-field">
                 <label class="sr-only" for="activity-search">Search stories, authors or readers</label>
@@ -35,18 +37,42 @@
                 <label class="sr-only" for="activity-status">Status</label>
                 <select name="status" id="activity-status">
                     <option value="">All states</option>
-                    @foreach(['saved' => 'Saved', 'reading' => 'Reading', 'finished' => 'Finished'] as $value => $label)
+                    @foreach(['saved' => 'Saved', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'] as $value => $label)
                         <option value="{{ $value }}" @selected(($filters['status'] ?? null) === $value)>{{ $label }}</option>
                     @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="sr-only" for="activity-provider">Sign-in method</label>
+                <select id="activity-provider" name="provider">
+                    <option value="">All sign-in methods</option>
+                    <option value="apple" @selected(($filters['provider'] ?? '') === 'apple')>Apple accounts</option>
+                    <option value="other" @selected(($filters['provider'] ?? '') === 'other')>Other accounts</option>
                 </select>
             </div>
             <button type="submit" class="button primary">Refresh report</button>
             <a class="text-link" href="/quickreads/story-activity">Clear filters</a>
         </div>
     </form>
+    @php
+        $filterLabels = [
+            'status' => ['saved' => 'Saved', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'][$filters['status'] ?? ''] ?? null,
+            'reader_kind' => ['guest' => 'Guests', 'account' => 'Accounts'][$filters['reader_kind'] ?? ''] ?? null,
+            'provider' => ['apple' => 'Apple accounts', 'other' => 'Other accounts'][$filters['provider'] ?? ''] ?? null,
+            'user_id' => empty($filters['user_id']) ? null : 'Reader #'.$filters['user_id'],
+            'story_id' => empty($filters['story_id']) ? null : 'Story #'.$filters['story_id'],
+            'q' => trim($filters['q'] ?? '') === '' ? null : 'Search: '.$filters['q'],
+        ];
+    @endphp
+    @if(array_filter($filterLabels))
+        <div class="active-filters" aria-label="Active filters"><strong>Showing:</strong>
+            @foreach(array_filter($filterLabels) as $key => $label)<a href="{{ $reportUrl([$key => null]) }}" aria-label="Remove {{ $label }} filter">{{ $label }} <span aria-hidden="true">×</span></a>@endforeach
+            <a href="/quickreads/story-activity">Show all activity</a>
+        </div>
+    @endif
     <div class="report-caption activity-caption">
-        <span>Last received: @include('projects.quickreads.statistics.activity-time', ['value' => $summary->last_received_at, 'empty' => 'No reports yet'])</span>
-        <span>Times shown in {{ config('app.timezone') }}</span>
+        <span>Latest state update: @include('projects.quickreads.statistics.activity-time', ['value' => $summary->last_received_at, 'empty' => 'No reports yet'])</span>
+        <span>Checked {{ now()->format('g:i:s a T') }} · {{ config('app.timezone') }}</span>
     </div>
     <section class="panel">
         <div class="panel-heading activity-report-heading">
@@ -59,8 +85,8 @@
         <div class="table-scroll">
             <table class="story-activity-table">
                 <thead><tr><th scope="col">Story</th><th scope="col">{{ $view === 'readers' ? 'Reader' : 'Readers' }}</th>
-                    @if($view === 'readers')<th scope="col">Reading state</th><th scope="col">Saved state</th><th scope="col">Received</th>
-                    @else<th scope="col">Saved</th><th scope="col">Reading</th><th scope="col">Finished</th><th scope="col">Last received</th>@endif
+                    @if($view === 'readers')<th scope="col">Reading state</th><th scope="col">Saved state</th><th scope="col">State updated</th>
+                    @else<th scope="col">Saved</th><th scope="col">Reading</th><th scope="col">Finished</th><th scope="col">State updated</th>@endif
                 </tr></thead>
                 <tbody>
                 @forelse($rows as $row)
@@ -74,18 +100,16 @@
                                 <span class="badge">{{ $row->reader_kind === 'guest' ? 'Guests' : 'Accounts' }}</span>
                                 <small class="activity-detail">{{ number_format($row->reports) }} {{ Str::plural('report', $row->reports) }}</small>
                             @elseif($row->reader_kind === 'account')
-                                @php($readerName = trim(($row->first_name ?? '').' '.($row->last_name ?? '')) ?: 'Registered reader')
+                                @php($readerName = trim(($row->first_name ?? '').' '.($row->last_name ?? '')) ?: 'Reader #'.$row->account_id)
                                 @if($row->account_id)<a class="record-title" href="/quickreads/users/{{ $row->account_id }}">{{ $readerName }}</a>@else<span>Unavailable account</span>@endif
-                                <small class="activity-detail">Account</small>
+                                <small class="activity-detail">Account #{{ $row->account_id ?? '—' }} @if($row->is_apple) · Apple @endif</small>
                             @else
                                 <span class="record-title">Guest reader</span><small class="activity-detail">Guest installation</small>
                             @endif
                         </td>
                         @if($view === 'readers')
-                            <td><span class="badge activity-state {{ $row->reading_status ?? 'unknown' }}">{{ ['reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'][$row->reading_status] ?? 'Not reported' }}</span>
-                                <small class="activity-detail">@include('projects.quickreads.statistics.activity-time', ['value' => $row->reading_observed_at])</small></td>
-                            <td><span class="badge activity-state {{ $row->saved === null ? 'unknown' : ($row->saved ? 'saved' : 'unsaved') }}">{{ $row->saved === null ? 'Not reported' : ($row->saved ? 'Saved' : 'Not saved') }}</span>
-                                <small class="activity-detail">@include('projects.quickreads.statistics.activity-time', ['value' => $row->saved_observed_at])</small></td>
+                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'reading'])</td>
+                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'saved'])</td>
                             <td class="nowrap">@include('projects.quickreads.statistics.activity-time', ['value' => $row->updated_at])</td>
                         @else
                             <td>{{ number_format($row->saved) }}</td><td>{{ number_format($row->reading) }}</td><td>{{ number_format($row->finished) }}</td>
@@ -94,7 +118,7 @@
                     </tr>
                 @empty
                     <tr><td colspan="{{ $view === 'readers' ? 5 : 6 }}" class="empty-state">
-                        <h3>{{ !empty($filters['status']) || !empty($filters['q']) || !empty($filters['reader_kind']) || !empty($filters['story_id']) ? 'No matching activity' : 'Waiting for the first report' }}</h3>
+                        <h3>{{ array_filter($filterLabels) ? 'No matching activity' : 'Waiting for the first report' }}</h3>
                         <p>In the iOS app, save a story, start reading, or mark it finished. Then refresh this report.</p>
                         <p>Reports appear once your app build has activity reporting enabled.</p>
                     </td></tr>
@@ -104,5 +128,5 @@
         </div>
         @include('projects.quickreads.admin.pagination', ['records' => $rows])
     </section>
-    <p class="activity-report-note">Each report keeps the latest known state, so Finished replaces Reading for the same reader and story. Counts include reports active within {{ config('quickreads_v2.activity_retention_days') }} days; guest counts represent installations. This page refreshes when you select Refresh report.</p>
+    <p class="activity-report-note">Each report keeps the latest known state, so Finished replaces Reading for the same reader and story. Counts include reports active within {{ config('quickreads_v2.activity_retention_days') }} days; guest counts represent installations. State updated is when the backend applied a report. Duplicate or older reports do not move that time forward. Select Refresh report to check again.</p>
 @endsection

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Projects\Quickreads;
 
-use App\Projects\Quickreads\Admin\{ActivityReport, Queries};
+use App\Projects\Quickreads\Admin\{ActivityReport, ReaderReport, Queries};
 use App\Projects\Quickreads\LatestAdditions;
 use Illuminate\Http\Request;
 
@@ -10,12 +10,14 @@ class AdminController extends QuickreadsController
 {
     public function index()
     {
-        $summary = Queries::dashboard();
+        $summary = array_merge(Queries::dashboard(), ReaderReport::summary());
         $recentStories = Queries::stories()->select('s.id', 's.slug', 's.title', 's.time', 's.created_at', 'a.name as author', 'c.category')
             ->orderByDesc('s.created_at')->orderByDesc('s.id')->limit(6)->get();
-        $recentUsers = Queries::db()->table('users')->select('id', 'first_name', 'last_name', 'email', 'created_at')
+        $recentUsers = ReaderReport::withProvider(Queries::db()->table('users')->select('id', 'first_name', 'last_name', 'email', 'created_at'), 'users.id')
             ->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get();
-        return view('projects.quickreads.dashboard', compact('summary', 'recentStories', 'recentUsers'));
+        foreach ($recentUsers as $user) $user->display_name = trim($user->first_name.' '.$user->last_name) ?: 'Reader #'.$user->id;
+        return response()->view('projects.quickreads.dashboard', array_merge(compact('summary', 'recentStories', 'recentUsers'), ActivityReport::overview()))
+            ->header('Cache-Control', 'private, no-store');
     }
 
     public function statistics(Request $request)

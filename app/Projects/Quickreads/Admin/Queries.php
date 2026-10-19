@@ -61,17 +61,13 @@ class Queries
 
     public static function dashboard(): array
     {
-        return Cache::remember('quickreads.admin.dashboard.v1', 300, function () {
+        return Cache::remember('quickreads.admin.dashboard.v2', 300, function () {
             $db = self::db();
-            $since = now()->subDays(29)->startOfDay();
             return [
                 'generated_at' => now(),
                 'stories' => $db->table('stories')->count(),
-                'users' => $db->table('users')->count(),
                 'authors' => $db->table('authors')->count(),
                 'categories' => LatestAdditions::categories($db->table('categories'), '', true)->count(),
-                'new_users' => $db->table('users')->where('created_at', '>=', $since)->count(),
-                'saves' => $db->table('user_purchase_records')->where('created_at', '>=', $since)->count(),
                 'relationships' => self::stories()->where(fn ($q) => $q->whereNull('a.id')->orWhereNull('c.id'))->count(),
                 'time' => self::stories()->where(fn ($q) => self::invalidTime($q))->count(),
             ];

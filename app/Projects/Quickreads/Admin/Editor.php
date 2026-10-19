@@ -37,7 +37,7 @@ class Editor
 
     public static function changed(): void
     {
-        Cache::forget('quickreads.admin.dashboard.v1');
+        Cache::forget('quickreads.admin.dashboard.v2');
         // Old report entries expire naturally; a new namespace also prevents
         // an in-flight report from restoring deleted records to the next view.
         Cache::forever('quickreads.admin.report_version', (string) Str::uuid());
