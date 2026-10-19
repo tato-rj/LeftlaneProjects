@@ -11,7 +11,7 @@
         <div>
             <p class="eyebrow">THE READER’S FRONT PAGE</p>
             <h1>Make room for discovery.</h1>
-            <p class="muted">Your sections, your stories. Drag to arrange and choose exactly what readers see.</p>
+            <p class="muted">Choose the stories and arrange your sections. Story order shuffles daily.</p>
         </div>
         <div class="explore-save">
             <span data-save-state>All changes saved</span>
@@ -28,7 +28,7 @@
                 <div class="explore-app-heading"><span class="explore-app-mark">q.</span><div><small>A LITTLE READING, EVERY DAY</small><h2>Explore</h2></div></div>
                 <div data-explore-sections></div>
                 <button type="button" class="explore-add" data-add-section>＋ Add a section</button>
-                <p class="explore-preview-note">The app controls the final typography and spacing. Readers can expand story rows with See all. Continue reading is added by their app.</p>
+                <p class="explore-preview-note">Story order shuffles once a day at midnight UTC. Just added stays newest first. This preview and the app share the same order. Readers can expand story rows with See all.</p>
             </div>
         </div>
         <aside class="explore-inspector" aria-label="Section editor">
@@ -83,7 +83,7 @@
             <div class="explore-dialog-actions"><small>Private until you save Explore.</small><button type="button" class="button" data-close-dialog>Cancel</button><button type="submit" class="button primary" data-create-section disabled>Create section</button></div>
         </form>
     </dialog>
-    <p class="sr-only" id="explore-drag-help">Drag to rearrange. You can also use the arrow keys on a drag handle. Today’s pick stays first.</p>
+    <p class="sr-only" id="explore-drag-help">Drag to rearrange sections. You can also use the arrow keys on a drag handle. Today’s pick stays first. Story order shuffles daily.</p>
     <div class="sr-only" aria-live="polite" data-drag-announcement></div>
     <script type="application/json" id="explore-initial">@json($initial)</script>
 @endsection

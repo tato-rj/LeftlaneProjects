@@ -50,30 +50,6 @@
             @include('projects.quickreads.admin.delete', ['kind' => 'user', 'deleteUrl' => '/quickreads/users/id/'.$user->id, 'warning' => 'This removes the account, saved stories, ratings, comments and access tokens.'])
         </aside>
         <div>
-            <section class="panel reader-activity-panel">
-                <div class="panel-heading"><div><p class="eyebrow">CURRENT READING PICTURE</p><h2>Their stories, right now.</h2>
-                    <p>Latest app reports, including saved membership and completion.</p></div>
-                    <a class="text-link" href="/quickreads/story-activity?user_id={{ $user->id }}">All story reports →</a></div>
-                <div class="reader-status-grid">
-                    @foreach(['reading' => 'Reading', 'finished' => 'Finished', 'saved' => 'Saved'] as $key => $label)
-                        <a href="/quickreads/story-activity?user_id={{ $user->id }}&amp;status={{ $key }}" class="reader-status {{ $key }}"><strong>{{ number_format($user->activity->$key) }}</strong><span>{{ $label }}</span></a>
-                    @endforeach
-                </div>
-                <div class="table-scroll"><table class="reader-stories-table">
-                    <thead><tr><th scope="col">Story</th><th scope="col">Reading state</th><th scope="col">Saved state</th></tr></thead>
-                    <tbody>
-                    @forelse($currentStories as $row)
-                        <tr><td><a class="record-title" href="/quickreads/story-activity?user_id={{ $user->id }}&amp;story_id={{ $row->story_id }}">{{ $row->title ?? 'Unavailable story' }}</a><small class="activity-detail">{{ $row->author ?? 'Unknown author' }} · #{{ $row->story_id }}</small><small class="activity-detail">Updated @include('projects.quickreads.statistics.activity-time', ['value' => $row->updated_at])</small></td>
-                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'reading'])</td>
-                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'saved'])</td></tr>
-                    @empty
-                        <tr><td colspan="3" class="empty-state"><h3>No current story reports</h3><p>Reading, Finished and Saved appear when this account reports activity from the updated app.</p></td></tr>
-                    @endforelse
-                    </tbody>
-                </table></div>
-                <div class="reader-activity-footer"><span>Showing the latest {{ $currentStories->count() }} of {{ number_format($user->activity->reports) }} current reports · {{ config('quickreads_v2.activity_retention_days') }}-day retention</span>
-                    <span>Latest update: @include('projects.quickreads.statistics.activity-time', ['value' => $user->activity->last_received_at, 'empty' => 'No reports yet'])</span></div>
-            </section>
             <div class="metric-grid compact">
                 @foreach($counts as $label => $count)
                     <div class="metric-card">
@@ -86,14 +62,14 @@
                     </div>
                 @endforeach
             </div>
-            <section class="panel">
+            <section class="panel saved-stories-panel" id="saved-stories">
                 <div class="panel-heading">
                     <div>
                         <h2>
-                            Legacy saved stories
+                            Saved stories
                         </h2>
                         <p>
-                            Save records from the favorites API · Current reported Saved states appear above
+                            Stories saved through any app version · Most recent first
                         </p>
                     </div>
                 </div>
@@ -138,6 +114,32 @@
                     </table>
                 </div>
                 @include('projects.quickreads.admin.pagination', ['records' => $saves])
+            </section>
+            <section class="panel reader-activity-panel">
+                <div class="panel-heading"><div><p class="eyebrow">NEW APP REPORTS</p><h2>Their stories, right now.</h2>
+                    <p>Reading, completion and saved state reported by the updated app.</p></div>
+                    <a class="text-link" href="/quickreads/story-activity?user_id={{ $user->id }}">All story reports →</a></div>
+                @if($user->activity->reports)
+                <div class="reader-status-grid">
+                    @foreach(['reading' => 'Reading', 'finished' => 'Finished', 'saved' => 'App-reported saved'] as $key => $label)
+                        <a href="/quickreads/story-activity?user_id={{ $user->id }}&amp;status={{ $key }}" class="reader-status {{ $key }}"><strong>{{ number_format($user->activity->$key) }}</strong><span>{{ $label }}</span></a>
+                    @endforeach
+                </div>
+                @endif
+                <div class="table-scroll"><table class="reader-stories-table">
+                    <thead><tr><th scope="col">Story</th><th scope="col">Reading state</th><th scope="col">Saved state</th></tr></thead>
+                    <tbody>
+                    @forelse($currentStories as $row)
+                        <tr><td><a class="record-title" href="/quickreads/story-activity?user_id={{ $user->id }}&amp;story_id={{ $row->story_id }}">{{ $row->title ?? 'Unavailable story' }}</a><small class="activity-detail">{{ $row->author ?? 'Unknown author' }} · #{{ $row->story_id }}</small><small class="activity-detail">Updated @include('projects.quickreads.statistics.activity-time', ['value' => $row->updated_at])</small></td>
+                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'reading'])</td>
+                            <td>@include('projects.quickreads.admin.story-state', ['field' => 'saved'])</td></tr>
+                    @empty
+                        <tr><td colspan="3" class="empty-state"><h3>No current app reports</h3><p>Reading and Finished appear when this account reports activity from the updated app. Saved stories from all app versions are listed above.</p></td></tr>
+                    @endforelse
+                    </tbody>
+                </table></div>
+                <div class="reader-activity-footer"><span>Showing the latest {{ $currentStories->count() }} of {{ number_format($user->activity->reports) }} current reports · {{ config('quickreads_v2.activity_retention_days') }}-day retention</span>
+                    <span>Latest update: @include('projects.quickreads.statistics.activity-time', ['value' => $user->activity->last_received_at, 'empty' => 'No reports yet'])</span></div>
             </section>
             <div class="two-column spaced">
                 <section class="panel">

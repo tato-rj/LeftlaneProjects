@@ -120,7 +120,7 @@ class UsersController extends QuickreadsController
         $apple = $db->table('apple_identities')->where('user_id', $userId)
             ->selectRaw('COUNT(*) as identities, SUM(CASE WHEN revoked_at IS NULL THEN 1 ELSE 0 END) as active, MAX(authorized_at) as authorized_at')->first();
         $currentStories = ActivityReport::details(ActivityReport::base()->where('activity.reader_kind', 'account')->where('activity.user_id', $userId))->limit(10)->get();
-        $counts = ['legacy saves' => $user->saves, 'ratings' => $user->ratings, 'comments' => $user->comments];
+        $counts = ['saved stories' => $user->saves, 'ratings' => $user->ratings, 'comments' => $user->comments];
         $saves = $db->table('user_purchase_records as p')->leftJoin('stories as s', 's.id', '=', 'p.story_id')
             ->select('p.id', 'p.created_at', 's.slug', 's.title')->where('p.user_id', $userId)->orderByDesc('p.created_at')->orderByDesc('p.id')->paginate(25)->withQueryString();
         $ratings = $db->table('ratings as r')->leftJoin('stories as s', 's.id', '=', 'r.story_id')

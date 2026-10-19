@@ -21,7 +21,7 @@
   const createSection = document.querySelector('[data-create-section]');
   const csrf = document.querySelector('meta[name=csrf-token]').content;
   const sources = {
-    manual: ['Hand-picked stories', 'Choose the stories yourself and arrange them just the way you like.'],
+    manual: ['Hand-picked stories', 'Choose the stories yourself. Their order shuffles daily.'],
     latest: ['Latest additions', 'Always the 10 newest stories, updated automatically.'],
     popular: ['Most saved', 'The stories saved by the most readers.'],
     quick: ['Quick reads', 'Stories that fit into a few spare minutes.'],
@@ -89,27 +89,16 @@
     function renderPicked() {
       const chosen = getStories(), scroll = picked.scrollTop; count.textContent = chosen.length+'/'+max;
       const focused = document.activeElement, focusedId = picked.contains(focused) ? focused.closest('[data-story-id]')?.dataset.storyId : null;
-      const focusSelector = focused?.classList.contains('explore-drag') ? '.explore-drag' : '.explore-picked-remove';
       picked.replaceChildren();
       if (!chosen.length) picked.append(node('p', 'explore-picker-empty', 'No stories selected. Add them below.'));
-      chosen.forEach((story, index) => {
+      chosen.forEach(story => {
         const row = node('div', 'explore-picked-story'); row.dataset.storyId = story.id;
-        const handle = button('⠿', 'explore-drag', () => {}, 'Drag '+story.title+' to reorder'); handle.dataset.dragKind = 'picker';
-        handle.setAttribute('aria-describedby', 'explore-drag-help');
-        handle.addEventListener('keydown', event => {
-          const direction = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
-          if (!direction) return; event.preventDefault(); const next = [...getStories()], target = index + direction;
-          if (target < 0 || target >= next.length) return;
-          [next[index], next[target]] = [next[target], next[index]]; change(next);
-          picked.querySelector(`[data-story-id="${story.id}"] .explore-drag`)?.focus();
-        });
         const copy = node('span', 'explore-picked-copy'); copy.append(node('strong', '', story.title), node('small', '', story.author));
-        if (max > 1) row.append(handle);
         row.append(copy, button('×', 'explore-picked-remove', () => change(getStories().filter(s => s.id !== story.id)), 'Remove '+story.title+' from selection'));
         picked.append(row);
       });
       picked.scrollTop = scroll;
-      if (focusedId) picked.querySelector(`[data-story-id="${focusedId}"] ${focusSelector}`)?.focus({ preventScroll: true });
+      if (focusedId) picked.querySelector(`[data-story-id="${focusedId}"] .explore-picked-remove`)?.focus({ preventScroll: true });
     }
     function renderResults() {
       const scroll = results.scrollTop, chosen = getStories();
@@ -154,9 +143,6 @@
       renderResults(); status.textContent = 'Searching…'; timer = setTimeout(() => load(1), 250);
     });
     search.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); clearTimeout(timer); load(1); } });
-    picked.addEventListener('pointerdown', event => beginDrag(event, order => {
-      const chosen = getStories(); change(order.map(storyId => chosen.find(s => s.id === storyId)).filter(Boolean));
-    }, render));
     render(); load(1);
     return { render, focus: () => search.focus(), destroy: () => { disposed = true; clearTimeout(timer); controller?.abort(); } };
   }
@@ -171,23 +157,14 @@
     markDirty(); renderCanvas(); renderInspector(); announce('Section moved.');
     canvas.querySelector(`[data-section-id="${selectedId}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
-  const moveStory = (section, storyId, direction) => {
-    const index = section.story_ids.indexOf(storyId), target = index + direction;
-    if (target < 0 || target >= section.story_ids.length) return;
-    [section.story_ids[index], section.story_ids[target]] = [section.story_ids[target], section.story_ids[index]];
-    const stories = preview.get(section.id) || [];
-    preview.set(section.id, section.story_ids.map(id => stories.find(s => s.id === id)).filter(Boolean));
-    markDirty(); renderCanvas(); activePicker?.render(); announce('Story moved.');
-  };
-  const dragHandle = (kind, section, storyId) => {
-    const handle = button('⠿', 'explore-drag', () => {}, kind === 'section' ? 'Drag '+section.title+' to reorder' : 'Drag story to reorder');
-    handle.dataset.dragKind = kind; handle.setAttribute('aria-describedby', 'explore-drag-help');
+  const dragHandle = section => {
+    const handle = button('⠿', 'explore-drag', () => {}, 'Drag '+section.title+' to reorder');
+    handle.dataset.dragKind = 'section'; handle.setAttribute('aria-describedby', 'explore-drag-help');
     handle.addEventListener('keydown', event => {
       const direction = ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : ['ArrowDown', 'ArrowRight'].includes(event.key) ? 1 : 0;
       if (!direction) return; event.preventDefault(); selectedId = section.id;
-      if (kind === 'section') moveSection(direction); else moveStory(section, storyId, direction);
-      const target = kind === 'section' ? canvas.querySelector(`[data-section-id="${section.id}"] [data-drag-kind="section"]`) : canvas.querySelector(`[data-section-id="${section.id}"] [data-story-id="${storyId}"] [data-drag-kind="story"]`);
-      target?.focus();
+      moveSection(direction);
+      canvas.querySelector(`[data-section-id="${section.id}"] [data-drag-kind="section"]`)?.focus();
     });
     return handle;
   };
@@ -199,25 +176,24 @@
     if (section.source === 'manual' && section.id === selectedId) {
       card.classList.add('is-editable');
       const tools = node('div', 'explore-story-tools');
-      if (section.id !== 'featured') tools.append(dragHandle('story', section, story.id)); else tools.append(node('span'));
+      tools.append(node('span'));
       tools.append(button('×', '', event => {
         event.stopPropagation(); const index = section.story_ids.indexOf(story.id);
         section.story_ids = section.story_ids.filter(id => id !== story.id);
         preview.set(section.id, (preview.get(section.id) || []).filter(s => s.id !== story.id));
         markDirty(); renderCanvas(); activePicker?.render();
-        notify('Story removed from this section.', false, () => { section.story_ids.splice(index, 0, story.id); preview.set(section.id, [...(preview.get(section.id) || []), story]); reorderPreview(section); markDirty(); renderCanvas(); activePicker?.render(); });
+        notify('Story removed from this section.', false, () => { section.story_ids.splice(index, 0, story.id); preview.set(section.id, [...(preview.get(section.id) || []), story]); markDirty(); renderCanvas(); activePicker?.render(); });
       }, 'Remove '+story.title+' from this section'));
       copy.append(tools);
     }
     return card;
   };
-  const reorderPreview = section => { const rows = preview.get(section.id) || []; preview.set(section.id, section.story_ids.map(id => rows.find(s => s.id === id)).filter(Boolean)); };
   function renderCanvas() {
     canvas.replaceChildren();
     sections.forEach(section => {
       const el = node('section', 'explore-section'+(section.id === selectedId ? ' selected' : '')); el.dataset.sectionId = section.id;
       const header = node('div', 'explore-section-heading');
-      header.append(section.id === 'featured' ? node('span', 'explore-lock', '◇') : dragHandle('section', section));
+      header.append(section.id === 'featured' ? node('span', 'explore-lock', '◇') : dragHandle(section));
       header.append(node('h3', '', section.id === 'featured' ? 'Today’s pick' : section.title));
       if (section.source !== 'latest') header.append(button('+ Stories', 'explore-edit', () => { select(section.id); activePicker?.focus(); }, 'Add stories to '+section.title));
       header.append(button(section.id === selectedId ? 'Editing' : 'Edit', 'explore-edit', () => select(section.id), 'Edit '+section.title));
@@ -250,7 +226,7 @@
     document.querySelector('[data-minutes-field]').hidden = s.source !== 'quick';
     document.querySelector('[data-filter-field]').hidden = !['category', 'author'].includes(s.source);
     document.querySelector('[data-section-picker]').hidden = s.source === 'latest';
-    document.querySelector('[data-selection-note]').textContent = s.source === 'latest' ? 'Latest additions always shows the 10 newest stories automatically.' : s.source === 'manual' ? 'Your selection stays exactly as you arrange it. Drag stories here or in the preview.' : 'Currently automatic. Add or remove a story below to keep your own selection.';
+    document.querySelector('[data-selection-note]').textContent = s.source === 'latest' ? 'Latest additions always shows the 10 newest stories, newest first.' : featured ? 'Choose one story or let the daily pick update automatically.' : s.source === 'manual' ? 'Your chosen stories shuffle daily. This preview shows today’s order.' : 'Stories shuffle daily. Add or remove a story below to keep your own selection.';
   }
   function renderInspector() {
     const s = selected(), featured = s.id === 'featured';
@@ -371,12 +347,11 @@
   window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 
   // Pointer events support mouse, pen and touch without a CDN dependency.
-  function beginDrag(event, commit, restore) {
+  function beginDrag(event) {
     const handle = event.target.closest('[data-drag-kind]'); if (!handle || event.button !== 0) return;
     previewController?.abort(); clearTimeout(previewTimer); previewSequence++; root.classList.remove('explore-editor-loading');
-    const item = handle.closest(handle.dataset.dragKind === 'section' ? '[data-section-id]' : '[data-story-id]');
-    const section = handle.closest('[data-section-id]');
-    drag = { handle, item, section, commit, restore, kind: handle.dataset.dragKind, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: false };
+    const item = handle.closest('[data-section-id]');
+    drag = { handle, item, pointer: event.pointerId, x: event.clientX, y: event.clientY, active: false };
     handle.setPointerCapture(event.pointerId);
   }
   canvas.addEventListener('pointerdown', event => beginDrag(event));
@@ -390,17 +365,12 @@
       Object.assign(drag.ghost.style, { width: bounds.width+'px', left: bounds.left+'px', top: bounds.top+'px' });
       (drag.handle.closest('dialog[open]') || document.body).append(drag.ghost); drag.item.classList.add('is-dragging'); document.body.classList.add('explore-dragging');
     }
-    if (drag.kind === 'picker') {
-      const list = drag.item.parentElement, bounds = list.getBoundingClientRect();
-      if (event.clientY < bounds.top + 24) list.scrollTop -= 12;
-      else if (event.clientY > bounds.bottom - 24) list.scrollTop += 12;
-    }
     drag.ghost.style.transform = `translate(${event.clientX - drag.x}px, ${event.clientY - drag.y}px)`;
     const under = document.elementFromPoint(event.clientX, event.clientY);
-    const target = under?.closest(drag.kind === 'section' ? '[data-section-id]' : '[data-story-id]');
-    if (target && target !== drag.item && target.parentElement === drag.item.parentElement && (drag.kind !== 'section' || target.dataset.sectionId !== 'featured')) {
+    const target = under?.closest('[data-section-id]');
+    if (target && target !== drag.item && target.parentElement === drag.item.parentElement && target.dataset.sectionId !== 'featured') {
       const bounds = target.getBoundingClientRect();
-      const after = ['section', 'picker'].includes(drag.kind) ? event.clientY > bounds.top + bounds.height / 2 : event.clientY > bounds.bottom || event.clientY >= bounds.top && event.clientX > bounds.left + bounds.width / 2;
+      const after = event.clientY > bounds.top + bounds.height / 2;
       target.parentElement.insertBefore(drag.item, after ? target.nextSibling : target);
     }
     if (event.clientY < 75) window.scrollBy(0, -18); else if (event.clientY > window.innerHeight - 75) window.scrollBy(0, 18);
@@ -410,15 +380,8 @@
     current.ghost?.remove(); current.item.classList.remove('is-dragging'); document.body.classList.remove('explore-dragging');
     if (current.handle.hasPointerCapture(current.pointer)) current.handle.releasePointerCapture(current.pointer);
     if (!current.active) { if (dirty) schedulePreview(); return; }
-    if (current.kind === 'picker') {
-      if (cancelled) current.restore();
-      else { current.commit([...current.item.parentElement.children].map(el => el.dataset.storyId)); announce('Story order updated.'); }
-      if (dirty) schedulePreview();
-      return;
-    }
     if (!cancelled) {
-      if (current.kind === 'section') { const order = [...canvas.children].map(el => el.dataset.sectionId); sections.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)); }
-      else { const section = sections.find(s => s.id === current.section.dataset.sectionId); const order = [...current.item.parentElement.children].map(el => el.dataset.storyId); section.story_ids.sort((a, b) => { const ai = order.indexOf(a), bi = order.indexOf(b); return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi); }); reorderPreview(section); }
+      const order = [...canvas.children].map(el => el.dataset.sectionId); sections.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
       markDirty(); announce('Order updated. Save Explore to apply.');
     }
     if (cancelled && dirty) schedulePreview();

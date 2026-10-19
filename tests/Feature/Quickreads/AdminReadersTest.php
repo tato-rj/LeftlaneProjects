@@ -100,11 +100,57 @@ class AdminReadersTest extends QuickreadsTestCase
         $db->table('user_purchase_records')->insert(['user_id' => $user->id, 'story_id' => 1, 'created_at' => now()]);
         $this->admin();
         $profile = $this->get('/quickreads/users/'.$user->id)->assertOk()->assertSee('Revoked')->assertSee('Apple private relay address')
-            ->assertSee('No current story reports')->assertSee('Legacy saved stories')->assertDontSee('must-not-fetch-secret');
+            ->assertSee('No current app reports')->assertSee('Saved stories')->assertDontSee('must-not-fetch-secret');
         $this->assertSame(0, (int) $profile->viewData('user')->activity->saved);
         $this->assertSame(1, (int) $profile->viewData('user')->saves);
         $this->assertSame(1, $this->get('/quickreads/users?provider=apple&status=unreported')->assertOk()->viewData('users')->total());
         $this->assertSame(0, $this->get('/quickreads/users?status=finished')->assertOk()->viewData('users')->total());
+    }
+
+    public function test_saved_stories_from_both_apis_remain_primary_without_activity_reports(): void
+    {
+        $user = $this->user('older-app@example.test');
+        $apple = $this->user('apple@example.test');
+        $this->apple($apple);
+        $db = DB::connection('quickreads');
+        $db->table('user_purchase_records')->insert([
+            ['user_id' => $user->id, 'story_id' => 1, 'created_at' => now()->subDays(120)],
+            ['user_id' => $user->id, 'story_id' => 2, 'created_at' => null],
+            ['user_id' => $user->id, 'story_id' => 1, 'created_at' => now()->subDays(121)],
+        ]);
+        $this->admin();
+        $overview = $this->get('/quickreads')->assertOk()->assertSee('Latest saved stories')->assertSee('Story 1')->assertSee('Story 2')
+            ->assertSee('href="/quickreads/users?activity=saved"', false);
+        $this->assertSame(3, $overview->viewData('savedTotal'));
+        $this->assertCount(3, $overview->viewData('recentSaves'));
+        $this->assertSame(0, (int) $overview->viewData('activitySummary')->saved);
+        $directory = $this->get('/quickreads/users?activity=saved')->assertOk()->assertSee('3 saved stories');
+        $this->assertSame(1, $directory->viewData('users')->total());
+        $this->assertSame(3, (int) $directory->viewData('users')->first()->saves);
+        $profile = $this->get('/quickreads/users/'.$user->id)->assertOk()->assertSee('Saved stories')->assertSee('Story 1')->assertSee('Story 2');
+        $this->assertSame(3, $profile->viewData('saves')->total());
+        $this->assertSame(3, (int) $profile->viewData('counts')['saved stories']);
+        $this->assertLessThan(strpos($profile->getContent(), 'class="panel reader-activity-panel"'), strpos($profile->getContent(), 'id="saved-stories"'));
+        $this->assertCount(0, $profile->viewData('currentStories'));
+
+        // Both the older app and new Apple accounts write the same saved list.
+        $this->postJson('/quickreads/app/records/purchase', ['facebook_id' => $user->facebook_id, 'title' => 'Story 3'])->assertCreated();
+        $headers = $this->bearer($apple);
+        $this->putJson('/api/v2/me/favorites/4', ['ignored' => true], $headers)->assertOk();
+        $updated = $this->get('/quickreads')->assertOk();
+        $this->assertSame(5, $updated->viewData('savedTotal'));
+        $this->assertLessThanOrEqual(6, $updated->viewData('recentSaves')->count());
+        $this->get('/quickreads/users?provider=apple&activity=saved')->assertOk()->assertSee('1 saved story');
+        $this->get('/quickreads/users/'.$apple->id)->assertOk()->assertSee('Story 4');
+        $this->assertSame(0, $db->table('story_activity')->count());
+
+        // A separate reporting flag never erases or double-counts stored saves.
+        $this->report($user, '1', 'reading', false);
+        $this->assertSame(5, $this->get('/quickreads')->assertOk()->viewData('savedTotal'));
+        $this->deleteJson('/api/v2/me/favorites/4', ['ignored' => true], $headers)->assertOk();
+        $this->assertSame(4, $this->get('/quickreads')->assertOk()->viewData('savedTotal'));
+        $this->assertSame(0, $this->get('/quickreads/users?provider=apple&activity=saved')->assertOk()->viewData('users')->total());
+        $this->assertSame(4, $db->table('user_purchase_records')->count());
     }
 
     public function test_lists_and_profile_use_bounded_metadata_queries_and_preserve_filters(): void

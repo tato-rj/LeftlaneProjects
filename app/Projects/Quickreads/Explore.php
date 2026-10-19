@@ -116,7 +116,7 @@ class Explore
             if (count($ids) < min($limit, $count)) {
                 $ids = array_merge($ids, (clone $query)->orderBy('s.id')->limit(min($limit, $count) - count($ids))->pluck('s.id')->all());
             }
-            return array_map('strval', $ids);
+            return self::dailyOrder($ids, $section['id']);
         } else {
             if ($source === 'quick') $query->whereRaw("s.time REGEXP '^[0-9]+([.][0-9]+)?$'")->whereRaw('CAST(s.time AS DECIMAL(12,4)) <= ?', [$section['max_minutes']]);
             if ($source === 'classics') $query->where('s.is_classic', true);
@@ -125,7 +125,20 @@ class Explore
             if ($source === 'popular') $query->orderByDesc(self::db()->table('user_purchase_records as p')->selectRaw('COUNT(DISTINCT p.user_id)')->whereColumn('p.story_id', 's.id'));
             $query->orderByDesc('s.created_at')->orderByDesc('s.id');
         }
-        return $query->limit($source === 'latest' ? 10 : $limit)->pluck('s.id')->map('strval')->all();
+        $ids = $query->limit($source === 'latest' ? 10 : $limit)->pluck('s.id')->map('strval')->all();
+        return $source === 'latest' ? $ids : self::dailyOrder($ids, $section['id']);
+    }
+
+    private static function dailyOrder(array $ids, string $sectionId): array
+    {
+        // Shared by admin previews, both Explore APIs and section pagination.
+        // Hashing each ID keeps the order stable all day without stored shuffles
+        // or changing PHP's global random state. Curation still controls membership.
+        $seed = now('UTC')->format('Y-m-d').':'.$sectionId.':';
+        $ranks = [];
+        foreach ($ids as $id) $ranks[(string) $id] = hash('sha256', $seed.$id);
+        usort($ids, fn ($a, $b) => strcmp($ranks[$a], $ranks[$b]) ?: strcmp((string) $a, (string) $b));
+        return array_map('strval', $ids);
     }
 
     public static function collections(array $sections)

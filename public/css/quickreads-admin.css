@@ -2323,3 +2323,5 @@ label>span {
 }
 .detail-grid > div, .detail-grid > aside { min-width: 0; }
 .reader-activity-panel .panel-heading { flex-wrap: wrap; align-items: flex-start; }
+.saved-stories-panel { margin-bottom: 24px; scroll-margin-top: 24px; }
+.saved-stories-panel .panel-heading { flex-wrap: wrap; }

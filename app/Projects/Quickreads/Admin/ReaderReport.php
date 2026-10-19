@@ -36,6 +36,20 @@ class ReaderReport
             'apple_users' => (int) $apple->total, 'new_apple_users' => (int) $apple->recent];
     }
 
+    public static function savedOverview(): array
+    {
+        // Both legacy saves and v2 favorites use these records. Activity
+        // reporting is independent and must not replace or be added to them.
+        $savedTotal = Queries::db()->table('user_purchase_records')->count();
+        $recentSaves = Queries::db()->table('user_purchase_records as saved')
+            ->leftJoin('stories as story', 'story.id', '=', 'saved.story_id')
+            ->leftJoin('users as reader', 'reader.id', '=', 'saved.user_id')
+            ->select('saved.id', 'saved.story_id', 'saved.created_at', 'story.title', 'story.slug',
+                'reader.id as user_id', 'reader.first_name', 'reader.last_name')
+            ->orderByDesc('saved.created_at')->orderByDesc('saved.id')->limit(6)->get();
+        return compact('savedTotal', 'recentSaves');
+    }
+
     public static function decorate(Collection $users): Collection
     {
         // Aggregate only the visible page's IDs in one indexed query. No

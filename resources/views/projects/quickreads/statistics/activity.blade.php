@@ -1,12 +1,13 @@
 @extends('projects.quickreads.layouts.app')
 @section('title', 'Story activity')
 @section('content')
-    @include('projects.quickreads.admin.heading', ['eyebrow' => 'THE READING PICTURE', 'heading' => 'Story activity', 'description' => 'See what readers have saved, are reading, and have finished.'])
+    @include('projects.quickreads.admin.heading', ['eyebrow' => 'THE READING PICTURE', 'heading' => 'Story activity', 'description' => 'Reading, completion and saved states reported by the updated app.'])
     @php
         $reportUrl = fn ($changes) => url('/quickreads/story-activity').(($query = http_build_query(array_filter(array_replace($filters, ['page' => null], $changes), fn ($value) => $value !== null && $value !== ''))) ? '?'.$query : '');
     @endphp
+    <p class="report-caption">Saved stories from every app version are available in <a class="text-link" href="/quickreads/users?activity=saved">Readers with saved stories →</a>.</p>
     <div class="metric-grid activity-metrics">
-        @foreach([['saved', 'Saved', 'bookmark'], ['reading', 'Reading', 'stories'], ['finished', 'Finished', 'check'], ['reports', 'Reader / story reports', 'users']] as [$key, $label, $icon])
+        @foreach([['saved', 'App-reported saves', 'bookmark'], ['reading', 'Reading', 'stories'], ['finished', 'Finished', 'check'], ['reports', 'Reader / story reports', 'users']] as [$key, $label, $icon])
             <a class="metric-card {{ ($filters['status'] ?? null) === $key ? 'is-selected' : '' }}" href="{{ $reportUrl(['status' => $key === 'reports' ? null : $key]) }}">
                 <div class="metric-top"><span>{{ $label }}</span><span class="metric-icon">@include('projects.quickreads.admin.icon', ['name' => $icon])</span></div>
                 <strong>{{ number_format($summary->$key) }}</strong>
@@ -37,7 +38,7 @@
                 <label class="sr-only" for="activity-status">Status</label>
                 <select name="status" id="activity-status">
                     <option value="">All states</option>
-                    @foreach(['saved' => 'Saved', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'] as $value => $label)
+                    @foreach(['saved' => 'Saved in app reports', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'] as $value => $label)
                         <option value="{{ $value }}" @selected(($filters['status'] ?? null) === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -56,7 +57,7 @@
     </form>
     @php
         $filterLabels = [
-            'status' => ['saved' => 'Saved', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'][$filters['status'] ?? ''] ?? null,
+            'status' => ['saved' => 'Saved in app reports', 'reading' => 'Reading', 'finished' => 'Finished', 'not_started' => 'Not started'][$filters['status'] ?? ''] ?? null,
             'reader_kind' => ['guest' => 'Guests', 'account' => 'Accounts'][$filters['reader_kind'] ?? ''] ?? null,
             'provider' => ['apple' => 'Apple accounts', 'other' => 'Other accounts'][$filters['provider'] ?? ''] ?? null,
             'user_id' => empty($filters['user_id']) ? null : 'Reader #'.$filters['user_id'],

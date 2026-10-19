@@ -16,7 +16,7 @@ class AdminController extends QuickreadsController
         $recentUsers = ReaderReport::withProvider(Queries::db()->table('users')->select('id', 'first_name', 'last_name', 'email', 'created_at'), 'users.id')
             ->orderByDesc('created_at')->orderByDesc('id')->limit(5)->get();
         foreach ($recentUsers as $user) $user->display_name = trim($user->first_name.' '.$user->last_name) ?: 'Reader #'.$user->id;
-        return response()->view('projects.quickreads.dashboard', array_merge(compact('summary', 'recentStories', 'recentUsers'), ActivityReport::overview()))
+        return response()->view('projects.quickreads.dashboard', array_merge(compact('summary', 'recentStories', 'recentUsers'), ActivityReport::overview(), ReaderReport::savedOverview()))
             ->header('Cache-Control', 'private, no-store');
     }
 

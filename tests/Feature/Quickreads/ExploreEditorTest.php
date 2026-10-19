@@ -35,23 +35,27 @@ class ExploreEditorTest extends QuickreadsTestCase
     {
         $this->admin(); $sections = [Explore::defaults()[0], $this->shelf('editors-shelf', ['5', '2', '6', '1'])];
         $sections[0]['source'] = 'manual'; $sections[0]['story_ids'] = ['3'];
-        $this->postJson('/quickreads/explore/preview', ['sections' => $sections])->assertOk()
-            ->assertJsonPath('preview.0.stories.0.id', '3')->assertJsonPath('preview.1.stories.0.id', '5');
+        $preview = $this->postJson('/quickreads/explore/preview', ['sections' => $sections])->assertOk()
+            ->assertJsonPath('preview.0.stories.0.id', '3');
+        $order = array_column($preview->json('preview.1.stories'), 'id');
+        $this->assertEqualsCanonicalizing(['5', '2', '6', '1'], $order);
         $this->assertSame(0, Explore::db()->table('explore_layouts')->count());
         $this->assertCount(6, $this->getJson('/quickreads/app/explore')->assertOk()->json());
         $saved = $this->patchJson('/quickreads/explore', ['revision' => 'initial', 'sections' => $sections])->assertOk();
         $this->assertNotSame('initial', $saved->json('revision'));
+        $this->assertSame($order, array_column($saved->json('preview.1.stories'), 'id'));
         $legacy = $this->getJson('/quickreads/app/explore')->assertOk()->json();
         $this->assertSame(["Today's pick", 'A shelf of good stories'], array_column($legacy, 'title'));
         $this->assertSame(['title', 'collection'], array_keys($legacy[1]));
         $this->assertSame([3], array_column($legacy[0]['collection'], 'id'));
-        $this->assertSame([5, 2, 6, 1], array_column($legacy[1]['collection'], 'id'));
+        $this->assertSame($order, array_map('strval', array_column($legacy[1]['collection'], 'id')));
         foreach (['author', 'dates', 'life', 'title', 'summary', 'time', 'cost', 'story_filename', 'category'] as $key) $this->assertIsString($legacy[1]['collection'][1][$key]);
         $v2 = $this->getJson('/api/v2/explore')->assertOk()->assertJsonPath('data.0.role', 'featured')->assertJsonPath('data.1.id', 'editors-shelf');
-        $this->assertSame(['5', '2', '6', '1'], array_column($v2->json('data.1.stories.data'), 'id'));
+        $this->assertSame($order, array_column($v2->json('data.1.stories.data'), 'id'));
         $first = $this->getJson('/api/v2/stories?section=editors-shelf&per_page=2')->assertOk()->assertJsonPath('meta.total', 4);
-        $this->assertSame(['5', '2'], array_column($first->json('data'), 'id'));
-        $this->getJson($first->json('links.next'))->assertOk()->assertJsonPath('data.0.id', '6')->assertJsonPath('data.1.id', '1');
+        $this->assertSame(array_slice($order, 0, 2), array_column($first->json('data'), 'id'));
+        $next = $this->getJson($first->json('links.next'))->assertOk();
+        $this->assertSame(array_slice($order, 2), array_column($next->json('data'), 'id'));
         $this->getJson('/api/v2/stories?section=editors-shelf&category_id=1')->assertOk()->assertJsonPath('meta.total', 2);
         $this->getJson('/quickreads/app/stories')->assertOk()->assertJsonCount(6);
         $this->getJson('/quickreads/app/stories/latest')->assertOk()->assertJsonCount(6);
@@ -79,10 +83,10 @@ class ExploreEditorTest extends QuickreadsTestCase
         }
         $this->patchJson('/quickreads/explore', ['revision' => 'initial', 'sections' => $sections])->assertOk()->assertJsonPath('sections.5.limit', 10);
         $legacy = $this->getJson('/quickreads/app/explore')->assertOk()->json();
-        $this->assertSame([6, 4, 2], array_column($legacy[1]['collection'], 'id'));
-        $this->assertSame([6, 5], array_column($legacy[2]['collection'], 'id'));
-        $this->assertSame([2, 1], array_column($legacy[3]['collection'], 'id'));
-        $this->assertSame([6, 4, 2], array_column($legacy[4]['collection'], 'id'));
+        $this->assertEqualsCanonicalizing([6, 4, 2], array_column($legacy[1]['collection'], 'id'));
+        $this->assertEqualsCanonicalizing([6, 5], array_column($legacy[2]['collection'], 'id'));
+        $this->assertEqualsCanonicalizing([2, 1], array_column($legacy[3]['collection'], 'id'));
+        $this->assertEqualsCanonicalizing([6, 4, 2], array_column($legacy[4]['collection'], 'id'));
         $preview = $this->postJson('/quickreads/explore/preview', ['sections' => $sections])->assertOk()->json('preview');
         foreach ($legacy as $index => $collection) $this->assertSame(array_map('strval', array_column($collection['collection'], 'id')), array_column($preview[$index]['stories'], 'id'));
     }
@@ -114,7 +118,9 @@ class ExploreEditorTest extends QuickreadsTestCase
         $this->patchJson('/quickreads/explore', ['revision' => 'initial', 'sections' => $sections])->assertOk();
         $user = $this->user(); $db = Explore::db();
         $db->table('user_purchase_records')->insert(['user_id' => $user->id, 'story_id' => 2]);
-        $this->getJson('/quickreads/app/explore?facebook_id='.urlencode($user->facebook_id))->assertOk()->assertJsonPath('1.collection.0.favorited', true);
+        $personalized = $this->getJson('/quickreads/app/explore?facebook_id='.urlencode($user->facebook_id))->assertOk()->json('1.collection');
+        $this->assertTrue(collect($personalized)->firstWhere('id', 2)['favorited']);
+        $this->assertFalse(collect($personalized)->firstWhere('id', 1)['favorited']);
         $guest = $this->getJson('/quickreads/app/explore')->assertOk()->json('1.collection.0');
         $this->assertArrayNotHasKey('favorited', $guest);
         $db->table('stories')->where('id', 2)->delete();
@@ -156,8 +162,9 @@ class ExploreEditorTest extends QuickreadsTestCase
         $saved->assertJsonPath('sections.3.limit', 2)->assertJsonPath('sections.3.source', 'manual');
         // A twenty-minute story belongs here when the editor explicitly chooses it.
         $legacy = $this->getJson('/quickreads/app/explore')->assertOk()->json('3.collection');
-        $this->assertSame([5, 1], array_column($legacy, 'id'));
-        $this->getJson('/api/v2/stories?section=under_10_minutes')->assertOk()->assertJsonPath('meta.total', 2)->assertJsonPath('data.0.id', '5');
+        $this->assertEqualsCanonicalizing([5, 1], array_column($legacy, 'id'));
+        $v2 = $this->getJson('/api/v2/stories?section=under_10_minutes')->assertOk()->assertJsonPath('meta.total', 2);
+        $this->assertSame(array_map('strval', array_column($legacy, 'id')), array_column($v2->json('data'), 'id'));
         $this->get('/quickreads/explore')->assertOk()->assertViewHas('initial', fn ($initial) => $initial['sections'][3]['story_ids'] === ['5', '1']);
     }
 }

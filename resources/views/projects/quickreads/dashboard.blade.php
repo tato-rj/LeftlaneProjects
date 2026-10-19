@@ -4,23 +4,40 @@
     @include('projects.quickreads.admin.heading', ['eyebrow' => 'QUICKREADS AT A GLANCE', 'heading' => 'Every reader has a story.', 'description' => 'See what’s being read, who’s joining and where your library is growing.', 'action' => ['Add a story', '/quickreads/stories/add']])
     <div class="overview-toolbar"><span class="freshness">Reader activity checked {{ now()->format('M j, g:i:s a T') }}</span><a class="button" href="/quickreads">Refresh overview @include('projects.quickreads.admin.icon', ['name' => 'refresh'])</a></div>
     <div class="metric-grid activity-metrics">
-        @foreach([['reading', 'Reading', 'stories'], ['finished', 'Finished stories', 'check'], ['saved', 'Saved stories', 'bookmark'], ['apple', 'Apple readers', 'users']] as [$key, $label, $icon])
-            <a class="metric-card overview-metric {{ $key }}" href="{{ $key === 'apple' ? '/quickreads/users?provider=apple' : '/quickreads/story-activity?status='.$key }}">
+        @foreach([['saved', 'Saved stories', 'bookmark'], ['reading', 'Reading', 'stories'], ['finished', 'Finished stories', 'check'], ['apple', 'Apple readers', 'users']] as [$key, $label, $icon])
+            <a class="metric-card overview-metric {{ $key }}" href="{{ $key === 'apple' ? '/quickreads/users?provider=apple' : ($key === 'saved' ? '/quickreads/users?activity=saved' : '/quickreads/story-activity?status='.$key) }}">
                 <div class="metric-top"><span>{{ $label }}</span><span class="metric-icon">@include('projects.quickreads.admin.icon', ['name' => $icon])</span></div>
-                <strong>{{ number_format($key === 'apple' ? $summary['apple_users'] : $activitySummary->$key) }}</strong>
-                <span class="metric-link">{{ $key === 'apple' ? 'View Apple accounts' : 'View story reports' }} @include('projects.quickreads.admin.icon', ['name' => 'arrow'])</span>
+                <strong>{{ number_format($key === 'apple' ? $summary['apple_users'] : ($key === 'saved' ? $savedTotal : $activitySummary->$key)) }}</strong>
+                <span class="metric-link">{{ $key === 'apple' ? 'View Apple accounts' : ($key === 'saved' ? 'View saved stories' : 'View story reports') }} @include('projects.quickreads.admin.icon', ['name' => 'arrow'])</span>
             </a>
         @endforeach
     </div>
-    <p class="report-caption">Story totals count current reader/story states updated within {{ config('quickreads_v2.activity_retention_days') }} days. Saved can also be Reading or Finished.</p>
+    <p class="report-caption">Saved stories include saved records from all app versions. Reading and Finished count new app reports updated within {{ config('quickreads_v2.activity_retention_days') }} days.</p>
     <div class="catalog-strip">
         @foreach([['stories', 'Stories', '/quickreads/stories'], ['users', 'Registered readers', '/quickreads/users'], ['authors', 'Authors', '/quickreads/authors'], ['categories', 'Categories', '/quickreads/categories']] as [$key, $label, $url])
             <a href="{{ $url }}"><strong>{{ number_format($summary[$key]) }}</strong><span>{{ $label }}</span><span aria-hidden="true">↗</span></a>
         @endforeach
     </div>
+    <section class="panel saved-stories-panel">
+        <div class="panel-heading"><div><h2>Latest saved stories</h2><p>Saves from all app versions</p></div><a class="text-link" href="/quickreads/users?activity=saved">Readers with saved stories →</a></div>
+        <div class="table-scroll"><table class="recent-activity-table">
+            <thead><tr><th scope="col">Story</th><th scope="col">Reader</th><th scope="col">Saved on</th></tr></thead>
+            <tbody>
+            @forelse($recentSaves as $save)
+                <tr>
+                    <td>@if($save->slug)<a class="record-title" href="/quickreads/stories/edit/{{ $save->slug }}">{{ $save->title }}</a>@else<span>Unavailable story · #{{ $save->story_id }}</span>@endif</td>
+                    <td>@if($save->user_id)<a class="record-title" href="/quickreads/users/{{ $save->user_id }}#saved-stories">{{ trim(($save->first_name ?? '').' '.($save->last_name ?? '')) ?: 'Reader #'.$save->user_id }}</a>@else<span>Unavailable account</span>@endif</td>
+                    <td>{{ $save->created_at ? \Carbon\Carbon::parse($save->created_at)->format('M j, Y') : 'Date not recorded' }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="3" class="empty-state">No saved stories yet.</td></tr>
+            @endforelse
+            </tbody>
+        </table></div>
+    </section>
     <div class="dashboard-grid">
         <section class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">FROM THE APP</p><h2>Latest story activity</h2><p>The latest state for each reader and story</p></div><a class="text-link" href="/quickreads/story-activity">All activity →</a></div>
+            <div class="panel-heading"><div><p class="eyebrow">FROM THE APP</p><h2>Latest app-reported activity</h2><p>The latest state for each reader and story</p></div><a class="text-link" href="/quickreads/story-activity">All activity →</a></div>
             <div class="table-scroll"><table class="recent-activity-table">
                 <thead><tr><th scope="col">Story</th><th scope="col">Reader</th><th scope="col">Current state</th></tr></thead>
                 <tbody>
@@ -68,7 +85,7 @@
             @foreach(['relationships' => ['Authors & categories', 'Stories with a missing author or category'], 'time' => ['Reading times', 'Stories with an invalid reading time']] as $key => [$label, $description])
                 <a class="check-row" href="/quickreads/stories?issue={{ $key }}"><span class="check-status {{ $summary[$key] ? 'needs-work' : '' }}">@include('projects.quickreads.admin.icon', ['name' => $summary[$key] ? 'alert' : 'check'])</span><span><strong>{{ $label }}</strong><small>{{ $summary[$key] ? number_format($summary[$key]).' need attention' : 'All looking good' }}</small></span><span aria-hidden="true">→</span></a>
             @endforeach
-            <div class="check-tip"><a href="/quickreads/statistics">Explore signup and legacy save statistics →</a></div>
+            <div class="check-tip"><a href="/quickreads/statistics">Explore signup and save statistics →</a></div>
         </section>
     </div>
     <section class="panel latest-library-panel">
