@@ -2,15 +2,18 @@ QUICK READS PRIVACY POLICY — PRIVATE PUBLICATION REVIEW
 Prepared October 19, 2026. This file is not part of the public policy.
 
 STATUS
-The webpage is a review draft, not a published or legally complete notice.
-The production route returns 404 while quickreads_privacy.published is false.
-Local and test environments can preview the same page at /quickreads/privacy.
-Do not enable publication until the facts below are answered and the page is
-updated to reflect the confirmed shipping app and deployed operations.
+The operator explicitly requested publication on October 19, 2026 after reviewing
+the preview and code findings. quickreads_privacy.published is now true in source.
+The operator deploys/pushes updates personally; no deployment or Git push is
+performed by this task. A successful public HTTPS response still requires
+verification after that deployment. Changing the local setting alone does not
+establish that the page is live.
+The remaining deployment/provider checks below are still unverified and are not
+presented as settled facts in the public policy.
 
 Intended final URL: https://leftlaneapps.com/quickreads/privacy
-This is the intended address, not a verified live policy URL. Do not submit it
-in the app or App Store Connect until the published HTTPS response is verified.
+Do not submit this address in the app or App Store Connect until the published
+HTTPS response is verified. Record successful verification here after deployment.
 
 CONFIRMED BY THE OPERATOR IN THIS CHAT
 - Legal operator: Leftlane Group LLC, based in Jersey City, New Jersey,
@@ -151,7 +154,7 @@ Source: resources/views/projects/quickreads/privacy.blade.php
 Styles: public/css/quickreads-privacy.css
 Route: routes/projects/quickreads.php
 Controller: app/Http/Controllers/Projects/Quickreads/PrivacyPolicyController.php
-Gate: config/quickreads_privacy.php (published defaults to false)
+Gate: config/quickreads_privacy.php (published is true following authorization)
 
 The standalone view uses the current Quick Reads warm-paper/green design and
 existing local book logo. It avoids the legacy stylesheet's Google Fonts import
@@ -160,11 +163,12 @@ server-rendered. The policy GET/HEAD route bypasses session/cookie middleware;
 it has no authentication, payment, installation or consent-banner dependency.
 The response CSP blocks scripts and external resources. This does not establish
 the deployed web server's logging or cookie behavior; verify those separately.
-Draft responses are no-store and noindex. No public preview copy is added.
+Unpublished responses are no-store and noindex. Published responses omit draft
+metadata. No separate public preview copy is added.
 
-After resolving every item and reviewing the revised page, set published=true
-in config/quickreads_privacy.php and deploy using the existing website release
-process. Refresh any configuration/route cache through that process. Configure
+The operator has requested publishing the reviewed policy. Deploy using the
+existing website release process. Refresh any configuration/route cache through
+that process. Configure
 HTTPS at the existing host and redirect HTTP to HTTPS there. Do not enable a
 global application HTTPS redirect based on guessed proxy configuration.
 
