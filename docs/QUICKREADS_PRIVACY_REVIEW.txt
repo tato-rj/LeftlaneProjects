@@ -1,0 +1,161 @@
+QUICK READS PRIVACY POLICY — PRIVATE PUBLICATION REVIEW
+Prepared October 19, 2026. This file is not part of the public policy.
+
+STATUS
+The webpage is a review draft, not a published or legally complete notice.
+The production route returns 404 while quickreads_privacy.published is false.
+Local and test environments can preview the same page at /quickreads/privacy.
+Do not enable publication until the facts below are answered and the page is
+updated to reflect the confirmed shipping app and deployed operations.
+
+Intended final URL: https://leftlaneapps.com/quickreads/privacy
+This is the intended address, not a verified live policy URL. Do not submit it
+in the app or App Store Connect until the published HTTPS response is verified.
+
+CONFIRMED BY THE OPERATOR IN THIS CHAT
+- Legal operator: Leftlane Group LLC, based in Jersey City, New Jersey,
+  United States. The operator requests that the street address be omitted
+  from the public policy and review artifacts; retain the general location
+  and privacy email as the public contact details.
+- Privacy contact: contact@leftlaneapps.com.
+- Database provider/location: DigitalOcean, United States.
+- Email provider: Gandi. Gandi is not the app/database host.
+- Readers may be worldwide. Stories are intended for adults, not children.
+- In-app purchases are no longer offered.
+- Saved-story information associated with an account is recorded to improve
+  suggestions. The statement does not confirm story-opening/completion delivery.
+- Guests are not tracked, per the operator. The draft describes no guest reading-
+  activity reporting; this is not a claim that network requests or logs are absent.
+- Server accounts and associated account data are deleted on account deletion.
+  Device files remain local as described in the original app facts.
+- The operator intends to enable Apple sign-in. This is a planned release
+  configuration, not evidence that it is already enabled in a shipping build.
+
+RELEASE DRAFT CONFIGURATION
+The current preview includes native Sign in with Apple wording for the planned
+release: Apple identifier, authorized/available name and email, private relay,
+backend verification/session creation and no access to the Apple Account password.
+The table and provider section cover the same information consistently.
+No app/backend feature flag or Apple Developer setting was changed by this task.
+Publish this wording only with a release in which Apple sign-in actually works.
+Do not describe opening/completion reporting as active until confirmed.
+The effective date October 19, 2026 is still a proposal requiring confirmation.
+
+REMAINING PUBLICATION FACTS
+1. Email processing locations and transfer arrangements
+   The earlier statement that all processing is US-only is superseded by the
+   provider clarification. DigitalOcean's database is confirmed in the US;
+   the actual Gandi mailbox/processing locations still require confirmation.
+   Gandi's current Trust Center lists infrastructure in France and Luxembourg:
+   https://www.gandi.net/en/trust-center
+   Its hosting documentation also discusses those countries, but the operator
+   clarified that Gandi supplies only email here. Do not infer a database host
+   or exact mailbox location from generic provider documentation.
+   The preview therefore names both providers and separates the confirmed US
+   database from potential Gandi email processing in France/Luxembourg. The
+   latter is a qualified inference from Gandi's published infrastructure, not
+   an account-specific verification. Confirm the actual email locations and
+   applicable international-transfer safeguards before publication.
+   Gandi's privacy policy distinguishes its own controller activities from
+   processing client data. Do not copy tracking disclosures for gandi.net's
+   own website into Quick Reads or claim that Gandi's practices are ours.
+
+2. Activity collection, logs and retention
+   Confirm whether the planned app sends only account saved-story information,
+   or also separate first-party story-opening/completion reports. If the latter
+   is active, add the payload, measurement, account association and actual
+   retention details before release. Confirm guest delivery remains off.
+   Independently confirm whether proxy/web-server/application/provider logs
+   retain search queries, filters, IP addresses, timestamps, request URLs,
+   user agents or other metadata, and for how long. Saving stories is not a
+   complete description of operational logging. Do not invent absent logs.
+   Confirm account/favorite/support-message retention while an account exists,
+   provider retention and backups, deletion/rotation and restored-data handling.
+   Confirm whether any historical guest or purchase/payment records remain.
+   Where applicable, confirm legal bases for account delivery, saved-story
+   suggestions, security and support; do not invent consent or contract choices.
+
+3. Account deletion and security records
+   The operator says all data is deleted. This supports deleting the account
+   and associated live account records, but conflicts with an unconditional
+   zero-retention promise for the current Apple deletion implementation.
+   app/Projects/Quickreads/Api/V2/AccountDeletion.php removes accounts, sessions,
+   favorites, activity and associated records, and revokes retained Apple
+   credentials. It also creates a limited subject-hash/event-time security
+   record to reject Apple proofs issued before deletion. PruneQuickreadsV2.php
+   removes these records after 90 days when deployed pruning runs.
+   Confirm deployed behavior, scheduler operation and any backup/log exceptions.
+   Do not promise immediate deletion of every local file, backup, provider log
+   or security record. Do not apply 90 days to accounts/favorites or all data.
+   The separate inactive activity/duplicate-request 90-day rules in the backend
+   specification also require deployment confirmation before public disclosure.
+
+4. Privacy requests and effective date
+   Confirm that the privacy inbox handles access/correction/erasure and any
+   applicable consent-withdrawal requests, and the practical verification and
+   response process. The preview proposes email intake; no export button,
+   analytics switch or guest-deletion screen has been invented.
+   If historical guest records exist, confirm how an installation can supply
+   its reporting UUID for owner-operated deletion. Do not infer that disabling
+   future guest delivery removes historical records.
+   Confirm how a parent's concern about a child's information is handled.
+   Confirm the effective date and the exact release shipping Apple sign-in,
+   email accounts, favorites, search, narration and Settings > Delete account.
+
+WORDING ONLY IF SIGNED-IN READING/COMPLETION REPORTING IS CONFIRMED ENABLED
+This paragraph is separate from the current policy; no guest reporting is added.
+Quick Reads sends first-party account story-activity reports to our backend to
+measure reading, saving and completion. Reports include story identifiers,
+reading and saved state, observation times and request identifiers. Signed-in
+activity is associated with your account. Opening a prepared story records
+reading activity. Finishing is recorded when you explicitly mark completion or
+narration completes; these signals do not prove that you read every word. The
+reports do not include story text, private reactions, detailed reading positions
+or microphone recordings. This reporting does not synchronize your whole
+Library or reading/listening positions across devices.
+Add confirmed purposes, legal basis, actual retention and applicable choices
+before using this paragraph. If guest reporting is ever enabled, the guest
+identifier is pseudonymous, not completely anonymous, and guest reports are
+not automatically merged into accounts on sign-in; update the policy first.
+
+IMPLEMENTATION AND RELEASE
+Source: resources/views/projects/quickreads/privacy.blade.php
+Styles: public/css/quickreads-privacy.css
+Route: routes/projects/quickreads.php
+Controller: app/Http/Controllers/Projects/Quickreads/PrivacyPolicyController.php
+Gate: config/quickreads_privacy.php (published defaults to false)
+
+The standalone view uses the current Quick Reads warm-paper/green design and
+existing local book logo. It avoids the legacy stylesheet's Google Fonts import
+and all shared script/layout includes. No JavaScript is needed. All content is
+server-rendered. The policy GET/HEAD route bypasses session/cookie middleware;
+it has no authentication, payment, installation or consent-banner dependency.
+The response CSP blocks scripts and external resources. This does not establish
+the deployed web server's logging or cookie behavior; verify those separately.
+Draft responses are no-store and noindex. No public preview copy is added.
+
+After resolving every item and reviewing the revised page, set published=true
+in config/quickreads_privacy.php and deploy using the existing website release
+process. Refresh any configuration/route cache through that process. Configure
+HTTPS at the existing host and redirect HTTP to HTTPS there. Do not enable a
+global application HTTPS redirect based on guessed proxy configuration.
+
+Verify the final HTTPS URL externally while logged out, including GET/HEAD,
+redirects, certificate, complete HTML without JavaScript, all local resources,
+absence of Set-Cookie/tracking injection, mobile layout, keyboard navigation,
+anchor destinations and mail links. Check that hosting/CDN layers do not add
+analytics, fonts, tracking pixels or nonessential cookies. Confirm no draft
+metadata or internal review notes appear in the published response. Then use
+the verified final policy URL in the app and App Store Connect. No claim of
+Apple approval or guarantee of App Store acceptance is made.
+
+PRIMARY REFERENCES CONSULTED FOR THE CURRENT REVIEW
+US Federal Trade Commission, privacy and security:
+https://www.ftc.gov/business-guidance/privacy-security
+US Federal Trade Commission, protecting personal information:
+https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business
+European Commission, information for individuals:
+https://commission.europa.eu/law/law-topic/data-protection/information-individuals_en
+These references support checking that disclosures match actual practices,
+retention and applicable rights. They do not establish which laws apply to
+Leftlane Group LLC, verify its practices or replace the missing operational facts.

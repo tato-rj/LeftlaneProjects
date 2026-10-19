@@ -1,5 +1,16 @@
 <?php
 
+// Standalone, read-only policy: no account, session, CSRF cookie or admin layout.
+Route::get('/quickreads/privacy', 'Projects\Quickreads\PrivacyPolicyController')
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ])
+    ->name('quickreads.privacy');
+
 Route::prefix('/quickreads')->name('quickreads.admin.')->group(function() {
 	Route::get('/login', 'Auth\Quickreads\LoginController@showLoginForm')->name('login');
 	Route::post('/login', 'Auth\Quickreads\LoginController@login')->name('login.submit');
