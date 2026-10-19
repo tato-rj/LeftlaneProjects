@@ -45,7 +45,7 @@
                     <p>Quick Reads helps you discover classic short stories, save them offline, read, and listen to narration.</p>
                 </div>
                 <ul class="overview-list">
-                    <li><span class="overview-number" aria-hidden="true">01</span><div><strong>Your account &amp; favorites</strong><p>Account details and explicit favorites go to our backend. We use account-associated saved-story information to improve suggestions.</p></div></li>
+                    <li><span class="overview-number" aria-hidden="true">01</span><div><strong>Your account &amp; activity</strong><p>Account details, explicit favorites, and signed-in reading and completion reports go to our backend. Saved-story information helps improve suggestions.</p></div></li>
                     <li><span class="overview-number" aria-hidden="true">02</span><div><strong>Your reading on this device</strong><p>Downloads, reading and listening positions, preferences, private reactions, and narration caches are stored locally.</p></div></li>
                     <li><span class="overview-number" aria-hidden="true">03</span><div><strong>Your voice stays yours</strong><p>Narration uses Apple’s system speech functionality. The app does not record your voice.</p></div></li>
                 </ul>
@@ -93,6 +93,7 @@
                                 <tr><th scope="row">Account information<span>First name, last name, email address, password, and locale you provide when registering.</span></th><td>Sent to our backend to create and manage your account, authenticate you, support account recovery, and use your locale.</td></tr>
                                 <tr><th scope="row">Apple sign-in information<span>An identifier and, when available and authorized, name and email information from Apple.</span></th><td>Sent to our backend to verify Apple authentication and establish a Quick Reads account session.</td></tr>
                                 <tr><th scope="row">Explicit favorites<span>Stories you choose to favorite while using an account.</span></th><td>Sent to our backend to store your account’s favorite stories. Account-associated saved-story information also helps us improve story suggestions.</td></tr>
+                                <tr><th scope="row">Signed-in reading activity<span>Story identifiers, reading and saved state, observation times, and request identifiers reported by the app.</span></th><td>Sent to our backend and associated with your account to measure story reading, saving, and completion.</td></tr>
                                 <tr><th scope="row">Local reading information<span>Downloaded stories, reading and listening positions, reader preferences, private story reactions, and narration caches created as you use the app.</span></th><td>Stored locally for offline reading, resuming a story, personalizing the reader, and playing narration.</td></tr>
                                 <tr><th scope="row">Search &amp; content requests<span>Search terms, selected filters, and requests for the catalog, stories, and artwork.</span></th><td>Sent to network services to find and deliver the content you request.</td></tr>
                                 <tr><th scope="row">Messages you send us<span>Your email address and information you include when contacting us.</span></th><td>Processed through email to respond to your questions and privacy requests.</td></tr>
@@ -115,8 +116,10 @@
                         <h3>On your device</h3>
                         <p>The app stores downloaded stories, reading and listening positions, reader preferences, private story reactions, and narration caches locally. Device backups may include this information, depending on your operating-system settings and backup services.</p>
                         <p>Explicit account favorites are also sent to our backend. Storing favorites does not mean your whole Library or reading and listening progress synchronizes across devices.</p>
-                        <h3>Saved-story information &amp; guests</h3>
-                        <p>For signed-in readers, we record which stories are saved and use that account-associated information to improve story suggestions.</p>
+                        <h3>Saved-story information &amp; reading statistics</h3>
+                        <p>For signed-in readers, we record which stories are saved and use that account-associated information to improve story suggestions. The app also sends first-party activity reports to our backend to measure reading and completion. These reports are associated with your account and include story identifiers, reading and saved state, observation times, and request identifiers.</p>
+                        <p>Opening a prepared story records reading activity. Completion is recorded when you explicitly mark a story as finished or narration completes. These signals do not prove that you read every word.</p>
+                        <p>Activity reports do not include story text, private reactions, detailed reading positions, or microphone recordings. Reporting is separate from storing your favorites and does not synchronize your whole Library or reading and listening positions across devices.</p>
                         <p>Guests do not send reading-activity reports to us. Guest use still involves the search and content requests described below.</p>
                         <h3>Listening to narration</h3>
                         <p>Narration uses Apple’s system speech functionality and local audio caching. Quick Reads does not record the reader’s voice or upload microphone recordings for narration.</p>
@@ -127,6 +130,7 @@
                         <h2 id="requests-title">Search &amp; service requests</h2>
                         <p>When you search, the app sends your search terms and selected filters to our backend to return matching results. Browsing the catalog, opening or downloading a story, and loading artwork also involve network services.</p>
                         <p>These requests are separate from reading-activity reporting. Browsing, searching, and downloading involve network requests even when you use the app as a guest.</p>
+                        <p>Our backend uses IP-based request limits to help protect the service against excessive requests.</p>
                     </section>
 
                     <section id="sharing" aria-labelledby="sharing-title" tabindex="-1">
@@ -146,6 +150,7 @@
                         <p class="section-number">07 / WHERE INFORMATION LIVES</p>
                         <h2 id="storage-title">Storage, transfers &amp; retention</h2>
                         <p>Account information and explicit favorites are processed on the servers used to provide Quick Reads. Local reading information is stored on your device and may be included in device backups.</p>
+                        <p>We keep account information while you maintain an account. Account favorites are kept until you remove them or delete your account. Successful account deletion also removes the reading-activity records associated with that account.</p>
                         <p>Our database is hosted by DigitalOcean in the United States. If you use Quick Reads from another country, information sent to that database is transferred to and processed in the United States.</p>
                         <p>Email is handled separately by Gandi. <a href="https://www.gandi.net/en/trust-center">Gandi lists infrastructure locations in France and Luxembourg</a>, so email services may involve processing in those countries. Your device and its backup services are governed separately by your operating-system settings.</p>
                         <p>Deleting your account removes the server account and associated account data. Local files and device backups have a separate lifecycle. Account deletion does not promise immediate removal of every backup copy or limited security record. See <a href="#delete-account">Delete your account</a> for what happens on your device.</p>
@@ -176,6 +181,7 @@
                             <span>Confirmation and a recent sign-in to the same account may be required.</span>
                         </div>
                         <p>Successful deletion removes your server account and its associated account data. Where Apple credentials have been retained for an account, the account-deletion process includes revoking them.</p>
+                        <p>For an Apple-linked account, a limited security record containing a hashed Apple identifier and event time may remain after deletion to prevent older Apple sign-in credentials from recreating the deleted account.</p>
                         <p><strong>Offline stories and local reading information remain on your device after account deletion.</strong> Logging out is separate from deleting an account. Neither action promises to remove every local file, backup, or security record immediately.</p>
                     </section>
 

@@ -14,109 +14,137 @@ in the app or App Store Connect until the published HTTPS response is verified.
 
 CONFIRMED BY THE OPERATOR IN THIS CHAT
 - Legal operator: Leftlane Group LLC, based in Jersey City, New Jersey,
-  United States. The operator requests that the street address be omitted
-  from the public policy and review artifacts; retain the general location
-  and privacy email as the public contact details.
-- Privacy contact: contact@leftlaneapps.com.
+  United States. Omit the street address from the public policy and artifacts.
+- Privacy contact and privacy-request intake: contact@leftlaneapps.com. The
+  operator confirms this inbox can handle privacy requests.
+- Effective date: October 19, 2026, explicitly approved by the operator.
 - Database provider/location: DigitalOcean, United States.
 - Email provider: Gandi. Gandi is not the app/database host.
 - Readers may be worldwide. Stories are intended for adults, not children.
 - In-app purchases are no longer offered.
-- Saved-story information associated with an account is recorded to improve
-  suggestions. The statement does not confirm story-opening/completion delivery.
-- Guests are not tracked, per the operator. The draft describes no guest reading-
-  activity reporting; this is not a claim that network requests or logs are absent.
+- Signed-in activity includes saved stories, reading and completion. Saved-story
+  information is used to improve suggestions. The operator confirmed reading
+  and completion reporting during this code review.
+- Guests are not tracked, per the operator. The policy scopes this to no guest
+  reading-activity reporting, rather than claiming that guest network requests
+  or security processing do not occur.
 - Server accounts and associated account data are deleted on account deletion.
   Device files remain local as described in the original app facts.
-- The operator intends to enable Apple sign-in. This is a planned release
-  configuration, not evidence that it is already enabled in a shipping build.
+- Apple sign-in is planned for the release covered by this draft. No app/server
+  feature flag or Apple Developer setting was changed by this webpage task.
 
-RELEASE DRAFT CONFIGURATION
-The current preview includes native Sign in with Apple wording for the planned
-release: Apple identifier, authorized/available name and email, private relay,
-backend verification/session creation and no access to the Apple Account password.
-The table and provider section cover the same information consistently.
-No app/backend feature flag or Apple Developer setting was changed by this task.
-Publish this wording only with a release in which Apple sign-in actually works.
-Do not describe opening/completion reporting as active until confirmed.
-The effective date October 19, 2026 is still a proposal requiring confirmation.
+CODE REVIEW FINDINGS — OCTOBER 19, 2026
+Reviewed the current backend checkout at baseline commit 64b9191, the relevant
+framework implementation, schema, routes, copied iOS handoffs and feature tests.
+No live user records, production database or raw log contents were inspected.
 
-REMAINING PUBLICATION FACTS
-1. Email processing locations and transfer arrangements
-   The earlier statement that all processing is US-only is superseded by the
-   provider clarification. DigitalOcean's database is confirmed in the US;
-   the actual Gandi mailbox/processing locations still require confirmation.
-   Gandi's current Trust Center lists infrastructure in France and Luxembourg:
-   https://www.gandi.net/en/trust-center
-   Its hosting documentation also discusses those countries, but the operator
-   clarified that Gandi supplies only email here. Do not infer a database host
-   or exact mailbox location from generic provider documentation.
-   The preview therefore names both providers and separates the confirmed US
-   database from potential Gandi email processing in France/Luxembourg. The
-   latter is a qualified inference from Gandi's published infrastructure, not
-   an account-specific verification. Confirm the actual email locations and
-   applicable international-transfer safeguards before publication.
-   Gandi's privacy policy distinguishes its own controller activities from
-   processing client data. Do not copy tracking disclosures for gandi.net's
-   own website into Quick Reads or claim that Gandi's practices are ours.
+1. Favorites and reading reports are distinct records
+   app/Http/Controllers/Api/V2/FavoritesController.php writes explicit account
+   favorites to user_purchase_records. Removing a favorite deletes its rows;
+   these records have no periodic 90-day expiration in the checked code.
+   Despite its historical name, this table represents saved/favorite membership,
+   not an in-app-purchase receipt ledger. Popular catalog ordering counts saves.
+   Account deletion also removes favorites and the account's activity records.
 
-2. Activity collection, logs and retention
-   Confirm whether the planned app sends only account saved-story information,
-   or also separate first-party story-opening/completion reports. If the latter
-   is active, add the payload, measurement, account association and actual
-   retention details before release. Confirm guest delivery remains off.
-   Independently confirm whether proxy/web-server/application/provider logs
-   retain search queries, filters, IP addresses, timestamps, request URLs,
-   user agents or other metadata, and for how long. Saving stories is not a
-   complete description of operational logging. Do not invent absent logs.
-   Confirm account/favorite/support-message retention while an account exists,
-   provider retention and backups, deletion/rotation and restored-data handling.
-   Confirm whether any historical guest or purchase/payment records remain.
-   Where applicable, confirm legal bases for account delivery, saved-story
-   suggestions, security and support; do not invent consent or contract choices.
+2. Reading/completion ingestion and payload are implemented
+   app/Http/Controllers/Api/V2/StoryActivityController.php accepts a story ID,
+   reading state, saved state, observed_at and mutation/request UUID. Strict
+   validation rejects unexpected fields, including names, email, story text,
+   private reactions and detailed positions. It stores latest known reader/story
+   state and duplicate-request receipts, not a complete event/session history.
+   Account identity comes from a verified bearer. Guest requests are supported
+   by this backend using a dedicated pseudonymous UUID-derived reader key;
+   there is no server-side switch that prohibits all guest reports. This is
+   capability, not proof that the shipping app sends guest reports. The owner
+   confirms no guest collection and signed-in reading/completion collection.
+   The policy now reflects that scope, the supplied Reader measurement facts,
+   account association and excluded payload categories.
+   No Swift checkout was found in the reviewed project/common code locations.
+   Copied October 14 iOS handoffs describe earlier local-only recording; they
+   are historical evidence, not a current shipping-build audit. No iOS binary
+   verification is claimed and the owner supplied the current reporting scope.
 
-3. Account deletion and security records
-   The operator says all data is deleted. This supports deleting the account
-   and associated live account records, but conflicts with an unconditional
-   zero-retention promise for the current Apple deletion implementation.
-   app/Projects/Quickreads/Api/V2/AccountDeletion.php removes accounts, sessions,
-   favorites, activity and associated records, and revokes retained Apple
-   credentials. It also creates a limited subject-hash/event-time security
-   record to reject Apple proofs issued before deletion. PruneQuickreadsV2.php
-   removes these records after 90 days when deployed pruning runs.
-   Confirm deployed behavior, scheduler operation and any backup/log exceptions.
-   Do not promise immediate deletion of every local file, backup, provider log
-   or security record. Do not apply 90 days to accounts/favorites or all data.
-   The separate inactive activity/duplicate-request 90-day rules in the backend
-   specification also require deployment confirmation before public disclosure.
+3. Deletion revokes Apple credentials and leaves limited security data
+   app/Projects/Quickreads/Api/V2/AccountDeletion.php revokes retained Apple
+   refresh credentials, removes the account, sessions, favorites, account
+   activity/receipts, provider identity, reset records, comments, ratings and
+   matching newsletter subscription. It leaves a minimal Apple subject-hash,
+   scope and event-time security record to reject proofs issued before deletion.
+   app/Http/Controllers/Api/V2/AppleLifecycleController.php requires explicit
+   confirmation and a bearer issued within the last ten minutes. A provider
+   revocation failure keeps the account for retry; it is not a successful deletion.
+   No device-file or provider/email-backup erasure occurs in this routine.
+   The policy now explicitly describes the limited Apple security exception.
 
-4. Privacy requests and effective date
-   Confirm that the privacy inbox handles access/correction/erasure and any
-   applicable consent-withdrawal requests, and the practical verification and
-   response process. The preview proposes email intake; no export button,
-   analytics switch or guest-deletion screen has been invented.
-   If historical guest records exist, confirm how an installation can supply
-   its reporting UUID for owner-operated deletion. Do not infer that disabling
-   future guest delivery removes historical records.
-   Confirm how a parent's concern about a child's information is handled.
-   Confirm the effective date and the exact release shipping Apple sign-in,
-   email accounts, favorites, search, narration and Settings > Delete account.
+4. The specific 90-day pruning rules exist in code
+   app/Console/Commands/PruneQuickreadsV2.php deletes Apple notification/deletion
+   security records older than 90 days, activity not updated within the configured
+   window (90 days by default), and duplicate-request receipts older than that
+   window. It separately expires short-lived Apple challenge/recovery material.
+   app/Console/Kernel.php schedules pruning every five minutes. Actual removal
+   requires the deployed host's scheduler to run successfully; a cutoff in code
+   is not a verified maximum physical retention period. It is not a retention
+   rule for all accounts, favorites, logs, email or backups. Numeric public
+   retention wording remains withheld until the deployed job is checked.
 
-WORDING ONLY IF SIGNED-IN READING/COMPLETION REPORTING IS CONFIRMED ENABLED
-This paragraph is separate from the current policy; no guest reporting is added.
-Quick Reads sends first-party account story-activity reports to our backend to
-measure reading, saving and completion. Reports include story identifiers,
-reading and saved state, observation times and request identifiers. Signed-in
-activity is associated with your account. Opening a prepared story records
-reading activity. Finishing is recorded when you explicitly mark completion or
-narration completes; these signals do not prove that you read every word. The
-reports do not include story text, private reactions, detailed reading positions
-or microphone recordings. This reporting does not synchronize your whole
-Library or reading/listening positions across devices.
-Add confirmed purposes, legal basis, actual retention and applicable choices
-before using this paragraph. If guest reporting is ever enabled, the guest
-identifier is pseudonymous, not completely anonymous, and guest reports are
-not automatically merged into accounts on sign-in; update the policy first.
+5. Search, IP handling and application logging
+   app/Projects/Quickreads/Api/V2/Catalog.php uses search/filter inputs to query
+   the catalog. No first-party search-history table or explicit normal-path
+   search-query audit logger was found. This does NOT prove queries are never
+   retained: exceptions/database error messages or host/proxy logs can contain
+   request details, SQL or bindings.
+   routes/api/quickreads_v2.php and app/Http/Kernel.php apply request throttles.
+   The installed Laravel ThrottleRequests/RateLimiter code derives a hashed
+   account/IP request signature and uses cache counters with configured TTLs
+   (one minute for these route limits). Expiry is not a universal log-deletion
+   guarantee and does not prove physical removal from the backing cache store.
+   The policy now discloses IP-based service protection without inventing logs.
+   config/logging.php defaults to stack -> single -> storage/logs/laravel.log,
+   with debug level and no rotation/expiry configured for that single channel.
+   The optional daily channel has seven-day rotation, but it is NOT the default.
+   The effective production LOG_CHANNEL and external rotation are not in code.
+   app/Exceptions/Handler.php restricts application error reporting for Apple,
+   activity and account-deletion endpoints to a generic message and exception
+   class. This does not control web-server/proxy/CDN/provider logs or establish
+   redaction for every other operation.
+
+6. Backups, email geography and manual privacy requests
+   No Quick Reads database-backup/deletion schedule, web-server access-log
+   configuration, host cron installation, logrotate policy, Gandi mailbox
+   location or deployment-specific provider agreement was found in this repo.
+   Generic mail/environment examples do not establish live provider settings.
+   Neither a mail hostname nor DNS answers establish physical processing country.
+   The confirmed privacy inbox is the request route; no automated rights portal,
+   export button, analytics switch or guest-deletion screen is promised.
+   The owner-only quickreads:activity-forget-guest command deletes reporting
+   records using a supplied installation UUID. It does not establish how users
+   retrieve that UUID or prove that historical guest records exist in production.
+   Apple consent-revoked notifications invalidate relevant sessions/credentials;
+   ordinary logout remains separate from account deletion/consent withdrawal.
+
+VALIDATION
+Ran the existing StoryActivityTest, AppleAuthTest and PrivacyPolicyTest suites
+against isolated test data: 24 tests, 1,003 assertions, 23 passed, one skipped.
+The skipped test requires an isolated MySQL socket and pcntl for real concurrent
+transactions. Provider calls are faked; this does not prove live Apple behavior,
+production pruning, remote backup deletion or the shipping iOS configuration.
+
+REMAINING CHECKS THAT SOURCE CODE CANNOT SETTLE
+- Confirm deployed scheduler execution and successful pruning, actual web/proxy/
+  database/provider log fields and rotation, backup retention and deletion.
+- Confirm Gandi's actual email-processing locations. Its Trust Center lists
+  infrastructure in France and Luxembourg, which is a qualified basis for the
+  preview's possible-email-location wording, not mailbox-specific verification:
+  https://www.gandi.net/en/trust-center
+- Confirm applicable legal bases and international-transfer arrangements from
+  actual business/provider agreements. These cannot be inferred from PHP code.
+- Verify the intended Apple-enabled release and matching server configuration
+  before publishing this release's wording. The owner has supplied the reporting
+  scope; do not ask them again whether reading/completion collection is intended.
+
+The effective date, privacy-request email, general company location, current
+reporting scope and named providers are resolved. Do not keep presenting these
+as unanswered questions or require a public street address against the request.
 
 IMPLEMENTATION AND RELEASE
 Source: resources/views/projects/quickreads/privacy.blade.php
