@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="How Quick Reads handles account information, saved stories, local reading data, narration, and your privacy choices.">
     <meta name="theme-color" content="#173e37">
-    @if($preview)
-        <meta name="robots" content="noindex, nofollow">
-    @endif
     <title>Quick Reads Privacy Policy</title>
     <link rel="icon" href="/images/icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/css/quickreads-privacy.css?v=1">

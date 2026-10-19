@@ -3,7 +3,9 @@ Prepared October 19, 2026. This file is not part of the public policy.
 
 STATUS
 The operator explicitly requested publication on October 19, 2026 after reviewing
-the preview and code findings. quickreads_privacy.published is now true in source.
+the preview and code findings. The policy controller now serves the public page
+unconditionally. The old publication configuration and 404 check were removed
+so a previously cached false/missing setting cannot suppress the page.
 The operator deploys/pushes updates personally; no deployment or Git push is
 performed by this task. A successful public HTTPS response still requires
 verification after that deployment. Changing the local setting alone does not
@@ -154,7 +156,7 @@ Source: resources/views/projects/quickreads/privacy.blade.php
 Styles: public/css/quickreads-privacy.css
 Route: routes/projects/quickreads.php
 Controller: app/Http/Controllers/Projects/Quickreads/PrivacyPolicyController.php
-Gate: config/quickreads_privacy.php (published is true following authorization)
+Publication: public controller response; no publication flag or environment gate.
 
 The standalone view uses the current Quick Reads warm-paper/green design and
 existing local book logo. It avoids the legacy stylesheet's Google Fonts import
@@ -163,12 +165,15 @@ server-rendered. The policy GET/HEAD route bypasses session/cookie middleware;
 it has no authentication, payment, installation or consent-banner dependency.
 The response CSP blocks scripts and external resources. This does not establish
 the deployed web server's logging or cookie behavior; verify those separately.
-Unpublished responses are no-store and noindex. Published responses omit draft
-metadata. No separate public preview copy is added.
+The public response omits draft metadata and has no dependency on the old
+publication flag. No separate public preview copy is added.
 
 The operator has requested publishing the reviewed policy. Deploy using the
 existing website release process. Refresh any configuration/route cache through
-that process. Configure
+that process. If the deployed route table predates this page, run php artisan
+route:clear on the server or rebuild the route cache through the release process.
+The obsolete configuration flag no longer needs to be refreshed to show the page.
+Configure
 HTTPS at the existing host and redirect HTTP to HTTPS there. Do not enable a
 global application HTTPS redirect based on guessed proxy configuration.
 
