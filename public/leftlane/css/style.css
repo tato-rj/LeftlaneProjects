@@ -37,3 +37,15 @@
 .portfolio-1::after {
     border: none !important;
 }
+.sample-blocks img.quickreads-floating-icon {
+  width: 260px;
+  height: 152px;
+  object-fit: cover;
+}
+
+.portfolio-1 img.quickreads-gallery-icon {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}

@@ -6,8 +6,8 @@
     <meta name="description" content="How Quick Reads handles account information, saved stories, local reading data, narration, and your privacy choices.">
     <meta name="theme-color" content="#173e37">
     <title>Quick Reads Privacy Policy</title>
-    <link rel="icon" href="/images/icon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/css/quickreads-privacy.css?v=1">
+    @include('projects.quickreads.components.icons')
+    <link rel="stylesheet" href="/css/quickreads-privacy.css?v=2">
 </head>
 <body id="top">
     <a class="skip-link" href="#policy">Skip to privacy policy</a>
@@ -15,7 +15,7 @@
     <header class="site-header">
         <div class="page-width header-inner">
             <a class="brand" href="#top" aria-label="Quick Reads, top of page">
-                <span class="brand-mark"><img src="/images/icon.svg" width="32" height="30" alt=""></span>
+                <span class="brand-mark"><img src="/images/projects/quickreads/app-icon.png" width="48" height="48" alt=""></span>
                 <span>Quick Reads</span>
             </a>
             <a class="header-contact" href="mailto:contact@leftlaneapps.com">Contact us <span aria-hidden="true">↗</span></a>

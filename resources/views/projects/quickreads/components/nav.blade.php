@@ -1,7 +1,7 @@
 <aside class="sidebar" id="sidebar">
     <a href="/quickreads" class="brand">
         <span class="brand-symbol">
-            @include('projects.quickreads.admin.icon', ['name' => 'stories'])
+            <img src="/images/projects/quickreads/app-icon.png" width="38" height="38" alt="">
         </span>
         <span>
             Quickreads

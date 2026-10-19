@@ -9,7 +9,7 @@
             @yield('title', 'Dashboard')
             · Quickreads
         </title>
-        <link rel="icon" href="{{ asset('images/icon.svg') }}" type="image/svg+xml">
+        @include('projects.quickreads.components.icons')
         <link rel="stylesheet" href="{{ asset('css/quickreads-admin.css') }}?v={{ filemtime(public_path('css/quickreads-admin.css')) }}">
         <script src="{{ asset('js/quickreads-admin.js') }}?v={{ filemtime(public_path('js/quickreads-admin.js')) }}" defer>
         </script>

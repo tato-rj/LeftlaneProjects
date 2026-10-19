@@ -199,16 +199,19 @@ small {
 .brand-symbol {
     height: 38px;
     width: 38px;
+    flex: none;
     border-radius: 10px;
-    background: #b8d7a5;
-    color: #183c31;
+    overflow: hidden;
+    background: #002b36;
     display: grid;
     place-items: center;
 }
 
-.brand-symbol svg {
-    width: 25px;
-    height: 25px;
+.brand-symbol img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .brand small {

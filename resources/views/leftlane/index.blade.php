@@ -10,7 +10,7 @@
 
     <!-- Styles -->
     <link href="{{asset('leftlane/css/page.min.css')}}" rel="stylesheet">
-    <link href="{{asset('leftlane/css/style.css?version=1')}}" rel="stylesheet">
+    <link href="{{asset('leftlane/css/style.css?version=2')}}" rel="stylesheet">
 
     <!-- Favicons -->
     <!-- <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png"> -->
@@ -76,7 +76,7 @@
           </a>
 
           <a href="https://itunes.apple.com/app/id1139023307" target="_blank">
-            <img class="shadow-6" src="{{asset('leftlane/img/portfolio/floating/quickreads.jpg')}}" alt="..." data-aos="fade-up" data-aos-delay="800" data-aos-offset="0">
+            <img class="shadow-6 quickreads-floating-icon" src="{{asset('images/projects/quickreads/app-icon-512.png')}}" width="260" height="152" alt="Quick Reads app icon" data-aos="fade-up" data-aos-delay="800" data-aos-offset="0">
           </a>
 
           <a href="#block-5" target="_blank">
@@ -237,7 +237,7 @@
 
               <div class="col-6 col-lg-3" data-shuffle="item" data-groups="app">
                 <a class="portfolio-1" href="https://itunes.apple.com/app/id1139023307" target="_blank">
-                  <img src="{{asset('leftlane/img/portfolio/gallery/quickreads.jpg')}}" alt="screenshot">
+                  <img class="quickreads-gallery-icon" src="{{asset('images/projects/quickreads/app-icon-512.png')}}" width="800" height="600" alt="Quick Reads app icon">
                   <div class="portfolio-detail">
                     <h5>Quickreads</h5>
                     <p>iOS</p>

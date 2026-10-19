@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Reset your QuickReads password</title></head>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Reset your QuickReads password</title>
+@include('projects.quickreads.components.icons')
+</head>
 <body>
 <main>
 <h1>Reset your QuickReads password</h1>

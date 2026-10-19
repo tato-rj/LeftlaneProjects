@@ -7,6 +7,7 @@
         <title>
             Sign in · Quickreads
         </title>
+        @include('projects.quickreads.components.icons')
         <link rel="stylesheet" href="{{ asset('css/quickreads-admin.css') }}?v={{ filemtime(public_path('css/quickreads-admin.css')) }}">
     </head>
     <body class="login-body">
@@ -14,7 +15,7 @@
             <section class="login-intro">
                 <a href="/quickreads" class="brand">
                     <span class="brand-symbol">
-                        @include('projects.quickreads.admin.icon', ['name' => 'stories'])
+                        <img src="/images/projects/quickreads/app-icon.png" width="38" height="38" alt="">
                     </span>
                     <span>
                         Quickreads
